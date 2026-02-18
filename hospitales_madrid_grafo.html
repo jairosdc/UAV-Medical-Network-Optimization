@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_f4fed06732c2243bbaeb05a81e1e3819 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.css"/>
+</head>
+<body>
+    
+    
+<div style="position:fixed;bottom:30px;left:30px;z-index:1000;
+     background:rgba(8,8,18,0.95);border:1px solid #FFD700;
+     border-radius:10px;padding:15px 19px;
+     font-family:'Segoe UI',sans-serif;color:white;font-size:12px;
+     min-width:250px;box-shadow:0 4px 24px rgba(0,0,0,0.7);">
+  <b style="color:#FFD700;font-size:14px;">🗺️ Grafo K8 — Hospitales Madrid</b>
+  <hr style="border-color:#333;margin:8px 0;">
+  <b style="color:#aaa;">Aristas:</b> color = mezcla de los 2 hospitales<br>
+  &nbsp;&nbsp;&nbsp;Grosor mayor → distancia más corta<br>
+  <span style="color:#FFD700;">╌╌╌╌</span> MST (activar en capas)<br>
+  <hr style="border-color:#333;margin:8px 0;">
+  <b style="color:#aaa;">Bases de drones:</b><br>
+  <span style="color:#00FF88;">🚁</span> BASE NORTE — Dehesa de la Villa<br>
+  <span style="color:#00CFFF;">🚁</span> BASE CENTRO — Parque del Oeste<br>
+  <span style="color:#FF9F00;">🚁</span> BASE SUR — Parque Pradolongo<br>
+  <hr style="border-color:#333;margin:8px 0;">
+  <i style="color:#888;font-size:10px;">Clic en hospitales/bases → detalles<br>
+  Panel lateral → activar/desactivar capas</i>
+</div>
+    
+            <div class="folium-map" id="map_f4fed06732c2243bbaeb05a81e1e3819" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_f4fed06732c2243bbaeb05a81e1e3819 = L.map(
+                "map_f4fed06732c2243bbaeb05a81e1e3819",
+                {
+                    center: [40.43, -3.695],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_f4fed06732c2243bbaeb05a81e1e3819);
+
+            
+
+        
+    
+            var tile_layer_b6bf9f40bd1ca603c5651101605f850d = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_b6bf9f40bd1ca603c5651101605f850d.addTo(map_f4fed06732c2243bbaeb05a81e1e3819);
+        
+    
+            var tile_layer_94e69869f32788813e469f4291a1fcbb = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detect_retina": false, "max_native_zoom": 19, "max_zoom": 19, "min_zoom": 0, "no_wrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+            var mini_map_8455a4dc48770b691e54029d9f04e8a8 = new L.Control.MiniMap(
+                tile_layer_94e69869f32788813e469f4291a1fcbb,
+                {
+  "position": "bottomright",
+  "width": 150,
+  "height": 150,
+  "collapsedWidth": 25,
+  "collapsedHeight": 25,
+  "zoomLevelOffset": -5,
+  "centerFixed": false,
+  "zoomAnimation": false,
+  "toggleDisplay": true,
+  "autoToggleDisplay": false,
+  "minimized": false,
+}
+            );
+            map_f4fed06732c2243bbaeb05a81e1e3819.addControl(mini_map_8455a4dc48770b691e54029d9f04e8a8);
+        
+    
+            var feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var poly_line_bb8c37e92f3cfebdc273716e0672279b = L.polyline(
+                [[40.4733, -3.6899], [40.4095, -3.6829]],
+                {"bubblingMouseEvents": true, "color": "#a69c97", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#a69c97", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_bb8c37e92f3cfebdc273716e0672279b.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ Gregorio Marañón  →  7.119 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_bd021fb8cddc8e970ccc7c34c6736fbf = L.marker(
+                [40.4414, -3.6864],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_7297ee13938fd2c0a1070f40a5f066cf = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#a69c97; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #a69c9766;\"\u003e7.119 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_bd021fb8cddc8e970ccc7c34c6736fbf.setIcon(div_icon_7297ee13938fd2c0a1070f40a5f066cf);
+            
+    
+            var poly_line_1263875a43798a78df747cf1dc314429 = L.polyline(
+                [[40.4733, -3.6899], [40.4427, -3.7186]],
+                {"bubblingMouseEvents": true, "color": "#ffa86c", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#ffa86c", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.8}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_1263875a43798a78df747cf1dc314429.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ San Carlos  →  4.18 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_e073f9248ad228115e41c2e16fed0166 = L.marker(
+                [40.458, -3.70425],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_f01b701b1dfa2b595d93d8e18b51a0bc = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#ffa86c; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #ffa86c66;\"\u003e4.18 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_e073f9248ad228115e41c2e16fed0166.setIcon(div_icon_f01b701b1dfa2b595d93d8e18b51a0bc);
+            
+    
+            var poly_line_340785f375999f0d214977c8b5de2d88 = L.polyline(
+                [[40.4733, -3.6899], [40.3839, -3.6911]],
+                {"bubblingMouseEvents": true, "color": "#d3a89d", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#d3a89d", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 1.7}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_340785f375999f0d214977c8b5de2d88.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ 12 de Octubre  →  9.941 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_77d16c2140f2f1b10bc7f16bc7f10918 = L.marker(
+                [40.4286, -3.6905],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_036f0b0e5366dba120038e2b1cf7d44e = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#d3a89d; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #d3a89d66;\"\u003e9.941 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_77d16c2140f2f1b10bc7f16bc7f10918.setIcon(div_icon_036f0b0e5366dba120038e2b1cf7d44e);
+            
+    
+            var poly_line_a94dd30c5db2eb5c9ce059927c2976d2 = L.polyline(
+                [[40.4733, -3.6899], [40.4724, -3.6482]],
+                {"bubblingMouseEvents": true, "color": "#ee85a4", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#ee85a4", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.9}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_a94dd30c5db2eb5c9ce059927c2976d2.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ Ramón y Cajal  →  3.529 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_4d96edeb4f68593473d91960779ef8e0 = L.marker(
+                [40.47285, -3.6690500000000004],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_038433a8e16c9123a6ff6ae2f6b2bb45 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#ee85a4; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #ee85a466;\"\u003e3.529 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_4d96edeb4f68593473d91960779ef8e0.setIcon(div_icon_038433a8e16c9123a6ff6ae2f6b2bb45);
+            
+    
+            var poly_line_ee72d9f7e3c0f8896ef6847c7efec372 = L.polyline(
+                [[40.4733, -3.6899], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#fba36d", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#fba36d", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.6}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_ee72d9f7e3c0f8896ef6847c7efec372.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ La Princesa  →  5.204 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_d15e40e10d72889f3d39632bb92aa133 = L.marker(
+                [40.4499, -3.69035],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_4f7ce967e918d8999ffcd27e2b0b8a2d = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#fba36d; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #fba36d66;\"\u003e5.204 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_d15e40e10d72889f3d39632bb92aa133.setIcon(div_icon_4f7ce967e918d8999ffcd27e2b0b8a2d);
+            
+    
+            var poly_line_9a40f59b717edee39cfeec2b28cdce4b = L.polyline(
+                [[40.4733, -3.6899], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#c296aa", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#c296aa", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.6}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_9a40f59b717edee39cfeec2b28cdce4b.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ Jiménez Díaz  →  5.097 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_8f78c3a86d92baf2bfefb5339601e6b3 = L.marker(
+                [40.4543, -3.70675],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_e8ac862e10ff64685cf7c232da36195a = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#c296aa; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #c296aa66;\"\u003e5.097 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_8f78c3a86d92baf2bfefb5339601e6b3.setIcon(div_icon_e8ac862e10ff64685cf7c232da36195a);
+            
+    
+            var poly_line_fbd4e45c06fa5b77d80ab1db641a0fbf = L.polyline(
+                [[40.4733, -3.6899], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#f87f7a", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#f87f7a", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.1}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_fbd4e45c06fa5b77d80ab1db641a0fbf.bindTooltip(
+                `<div>
+                     ✈️ La Paz ↔ Cruz Roja  →  2.524 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_69ce9799ba1d3ea8cec26e2a9a1734c6 = L.marker(
+                [40.4636, -3.6976500000000003],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_0db3efcd35b1ef0410d0d30da1518d32 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#f87f7a; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #f87f7a66;\"\u003e2.524 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_69ce9799ba1d3ea8cec26e2a9a1734c6.setIcon(div_icon_0db3efcd35b1ef0410d0d30da1518d32);
+            
+    
+            var poly_line_a2269515ff081f7a9d9d57881f027e45 = L.polyline(
+                [[40.4095, -3.6829], [40.4427, -3.7186]],
+                {"bubblingMouseEvents": true, "color": "#a6d998", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#a6d998", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.7}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_a2269515ff081f7a9d9d57881f027e45.bindTooltip(
+                `<div>
+                     ✈️ Gregorio Marañón ↔ San Carlos  →  4.771 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_e84587f5e0d120431b230f8bd09547f8 = L.marker(
+                [40.426100000000005, -3.70075],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_8f4bfc37ddcc502e81999b7242c67a02 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#a6d998; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #a6d99866;\"\u003e4.771 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_e84587f5e0d120431b230f8bd09547f8.setIcon(div_icon_8f4bfc37ddcc502e81999b7242c67a02);
+            
+    
+            var poly_line_ef18f8d259cda99dee4aa175203133a9 = L.polyline(
+                [[40.4095, -3.6829], [40.3839, -3.6911]],
+                {"bubblingMouseEvents": true, "color": "#7bd9c9", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#7bd9c9", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.0}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_ef18f8d259cda99dee4aa175203133a9.bindTooltip(
+                `<div>
+                     ✈️ Gregorio Marañón ↔ 12 de Octubre  →  2.93 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_14e25c01fd4f7044e3e6621991914257 = L.marker(
+                [40.396699999999996, -3.6870000000000003],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_1d2e76b1938e11b60b86ef2e231a88d4 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#7bd9c9; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #7bd9c966;\"\u003e2.93 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_14e25c01fd4f7044e3e6621991914257.setIcon(div_icon_1d2e76b1938e11b60b86ef2e231a88d4);
+            
+    
+            var poly_line_a31b1442f78894af7b35f7e63019bcc1 = L.polyline(
+                [[40.4095, -3.6829], [40.4724, -3.6482]],
+                {"bubblingMouseEvents": true, "color": "#95b6d0", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#95b6d0", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_a31b1442f78894af7b35f7e63019bcc1.bindTooltip(
+                `<div>
+                     ✈️ Gregorio Marañón ↔ Ramón y Cajal  →  7.586 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_fc387a9dcb4ffbc223264e8cdf00846f = L.marker(
+                [40.44095, -3.66555],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_86f79c7630baf7aa7119ad3d34070259 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#95b6d0; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #95b6d066;\"\u003e7.586 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_fc387a9dcb4ffbc223264e8cdf00846f.setIcon(div_icon_86f79c7630baf7aa7119ad3d34070259);
+            
+    
+            var poly_line_565f3db1824c922f9f69f22a359f0254 = L.polyline(
+                [[40.4095, -3.6829], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#a2d499", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#a2d499", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.2}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_565f3db1824c922f9f69f22a359f0254.bindTooltip(
+                `<div>
+                     ✈️ Gregorio Marañón ↔ La Princesa  →  2.005 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_b5eb043d6997ddb3d3fcf3b53edb189f = L.marker(
+                [40.418, -3.6868499999999997],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_643c3b212a9a6a6c5b5391854efe41e3 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#a2d499; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #a2d49966;\"\u003e2.005 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_b5eb043d6997ddb3d3fcf3b53edb189f.setIcon(div_icon_643c3b212a9a6a6c5b5391854efe41e3);
+            
+    
+            var poly_line_ce8748ae3645f0f5a8f03858198faa7c = L.polyline(
+                [[40.4095, -3.6829], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#69c7d6", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#69c7d6", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.7}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_ce8748ae3645f0f5a8f03858198faa7c.bindTooltip(
+                `<div>
+                     ✈️ Gregorio Marañón ↔ Jiménez Díaz  →  4.483 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_0a087bec51d787f81b32a220ed2d6c0c = L.marker(
+                [40.422399999999996, -3.7032499999999997],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_e983c49349b7065bade9532ec3838091 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#69c7d6; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #69c7d666;\"\u003e4.483 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_0a087bec51d787f81b32a220ed2d6c0c.setIcon(div_icon_e983c49349b7065bade9532ec3838091);
+            
+    
+            var poly_line_983b2d21907e9ac510b4bad933203a31 = L.polyline(
+                [[40.4095, -3.6829], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#9fb0a7", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#9fb0a7", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.6}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_983b2d21907e9ac510b4bad933203a31.bindTooltip(
+                `<div>
+                     ✈️ Gregorio Marañón ↔ Cruz Roja  →  5.292 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3dbcf93f1356e3c76fe290c830ad4818 = L.marker(
+                [40.4317, -3.69415],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_61910d6fe5ef5a9fc7ae0c631d09eb1e = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#9fb0a7; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #9fb0a766;\"\u003e5.292 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_3dbcf93f1356e3c76fe290c830ad4818.setIcon(div_icon_61910d6fe5ef5a9fc7ae0c631d09eb1e);
+            
+    
+            var poly_line_585e6924adcf64cac7a68b84febde80f = L.polyline(
+                [[40.4427, -3.7186], [40.3839, -3.6911]],
+                {"bubblingMouseEvents": true, "color": "#d3e69e", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#d3e69e", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.3}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_585e6924adcf64cac7a68b84febde80f.bindTooltip(
+                `<div>
+                     ✈️ San Carlos ↔ 12 de Octubre  →  6.94 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c44476d11a9a0885d68de1b7701feac0 = L.marker(
+                [40.4133, -3.70485],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_c957aa74b1cbeb09da84f0e8b8125288 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#d3e69e; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #d3e69e66;\"\u003e6.94 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_c44476d11a9a0885d68de1b7701feac0.setIcon(div_icon_c957aa74b1cbeb09da84f0e8b8125288);
+            
+    
+            var poly_line_255c968f99c7f05ce8d96d827af04efe = L.polyline(
+                [[40.4427, -3.7186], [40.4724, -3.6482]],
+                {"bubblingMouseEvents": true, "color": "#eec3a5", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#eec3a5", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.3}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_255c968f99c7f05ce8d96d827af04efe.bindTooltip(
+                `<div>
+                     ✈️ San Carlos ↔ Ramón y Cajal  →  6.811 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c7bfffaf1caf42508cec73f44fb26458 = L.marker(
+                [40.45755, -3.6834],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_9f3523b2252855bb64befa87ecab2727 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#eec3a5; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #eec3a566;\"\u003e6.811 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_c7bfffaf1caf42508cec73f44fb26458.setIcon(div_icon_9f3523b2252855bb64befa87ecab2727);
+            
+    
+            var poly_line_afa69bbf9f57476071d9ae1aef88fd31 = L.polyline(
+                [[40.4427, -3.7186], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#fbe16e", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#fbe16e", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.0}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_afa69bbf9f57476071d9ae1aef88fd31.bindTooltip(
+                `<div>
+                     ✈️ San Carlos ↔ La Princesa  →  2.963 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_379907cae51e1833e17e02576bc7d752 = L.marker(
+                [40.4346, -3.7047],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_47194f6c819547308afe9714dab876f7 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#fbe16e; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #fbe16e66;\"\u003e2.963 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_379907cae51e1833e17e02576bc7d752.setIcon(div_icon_47194f6c819547308afe9714dab876f7);
+            
+    
+            var poly_line_d128e6222b1a55664a9421f262f6bfce = L.polyline(
+                [[40.4427, -3.7186], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#c2d3ab", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#c2d3ab", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.4}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_d128e6222b1a55664a9421f262f6bfce.bindTooltip(
+                `<div>
+                     ✈️ San Carlos ↔ Jiménez Díaz  →  0.925 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_4f044620bef09ad772cd40815762bc99 = L.marker(
+                [40.439, -3.7211],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_cce78fb124dad5d3b8c7268f1cfcf9c7 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#c2d3ab; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #c2d3ab66;\"\u003e0.925 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_4f044620bef09ad772cd40815762bc99.setIcon(div_icon_cce78fb124dad5d3b8c7268f1cfcf9c7);
+            
+    
+            var poly_line_3da2d6e5a919c0c71f2287528c026efb = L.polyline(
+                [[40.4427, -3.7186], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#f8bd7b", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#f8bd7b", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.3}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_3da2d6e5a919c0c71f2287528c026efb.bindTooltip(
+                `<div>
+                     ✈️ San Carlos ↔ Cruz Roja  →  1.673 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c3389b0f6c12a257f3eb4244c3a946cd = L.marker(
+                [40.4483, -3.7119999999999997],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_243183f0e484862a1a7022aeb2de8efe = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#f8bd7b; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #f8bd7b66;\"\u003e1.673 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_c3389b0f6c12a257f3eb4244c3a946cd.setIcon(div_icon_243183f0e484862a1a7022aeb2de8efe);
+            
+    
+            var poly_line_93866400754d9472de80c4c564be40c4 = L.polyline(
+                [[40.3839, -3.6911], [40.4724, -3.6482]],
+                {"bubblingMouseEvents": true, "color": "#c2c3d6", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#c2c3d6", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 1.6}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_93866400754d9472de80c4c564be40c4.bindTooltip(
+                `<div>
+                     ✈️ 12 de Octubre ↔ Ramón y Cajal  →  10.489 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_6f47bfec157d83a9abfe734f6e687fe5 = L.marker(
+                [40.42815, -3.66965],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_3132a7ca0df8a61061d6209f948a575c = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#c2c3d6; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #c2c3d666;\"\u003e10.489 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_6f47bfec157d83a9abfe734f6e687fe5.setIcon(div_icon_3132a7ca0df8a61061d6209f948a575c);
+            
+    
+            var poly_line_bc9c49c573a1b85de4956ed2a76c19db = L.polyline(
+                [[40.3839, -3.6911], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#cfe19f", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#cfe19f", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.7}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_bc9c49c573a1b85de4956ed2a76c19db.bindTooltip(
+                `<div>
+                     ✈️ 12 de Octubre ↔ La Princesa  →  4.737 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_66296560b290d9dd43660596d7905051 = L.marker(
+                [40.405199999999994, -3.69095],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_8d377b2eaf7d0a9dc4ba7b57d970f1f9 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#cfe19f; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #cfe19f66;\"\u003e4.737 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_66296560b290d9dd43660596d7905051.setIcon(div_icon_8d377b2eaf7d0a9dc4ba7b57d970f1f9);
+            
+    
+            var poly_line_9019038b3de0353e10bdeb7e973948ac = L.polyline(
+                [[40.3839, -3.6911], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#96d3dc", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#96d3dc", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.4}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_9019038b3de0353e10bdeb7e973948ac.bindTooltip(
+                `<div>
+                     ✈️ 12 de Octubre ↔ Jiménez Díaz  →  6.343 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_db5e72bb1421e0a139c57e0b305046f8 = L.marker(
+                [40.4096, -3.70735],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_8d85754ee187020020faa3aa81d915a6 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#96d3dc; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #96d3dc66;\"\u003e6.343 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_db5e72bb1421e0a139c57e0b305046f8.setIcon(div_icon_8d85754ee187020020faa3aa81d915a6);
+            
+    
+            var poly_line_190c516da60502f8842858bd266baa49 = L.polyline(
+                [[40.3839, -3.6911], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#ccbdac", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#ccbdac", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.1}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_190c516da60502f8842858bd266baa49.bindTooltip(
+                `<div>
+                     ✈️ 12 de Octubre ↔ Cruz Roja  →  7.877 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_47bf82b017ccabf17f04d5ac6516438c = L.marker(
+                [40.418899999999994, -3.69825],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_b192bc09b126cef9be78ade63c56a407 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#ccbdac; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #ccbdac66;\"\u003e7.877 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_47bf82b017ccabf17f04d5ac6516438c.setIcon(div_icon_b192bc09b126cef9be78ade63c56a407);
+            
+    
+            var poly_line_805dfd4f64a451e3ae6c431b7e464358 = L.polyline(
+                [[40.4724, -3.6482], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#eabea6", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#eabea6", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.4}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_805dfd4f64a451e3ae6c431b7e464358.bindTooltip(
+                `<div>
+                     ✈️ Ramón y Cajal ↔ La Princesa  →  6.248 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_05029054cea4fa1490f3e6730f33d6bb = L.marker(
+                [40.44945, -3.6695],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_6989bef80071d8c26542ebf30ebd380f = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#eabea6; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #eabea666;\"\u003e6.248 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_05029054cea4fa1490f3e6730f33d6bb.setIcon(div_icon_6989bef80071d8c26542ebf30ebd380f);
+            
+    
+            var poly_line_39143b51f44e1e532615cede86d257ca = L.polyline(
+                [[40.4724, -3.6482], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#b1b0e3", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#b1b0e3", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.1}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_39143b51f44e1e532615cede86d257ca.bindTooltip(
+                `<div>
+                     ✈️ Ramón y Cajal ↔ Jiménez Díaz  →  7.597 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_0f650329fbc7591313c81a698d0a713a = L.marker(
+                [40.45385, -3.6859],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_aa5a1b148a8a0798626146770349f14f = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#b1b0e3; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #b1b0e366;\"\u003e7.597 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_0f650329fbc7591313c81a698d0a713a.setIcon(div_icon_aa5a1b148a8a0798626146770349f14f);
+            
+    
+            var poly_line_af2624c338f9c1a59f4fb10c74a6870c = L.polyline(
+                [[40.4724, -3.6482], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#e79ab3", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#e79ab3", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 2.6}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_af2624c338f9c1a59f4fb10c74a6870c.bindTooltip(
+                `<div>
+                     ✈️ Ramón y Cajal ↔ Cruz Roja  →  5.258 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_6b6aa35feac014a695a1e3cfa025ff6b = L.marker(
+                [40.46315, -3.6768],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_e084dbaa56c3cd20746946609d83f347 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#e79ab3; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #e79ab366;\"\u003e5.258 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_6b6aa35feac014a695a1e3cfa025ff6b.setIcon(div_icon_e084dbaa56c3cd20746946609d83f347);
+            
+    
+            var poly_line_321bd2b015b242cc05112d351484c69a = L.polyline(
+                [[40.4265, -3.6908], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#beceac", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#beceac", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.0}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_321bd2b015b242cc05112d351484c69a.bindTooltip(
+                `<div>
+                     ✈️ La Princesa ↔ Jiménez Díaz  →  2.944 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c1a4c875d83651490ede4b78ff83d14f = L.marker(
+                [40.430899999999994, -3.7072],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_a6d1c2ef7a011e7bca9ca7b80878dd1c = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#beceac; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #beceac66;\"\u003e2.944 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_c1a4c875d83651490ede4b78ff83d14f.setIcon(div_icon_a6d1c2ef7a011e7bca9ca7b80878dd1c);
+            
+    
+            var poly_line_49eaf8fdfcb186f1356f19678fba04e5 = L.polyline(
+                [[40.4265, -3.6908], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#f4b87c", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#f4b87c", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.0}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_49eaf8fdfcb186f1356f19678fba04e5.bindTooltip(
+                `<div>
+                     ✈️ La Princesa ↔ Cruz Roja  →  3.288 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_222dae185bcb13d28cd086481df69013 = L.marker(
+                [40.4402, -3.6981],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_ccd8d506d136a3b5f60337eff18b97d4 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#f4b87c; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #f4b87c66;\"\u003e3.288 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_222dae185bcb13d28cd086481df69013.setIcon(div_icon_ccd8d506d136a3b5f60337eff18b97d4);
+            
+    
+            var poly_line_cf5b342f379a4440770631fe32d37d9b = L.polyline(
+                [[40.4353, -3.7236], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#bbaab9", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#bbaab9", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 3.1}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            poly_line_cf5b342f379a4440770631fe32d37d9b.bindTooltip(
+                `<div>
+                     ✈️ Jiménez Díaz ↔ Cruz Roja  →  2.579 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_365bae7bd9398985c76eb0855bc8851b = L.marker(
+                [40.444599999999994, -3.7145],
+                {
+}
+            ).addTo(feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca);
+        
+    
+            var div_icon_ba1fa786dac623e9308fda8f2faa37c9 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:8px; font-weight:bold; color:#bbaab9; background:rgba(0,0,0,0.72); padding:1px 4px; border-radius:3px; white-space:nowrap; border:1px solid #bbaab966;\"\u003e2.579 km\u003c/div\u003e",
+  "iconSize": [56, 16],
+  "iconAnchor": [28, 8],
+  "className": "empty",
+});
+        
+    
+                marker_365bae7bd9398985c76eb0855bc8851b.setIcon(div_icon_ba1fa786dac623e9308fda8f2faa37c9);
+            
+    
+            feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca.addTo(map_f4fed06732c2243bbaeb05a81e1e3819);
+        
+    
+            var feature_group_893984527809579d590029b721d760b4 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var poly_line_09de246a456070f04e13ce4b8a0e7e0d = L.polyline(
+                [[40.4733, -3.6899], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_09de246a456070f04e13ce4b8a0e7e0d.bindTooltip(
+                `<div>
+                     ⭐ MST: La Paz ↔ Cruz Roja  →  2.524 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3a1d59e21730ca0a724b4802273d9fca = L.marker(
+                [40.4636, -3.6976500000000003],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_07ca47929c110e73a1782b26ac890487 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e2.524 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_3a1d59e21730ca0a724b4802273d9fca.setIcon(div_icon_07ca47929c110e73a1782b26ac890487);
+            
+    
+            var poly_line_823d2ec531cbed4742fb9257a72f8352 = L.polyline(
+                [[40.4733, -3.6899], [40.4724, -3.6482]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_823d2ec531cbed4742fb9257a72f8352.bindTooltip(
+                `<div>
+                     ⭐ MST: La Paz ↔ Ramón y Cajal  →  3.529 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3e1314707bf051d154ea697f23753deb = L.marker(
+                [40.47285, -3.6690500000000004],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_d833bc451836f8f7c260d105545eb822 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e3.529 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_3e1314707bf051d154ea697f23753deb.setIcon(div_icon_d833bc451836f8f7c260d105545eb822);
+            
+    
+            var poly_line_12dc7b95da5c7f04e9592ba656117007 = L.polyline(
+                [[40.4095, -3.6829], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_12dc7b95da5c7f04e9592ba656117007.bindTooltip(
+                `<div>
+                     ⭐ MST: Gregorio Marañón ↔ La Princesa  →  2.005 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_6d52918e75acca8db1a028f794c84282 = L.marker(
+                [40.418, -3.6868499999999997],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_7305777e06652b5df6d52bf08e8c0ec0 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e2.005 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_6d52918e75acca8db1a028f794c84282.setIcon(div_icon_7305777e06652b5df6d52bf08e8c0ec0);
+            
+    
+            var poly_line_9c3545c6093c8e612d574da6efb1b28d = L.polyline(
+                [[40.4095, -3.6829], [40.3839, -3.6911]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_9c3545c6093c8e612d574da6efb1b28d.bindTooltip(
+                `<div>
+                     ⭐ MST: Gregorio Marañón ↔ 12 de Octubre  →  2.93 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7ff765b1a7efa94e15ab26aa2af1bc19 = L.marker(
+                [40.396699999999996, -3.6870000000000003],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_1e279f097913e00dd3091cebafbb4658 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e2.93 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_7ff765b1a7efa94e15ab26aa2af1bc19.setIcon(div_icon_1e279f097913e00dd3091cebafbb4658);
+            
+    
+            var poly_line_20e131624904d1fafcb9cac0e73d0c35 = L.polyline(
+                [[40.4427, -3.7186], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_20e131624904d1fafcb9cac0e73d0c35.bindTooltip(
+                `<div>
+                     ⭐ MST: San Carlos ↔ Jiménez Díaz  →  0.925 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_35e37dd4c401502715b957f856db3270 = L.marker(
+                [40.439, -3.7211],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_84fe0f10b382d743986b5803488e1c77 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e0.925 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_35e37dd4c401502715b957f856db3270.setIcon(div_icon_84fe0f10b382d743986b5803488e1c77);
+            
+    
+            var poly_line_a1b98537c57c3f22dae4ddfb17309ed0 = L.polyline(
+                [[40.4427, -3.7186], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_a1b98537c57c3f22dae4ddfb17309ed0.bindTooltip(
+                `<div>
+                     ⭐ MST: San Carlos ↔ Cruz Roja  →  1.673 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c4fa36b899cfd51d5ae8d4bbe94c947b = L.marker(
+                [40.4483, -3.7119999999999997],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_a6a54d6592334454bf19eaa15f43e585 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e1.673 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_c4fa36b899cfd51d5ae8d4bbe94c947b.setIcon(div_icon_a6a54d6592334454bf19eaa15f43e585);
+            
+    
+            var poly_line_d4dabc90879b0bc0e9e95e33be7b0f8f = L.polyline(
+                [[40.4265, -3.6908], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#FFD700", "dashArray": "12", "dashOffset": null, "fill": false, "fillColor": "#FFD700", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            poly_line_d4dabc90879b0bc0e9e95e33be7b0f8f.bindTooltip(
+                `<div>
+                     ⭐ MST: La Princesa ↔ Jiménez Díaz  →  2.944 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_8f382ebe5fbae860773851f3f1af6ad9 = L.marker(
+                [40.430899999999994, -3.7072],
+                {
+}
+            ).addTo(feature_group_893984527809579d590029b721d760b4);
+        
+    
+            var div_icon_07a12db0407202658e1d99a74e5d92c0 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:9px; font-weight:bold; color:#FFD700; background:rgba(0,0,0,0.82); padding:2px 5px; border-radius:4px; border:1px solid #FFD700; white-space:nowrap;\"\u003e2.944 km\u003c/div\u003e",
+  "iconSize": [60, 18],
+  "iconAnchor": [30, 9],
+  "className": "empty",
+});
+        
+    
+                marker_8f382ebe5fbae860773851f3f1af6ad9.setIcon(div_icon_07a12db0407202658e1d99a74e5d92c0);
+            
+    
+            var feature_group_ec03bcad8f7e35c8d137cc796e88e883 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_marker_260bd328234c2ced756623b647c555e1 = L.circleMarker(
+                [40.4733, -3.6899],
+                {"bubblingMouseEvents": true, "color": "#FF6B6B", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#FF6B6B", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_3d0fedc734933b33765cc6d824c77604 = L.circleMarker(
+                [40.4733, -3.6899],
+                {"bubblingMouseEvents": true, "color": "#FF6B6B", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FF6B6B", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_375852cb2f68e84db3aeeabcb1efb27b = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_e26f0c1ed8b2ca8e1d3f0d91506feb4e = $(`<div id="html_e26f0c1ed8b2ca8e1d3f0d91506feb4e" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#FF6B6B;                    border-bottom:2px solid #FF6B6B;padding-bottom:4px;">             🏥 H. Universitario La Paz         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Fuencarral-El Pardo</p>         <p style="margin:3px 0;"><b>🔬</b> Neurocirugía, trasplantes, cardíaca, UCI avanzada</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.47330, -3.68990</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.119 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.18 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">9.941 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">3.529 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.204 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.097 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.524 km</td></tr></table>     </div>     </div>`)[0];
+                popup_375852cb2f68e84db3aeeabcb1efb27b.setContent(html_e26f0c1ed8b2ca8e1d3f0d91506feb4e);
+            
+        
+
+        circle_marker_3d0fedc734933b33765cc6d824c77604.bindPopup(popup_375852cb2f68e84db3aeeabcb1efb27b)
+        ;
+
+        
+    
+    
+            circle_marker_3d0fedc734933b33765cc6d824c77604.bindTooltip(
+                `<div>
+                     🏥 La Paz  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_21da8bdb7748d2fb7e7244da5d526aca = L.marker(
+                [40.4765, -3.6899],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_59a6f53b4662e68cc8f60a103f770b28 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#FF6B6B;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eLa Paz\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_21da8bdb7748d2fb7e7244da5d526aca.setIcon(div_icon_59a6f53b4662e68cc8f60a103f770b28);
+            
+    
+            var circle_marker_7760ea65d59522092d7fac63a7eea289 = L.circleMarker(
+                [40.4095, -3.6829],
+                {"bubblingMouseEvents": true, "color": "#4ECDC4", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#4ECDC4", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_98de105f730c4b37a74e3973063911ff = L.circleMarker(
+                [40.4095, -3.6829],
+                {"bubblingMouseEvents": true, "color": "#4ECDC4", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4ECDC4", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_b300492c468953fd8fc3e4a5b149bd00 = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_b20890cd8bca12fb561ed476c4d18ee3 = $(`<div id="html_b20890cd8bca12fb561ed476c4d18ee3" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#4ECDC4;                    border-bottom:2px solid #4ECDC4;padding-bottom:4px;">             🏥 H. General Universitario Gregorio Marañón         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Retiro</p>         <p style="margin:3px 0;"><b>🔬</b> Cirugía compleja, esclerosis múltiple, endoscópica</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.40950, -3.68290</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.119 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.771 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.93 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.586 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.005 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.483 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.292 km</td></tr></table>     </div>     </div>`)[0];
+                popup_b300492c468953fd8fc3e4a5b149bd00.setContent(html_b20890cd8bca12fb561ed476c4d18ee3);
+            
+        
+
+        circle_marker_98de105f730c4b37a74e3973063911ff.bindPopup(popup_b300492c468953fd8fc3e4a5b149bd00)
+        ;
+
+        
+    
+    
+            circle_marker_98de105f730c4b37a74e3973063911ff.bindTooltip(
+                `<div>
+                     🏥 Gregorio Marañón  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_5cd12535f285f758b7697ad2caa2736b = L.marker(
+                [40.4127, -3.6829],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_d80fbc300d43dc4a7d75cceca3574912 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#4ECDC4;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eGregorio Mara\u00f1\u00f3n\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_5cd12535f285f758b7697ad2caa2736b.setIcon(div_icon_d80fbc300d43dc4a7d75cceca3574912);
+            
+    
+            var circle_marker_00f516049bd6828eae7237f362ac55b8 = L.circleMarker(
+                [40.4427, -3.7186],
+                {"bubblingMouseEvents": true, "color": "#FFE66D", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#FFE66D", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_f0c3df272a58d06c5ad93d609750653f = L.circleMarker(
+                [40.4427, -3.7186],
+                {"bubblingMouseEvents": true, "color": "#FFE66D", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FFE66D", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_362b03ca8e6f1e7993628f037aa6f7ef = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_57080449ac36ca5fe66b7380ffebcdac = $(`<div id="html_57080449ac36ca5fe66b7380ffebcdac" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#FFE66D;                    border-bottom:2px solid #FFE66D;padding-bottom:4px;">             🏥 H. Clínico San Carlos         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Moncloa-Aravaca</p>         <p style="margin:3px 0;"><b>🔬</b> Cardiaca, torácica, UCI postoperatorio</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.44270, -3.71860</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.18 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.771 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.94 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.811 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.963 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">0.925 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">1.673 km</td></tr></table>     </div>     </div>`)[0];
+                popup_362b03ca8e6f1e7993628f037aa6f7ef.setContent(html_57080449ac36ca5fe66b7380ffebcdac);
+            
+        
+
+        circle_marker_f0c3df272a58d06c5ad93d609750653f.bindPopup(popup_362b03ca8e6f1e7993628f037aa6f7ef)
+        ;
+
+        
+    
+    
+            circle_marker_f0c3df272a58d06c5ad93d609750653f.bindTooltip(
+                `<div>
+                     🏥 San Carlos  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_7d7a59620b0a057990ce1f21810b11fe = L.marker(
+                [40.4459, -3.7186],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_abad87ccbdaa6377c4ad555605df6272 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#FFE66D;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eSan Carlos\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_7d7a59620b0a057990ce1f21810b11fe.setIcon(div_icon_abad87ccbdaa6377c4ad555605df6272);
+            
+    
+            var circle_marker_0bc8e6ce5034bf2043abd5c6e34c6c0c = L.circleMarker(
+                [40.3839, -3.6911],
+                {"bubblingMouseEvents": true, "color": "#A8E6CF", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#A8E6CF", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_ad17a5ffe7d01909f5a4558b3a13a436 = L.circleMarker(
+                [40.3839, -3.6911],
+                {"bubblingMouseEvents": true, "color": "#A8E6CF", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#A8E6CF", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_b92611d20540b726ae8b9f33fa2d5353 = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_24cbea3f893a1fbd903bede3fbea6acd = $(`<div id="html_24cbea3f893a1fbd903bede3fbea6acd" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#A8E6CF;                    border-bottom:2px solid #A8E6CF;padding-bottom:4px;">             🏥 H. Universitario 12 de Octubre         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Usera</p>         <p style="margin:3px 0;"><b>🔬</b> Malformaciones vasculares, trasplantes, cirugía mayor</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.38390, -3.69110</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">9.941 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.93 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.94 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">10.489 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.737 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.343 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.877 km</td></tr></table>     </div>     </div>`)[0];
+                popup_b92611d20540b726ae8b9f33fa2d5353.setContent(html_24cbea3f893a1fbd903bede3fbea6acd);
+            
+        
+
+        circle_marker_ad17a5ffe7d01909f5a4558b3a13a436.bindPopup(popup_b92611d20540b726ae8b9f33fa2d5353)
+        ;
+
+        
+    
+    
+            circle_marker_ad17a5ffe7d01909f5a4558b3a13a436.bindTooltip(
+                `<div>
+                     🏥 12 de Octubre  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_2ec84a74be1436dd8a1d54462dfd60e0 = L.marker(
+                [40.3871, -3.6911],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_1144a6c7db546d15fa164c8159c18ad1 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#A8E6CF;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003e12 de Octubre\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_2ec84a74be1436dd8a1d54462dfd60e0.setIcon(div_icon_1144a6c7db546d15fa164c8159c18ad1);
+            
+    
+            var circle_marker_99ea9dd537dc0728f1df2484b72514a8 = L.circleMarker(
+                [40.4724, -3.6482],
+                {"bubblingMouseEvents": true, "color": "#DDA0DD", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#DDA0DD", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_6eebaaffaf90823f0a1bd78765dac45f = L.circleMarker(
+                [40.4724, -3.6482],
+                {"bubblingMouseEvents": true, "color": "#DDA0DD", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#DDA0DD", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_19400a311e28b2b0113e2392e048e239 = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_b4991e0713c0216f975925224a3fc75d = $(`<div id="html_b4991e0713c0216f975925224a3fc75d" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#DDA0DD;                    border-bottom:2px solid #DDA0DD;padding-bottom:4px;">             🏥 H. Universitario Ramón y Cajal         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Fuencarral-El Pardo</p>         <p style="margin:3px 0;"><b>🔬</b> Cirugía esofágica compleja, neurocirugía</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.47240, -3.64820</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">3.529 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.586 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.811 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">10.489 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.248 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.597 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.258 km</td></tr></table>     </div>     </div>`)[0];
+                popup_19400a311e28b2b0113e2392e048e239.setContent(html_b4991e0713c0216f975925224a3fc75d);
+            
+        
+
+        circle_marker_6eebaaffaf90823f0a1bd78765dac45f.bindPopup(popup_19400a311e28b2b0113e2392e048e239)
+        ;
+
+        
+    
+    
+            circle_marker_6eebaaffaf90823f0a1bd78765dac45f.bindTooltip(
+                `<div>
+                     🏥 Ramón y Cajal  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_bb0b3e34395e600a64bed3d375b3546b = L.marker(
+                [40.4756, -3.6482],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_15c5d14d615ebfc9f36a8dd2d86dbcc7 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#DDA0DD;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eRam\u00f3n y Cajal\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_bb0b3e34395e600a64bed3d375b3546b.setIcon(div_icon_15c5d14d615ebfc9f36a8dd2d86dbcc7);
+            
+    
+            var circle_marker_c33e752f1bc773f74e88ac40915ceab8 = L.circleMarker(
+                [40.4265, -3.6908],
+                {"bubblingMouseEvents": true, "color": "#F7DC6F", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#F7DC6F", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_c0b7edca3c076286540cd27d6f146fab = L.circleMarker(
+                [40.4265, -3.6908],
+                {"bubblingMouseEvents": true, "color": "#F7DC6F", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F7DC6F", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_5467e4dd05da683787ac6290c4c078bd = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_8a331e348c67f252d9104fc5625d9028 = $(`<div id="html_8a331e348c67f252d9104fc5625d9028" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#F7DC6F;                    border-bottom:2px solid #F7DC6F;padding-bottom:4px;">             🏥 H. Universitario de La Princesa         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Salamanca</p>         <p style="margin:3px 0;"><b>🔬</b> Cirugía general avanzada, UCI</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.42650, -3.69080</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.204 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.005 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.963 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.737 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.248 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.944 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">3.288 km</td></tr></table>     </div>     </div>`)[0];
+                popup_5467e4dd05da683787ac6290c4c078bd.setContent(html_8a331e348c67f252d9104fc5625d9028);
+            
+        
+
+        circle_marker_c0b7edca3c076286540cd27d6f146fab.bindPopup(popup_5467e4dd05da683787ac6290c4c078bd)
+        ;
+
+        
+    
+    
+            circle_marker_c0b7edca3c076286540cd27d6f146fab.bindTooltip(
+                `<div>
+                     🏥 La Princesa  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_39a0e4d59612dcfd4e376b8fd033b1f8 = L.marker(
+                [40.4297, -3.6908],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_9fd680883bd0de6c55a3c4c6b7c942b6 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#F7DC6F;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eLa Princesa\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_39a0e4d59612dcfd4e376b8fd033b1f8.setIcon(div_icon_9fd680883bd0de6c55a3c4c6b7c942b6);
+            
+    
+            var circle_marker_6dc1569bdf5962c5588ddbe9b380a371 = L.circleMarker(
+                [40.4353, -3.7236],
+                {"bubblingMouseEvents": true, "color": "#85C1E9", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#85C1E9", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_9bb540107f136b677c2de6cfbf7bbe89 = L.circleMarker(
+                [40.4353, -3.7236],
+                {"bubblingMouseEvents": true, "color": "#85C1E9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#85C1E9", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_b14f04741dda012dab97260f3132f53e = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_961905cd47dda4185776b1811654327e = $(`<div id="html_961905cd47dda4185776b1811654327e" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#85C1E9;                    border-bottom:2px solid #85C1E9;padding-bottom:4px;">             🏥 H. Fundación Jiménez Díaz         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Moncloa-Aravaca</p>         <p style="margin:3px 0;"><b>🔬</b> Cirugía torácica de alto riesgo, UCI respiratoria</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.43530, -3.72360</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.097 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">4.483 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">0.925 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">6.343 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.597 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.944 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Cruz Roja</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.579 km</td></tr></table>     </div>     </div>`)[0];
+                popup_b14f04741dda012dab97260f3132f53e.setContent(html_961905cd47dda4185776b1811654327e);
+            
+        
+
+        circle_marker_9bb540107f136b677c2de6cfbf7bbe89.bindPopup(popup_b14f04741dda012dab97260f3132f53e)
+        ;
+
+        
+    
+    
+            circle_marker_9bb540107f136b677c2de6cfbf7bbe89.bindTooltip(
+                `<div>
+                     🏥 Jiménez Díaz  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_d2fa4a0af70a5f24ab79569fc5a6b979 = L.marker(
+                [40.4385, -3.7236],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_efb1c1df7ed9f17a5a848c1b011b752e = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#85C1E9;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eJim\u00e9nez D\u00edaz\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_d2fa4a0af70a5f24ab79569fc5a6b979.setIcon(div_icon_efb1c1df7ed9f17a5a848c1b011b752e);
+            
+    
+            var circle_marker_e5837a6873bd9673c6556ef7073bf8d2 = L.circleMarker(
+                [40.4539, -3.7054],
+                {"bubblingMouseEvents": true, "color": "#F1948A", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#F1948A", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.4, "radius": 22.0, "stroke": true, "weight": 1.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var circle_marker_322a22eb0614b4c45c5b67a7cecfc628 = L.circleMarker(
+                [40.4539, -3.7054],
+                {"bubblingMouseEvents": true, "color": "#F1948A", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#F1948A", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 18.0, "stroke": true, "weight": 2.5}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+        var popup_7456516008cbe468c0978590ee399899 = L.popup({
+  "maxWidth": 340,
+});
+
+        
+            
+                var html_732ba02f0f22b05f2e66ec7261b687e0 = $(`<div id="html_732ba02f0f22b05f2e66ec7261b687e0" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:280px;max-width:330px;                 background:#111;color:white;padding:6px;">         <h4 style="margin:0 0 8px;color:#F1948A;                    border-bottom:2px solid #F1948A;padding-bottom:4px;">             🏥 H. Central de la Cruz Roja         </h4>         <p style="margin:3px 0;"><b>📍 Distrito:</b> Tetuán</p>         <p style="margin:3px 0;"><b>🔬</b> Cirugía general, emergencias</p>         <p style="margin:3px 0;"><b>📡 Centralidad:</b> 0.0000</p>         <p style="margin:3px 0;"><b>🗺️</b> 40.45390, -3.70540</p>         <hr style="border-color:#333;margin:6px 0;">         <p style="margin:3px 0;font-size:11px;color:#aaa;">Distancias aéreas a todos:</p>         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 8px;color:#bbb;">↔ La Paz</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.524 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Gregorio Marañón</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.292 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ San Carlos</td><td style="padding:2px 8px;font-weight:bold;color:white;">1.673 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ 12 de Octubre</td><td style="padding:2px 8px;font-weight:bold;color:white;">7.877 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Ramón y Cajal</td><td style="padding:2px 8px;font-weight:bold;color:white;">5.258 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ La Princesa</td><td style="padding:2px 8px;font-weight:bold;color:white;">3.288 km</td></tr><tr><td style="padding:2px 8px;color:#bbb;">↔ Jiménez Díaz</td><td style="padding:2px 8px;font-weight:bold;color:white;">2.579 km</td></tr></table>     </div>     </div>`)[0];
+                popup_7456516008cbe468c0978590ee399899.setContent(html_732ba02f0f22b05f2e66ec7261b687e0);
+            
+        
+
+        circle_marker_322a22eb0614b4c45c5b67a7cecfc628.bindPopup(popup_7456516008cbe468c0978590ee399899)
+        ;
+
+        
+    
+    
+            circle_marker_322a22eb0614b4c45c5b67a7cecfc628.bindTooltip(
+                `<div>
+                     🏥 Cruz Roja  |  Centralidad: 0.000
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_e13adf1c51573c3a8a049ada7524fe35 = L.marker(
+                [40.4571, -3.7054],
+                {
+}
+            ).addTo(feature_group_ec03bcad8f7e35c8d137cc796e88e883);
+        
+    
+            var div_icon_d9d1bae40f852e2c2e11194a9902269a = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:11px;font-weight:bold;color:#F1948A;text-shadow:1px 1px 4px #000,-1px -1px 4px #000;white-space:nowrap;\"\u003eCruz Roja\u003c/div\u003e",
+  "iconSize": [180, 22],
+  "iconAnchor": [90, 11],
+  "className": "empty",
+});
+        
+    
+                marker_e13adf1c51573c3a8a049ada7524fe35.setIcon(div_icon_d9d1bae40f852e2c2e11194a9902269a);
+            
+    
+            feature_group_ec03bcad8f7e35c8d137cc796e88e883.addTo(map_f4fed06732c2243bbaeb05a81e1e3819);
+        
+    
+            var feature_group_d34429692bc74c818e266cd2087b84ea = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_ad48b0dfca3e9615f5465f3c4e4bec41 = L.circle(
+                [40.4685, -3.7012],
+                {"bubblingMouseEvents": true, "color": "#00FF88", "dashArray": "7", "dashOffset": null, "fill": true, "fillColor": "#00FF88", "fillOpacity": 0.06, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4504.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            circle_ad48b0dfca3e9615f5465f3c4e4bec41.bindTooltip(
+                `<div>
+                     Cobertura BASE NORTE: 4.50 km radio
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_9f011ea41f8bf67200d4148059750a44 = L.polyline(
+                [[40.4685, -3.7012], [40.4733, -3.6899]],
+                {"bubblingMouseEvents": true, "color": "#00FF88", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#00FF88", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_9f011ea41f8bf67200d4148059750a44.bindTooltip(
+                `<div>
+                     🚁 BASE NORTE → La Paz: 1.09 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_44a4d9916e5f6e651ed4ca11361355e9 = L.polyline(
+                [[40.4685, -3.7012], [40.4724, -3.6482]],
+                {"bubblingMouseEvents": true, "color": "#00FF88", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#00FF88", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_44a4d9916e5f6e651ed4ca11361355e9.bindTooltip(
+                `<div>
+                     🚁 BASE NORTE → Ramón y Cajal: 4.50 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_8ed083e2c06a63012f8692347a33da6a = L.polyline(
+                [[40.4685, -3.7012], [40.4539, -3.7054]],
+                {"bubblingMouseEvents": true, "color": "#00FF88", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#00FF88", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_8ed083e2c06a63012f8692347a33da6a.bindTooltip(
+                `<div>
+                     🚁 BASE NORTE → Cruz Roja: 1.66 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_e62d5a5d658e04aa5ae98add265b8548 = L.marker(
+                [40.4685, -3.7012],
+                {
+}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            var div_icon_b8d5ad8ed217145d45014c4094e77b1b = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:28px;text-align:center;filter:drop-shadow(0 0 10px #00FF88);\"\u003e\ud83d\ude81\u003c/div\u003e",
+  "iconSize": [36, 36],
+  "iconAnchor": [18, 18],
+  "className": "empty",
+});
+        
+    
+        var popup_685d50923f7c9cff08854766f163059b = L.popup({
+  "maxWidth": 330,
+});
+
+        
+            
+                var html_19927fcc30b974f6b9f65e66e3917b28 = $(`<div id="html_19927fcc30b974f6b9f65e66e3917b28" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:260px;max-width:320px;                 background:#111;color:white;padding:6px;">         <h4 style="color:#00FF88;margin:0 0 8px;                    border-bottom:2px solid #00FF88;padding-bottom:4px;">             🚁 BASE NORTE         </h4>         <p style="margin:3px 0;"><b>📍 Ubicación real:</b><br>            <span style="color:#aaa;font-size:11px;">Parque Dehesa de la Villa (zona interior norte)</span></p>         <p style="margin:6px 0;"><b>✅ Por qué aquí:</b><br>            <span style="color:#aaa;font-size:11px;">Parque forestal de 64 ha, sendas poco transitadas. Sin edificios cercanos. Acceso por Av. de Miraflores. Posición central respecto a La Paz, Ramón y Cajal y Cruz Roja.</span></p>         <p style="margin:3px 0;"><b>🗺️ Coords:</b> 40.4685, -3.7012</p>         <p style="margin:3px 0;"><b>📏 Radio cobertura:</b> 4.50 km</p>         <hr style="border-color:#333;margin:6px 0;">         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 6px;color:#ccc;">• La Paz</td><td style="padding:2px 6px;font-weight:bold;color:white;">1.09 km</td></tr><tr><td style="padding:2px 6px;color:#ccc;">• Ramón y Cajal</td><td style="padding:2px 6px;font-weight:bold;color:white;">4.50 km</td></tr><tr><td style="padding:2px 6px;color:#ccc;">• Cruz Roja</td><td style="padding:2px 6px;font-weight:bold;color:white;">1.66 km</td></tr></table>     </div>     </div>`)[0];
+                popup_685d50923f7c9cff08854766f163059b.setContent(html_19927fcc30b974f6b9f65e66e3917b28);
+            
+        
+
+        marker_e62d5a5d658e04aa5ae98add265b8548.bindPopup(popup_685d50923f7c9cff08854766f163059b)
+        ;
+
+        
+    
+    
+            marker_e62d5a5d658e04aa5ae98add265b8548.bindTooltip(
+                `<div>
+                     🚁 BASE NORTE — Parque Dehesa de la Villa (zona interior norte)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e62d5a5d658e04aa5ae98add265b8548.setIcon(div_icon_b8d5ad8ed217145d45014c4094e77b1b);
+            
+    
+            var circle_b9c2bf1248758e61bd4d1d718b15d78f = L.circle(
+                [40.4382, -3.7155],
+                {"bubblingMouseEvents": true, "color": "#00CFFF", "dashArray": "7", "dashOffset": null, "fill": true, "fillColor": "#00CFFF", "fillOpacity": 0.06, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2462.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            circle_b9c2bf1248758e61bd4d1d718b15d78f.bindTooltip(
+                `<div>
+                     Cobertura BASE CENTRO: 2.46 km radio
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_2aeb0b785259f6419fa821613b02ab53 = L.polyline(
+                [[40.4382, -3.7155], [40.4427, -3.7186]],
+                {"bubblingMouseEvents": true, "color": "#00CFFF", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#00CFFF", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_2aeb0b785259f6419fa821613b02ab53.bindTooltip(
+                `<div>
+                     🚁 BASE CENTRO → San Carlos: 0.56 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_ad4a91e732e7d1433ac44f58bba24baf = L.polyline(
+                [[40.4382, -3.7155], [40.4353, -3.7236]],
+                {"bubblingMouseEvents": true, "color": "#00CFFF", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#00CFFF", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_ad4a91e732e7d1433ac44f58bba24baf.bindTooltip(
+                `<div>
+                     🚁 BASE CENTRO → Jiménez Díaz: 0.76 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_d08b6744cac00fe651c055c05b9139dd = L.polyline(
+                [[40.4382, -3.7155], [40.4265, -3.6908]],
+                {"bubblingMouseEvents": true, "color": "#00CFFF", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#00CFFF", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_d08b6744cac00fe651c055c05b9139dd.bindTooltip(
+                `<div>
+                     🚁 BASE CENTRO → La Princesa: 2.46 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_15b542e3729bbae271f44fee13452775 = L.marker(
+                [40.4382, -3.7155],
+                {
+}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            var div_icon_5dcfdd0ad81a250f75d890028d002fd1 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:28px;text-align:center;filter:drop-shadow(0 0 10px #00CFFF);\"\u003e\ud83d\ude81\u003c/div\u003e",
+  "iconSize": [36, 36],
+  "iconAnchor": [18, 18],
+  "className": "empty",
+});
+        
+    
+        var popup_cf0ba8ca4cca07cb9005eb75030054fd = L.popup({
+  "maxWidth": 330,
+});
+
+        
+            
+                var html_cb01555dd85fb0a8f2badb8811cfd966 = $(`<div id="html_cb01555dd85fb0a8f2badb8811cfd966" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:260px;max-width:320px;                 background:#111;color:white;padding:6px;">         <h4 style="color:#00CFFF;margin:0 0 8px;                    border-bottom:2px solid #00CFFF;padding-bottom:4px;">             🚁 BASE CENTRO         </h4>         <p style="margin:3px 0;"><b>📍 Ubicación real:</b><br>            <span style="color:#aaa;font-size:11px;">Parque del Oeste — zona interior (Huerta de la Partida)</span></p>         <p style="margin:6px 0;"><b>✅ Por qué aquí:</b><br>            <span style="color:#aaa;font-size:11px;">Zona arbolada densa del Parque del Oeste, alejada del Templo de Debod. Baja afluencia peatonal en el interior. Acceso por C/ Fernández de los Ríos. Posición equidistante entre San Carlos, Jiménez Díaz y La Princesa.</span></p>         <p style="margin:3px 0;"><b>🗺️ Coords:</b> 40.4382, -3.7155</p>         <p style="margin:3px 0;"><b>📏 Radio cobertura:</b> 2.46 km</p>         <hr style="border-color:#333;margin:6px 0;">         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 6px;color:#ccc;">• San Carlos</td><td style="padding:2px 6px;font-weight:bold;color:white;">0.56 km</td></tr><tr><td style="padding:2px 6px;color:#ccc;">• Jiménez Díaz</td><td style="padding:2px 6px;font-weight:bold;color:white;">0.76 km</td></tr><tr><td style="padding:2px 6px;color:#ccc;">• La Princesa</td><td style="padding:2px 6px;font-weight:bold;color:white;">2.46 km</td></tr></table>     </div>     </div>`)[0];
+                popup_cf0ba8ca4cca07cb9005eb75030054fd.setContent(html_cb01555dd85fb0a8f2badb8811cfd966);
+            
+        
+
+        marker_15b542e3729bbae271f44fee13452775.bindPopup(popup_cf0ba8ca4cca07cb9005eb75030054fd)
+        ;
+
+        
+    
+    
+            marker_15b542e3729bbae271f44fee13452775.bindTooltip(
+                `<div>
+                     🚁 BASE CENTRO — Parque del Oeste — zona interior (Huerta de la Partida)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_15b542e3729bbae271f44fee13452775.setIcon(div_icon_5dcfdd0ad81a250f75d890028d002fd1);
+            
+    
+            var circle_b6938a68238ef06183744ade2caa7fb7 = L.circle(
+                [40.3968, -3.6985],
+                {"bubblingMouseEvents": true, "color": "#FF9F00", "dashArray": "7", "dashOffset": null, "fill": true, "fillColor": "#FF9F00", "fillOpacity": 0.06, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1934.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            circle_b6938a68238ef06183744ade2caa7fb7.bindTooltip(
+                `<div>
+                     Cobertura BASE SUR: 1.93 km radio
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_6ed97abf5f461faee470aeca527bb5a8 = L.polyline(
+                [[40.3968, -3.6985], [40.3839, -3.6911]],
+                {"bubblingMouseEvents": true, "color": "#FF9F00", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#FF9F00", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_6ed97abf5f461faee470aeca527bb5a8.bindTooltip(
+                `<div>
+                     🚁 BASE SUR → 12 de Octubre: 1.56 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_ecc584584eaf41be2478f64a1c33551f = L.polyline(
+                [[40.3968, -3.6985], [40.4095, -3.6829]],
+                {"bubblingMouseEvents": true, "color": "#FF9F00", "dashArray": "6", "dashOffset": null, "fill": false, "fillColor": "#FF9F00", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 2.2}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            poly_line_ecc584584eaf41be2478f64a1c33551f.bindTooltip(
+                `<div>
+                     🚁 BASE SUR → Gregorio Marañón: 1.93 km
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_3509f51bb4791c0e1d27e60c6516fa67 = L.marker(
+                [40.3968, -3.6985],
+                {
+}
+            ).addTo(feature_group_d34429692bc74c818e266cd2087b84ea);
+        
+    
+            var div_icon_e7661fa0136ab3ed25a42a8f12c636f4 = L.divIcon({
+  "html": "\u003cdiv style=\"font-size:28px;text-align:center;filter:drop-shadow(0 0 10px #FF9F00);\"\u003e\ud83d\ude81\u003c/div\u003e",
+  "iconSize": [36, 36],
+  "iconAnchor": [18, 18],
+  "className": "empty",
+});
+        
+    
+        var popup_f03cf7a60598ba9cb065a6bf0e40b766 = L.popup({
+  "maxWidth": 330,
+});
+
+        
+            
+                var html_83836ab10e0a6e4ba95b8f2c5b82963e = $(`<div id="html_83836ab10e0a6e4ba95b8f2c5b82963e" style="width: 100.0%; height: 100.0%;">     <div style="font-family:'Segoe UI',sans-serif;min-width:260px;max-width:320px;                 background:#111;color:white;padding:6px;">         <h4 style="color:#FF9F00;margin:0 0 8px;                    border-bottom:2px solid #FF9F00;padding-bottom:4px;">             🚁 BASE SUR         </h4>         <p style="margin:3px 0;"><b>📍 Ubicación real:</b><br>            <span style="color:#aaa;font-size:11px;">Parque Pradolongo, Usera</span></p>         <p style="margin:6px 0;"><b>✅ Por qué aquí:</b><br>            <span style="color:#aaa;font-size:11px;">Parque urbano con amplias zonas de césped y baja edificación colindante. Acceso por C/ de Pradillo. Uso moderado. Posición óptima entre 12 de Octubre y Gregorio Marañón.</span></p>         <p style="margin:3px 0;"><b>🗺️ Coords:</b> 40.3968, -3.6985</p>         <p style="margin:3px 0;"><b>📏 Radio cobertura:</b> 1.93 km</p>         <hr style="border-color:#333;margin:6px 0;">         <table style="font-size:11px;width:100%;"><tr><td style="padding:2px 6px;color:#ccc;">• 12 de Octubre</td><td style="padding:2px 6px;font-weight:bold;color:white;">1.56 km</td></tr><tr><td style="padding:2px 6px;color:#ccc;">• Gregorio Marañón</td><td style="padding:2px 6px;font-weight:bold;color:white;">1.93 km</td></tr></table>     </div>     </div>`)[0];
+                popup_f03cf7a60598ba9cb065a6bf0e40b766.setContent(html_83836ab10e0a6e4ba95b8f2c5b82963e);
+            
+        
+
+        marker_3509f51bb4791c0e1d27e60c6516fa67.bindPopup(popup_f03cf7a60598ba9cb065a6bf0e40b766)
+        ;
+
+        
+    
+    
+            marker_3509f51bb4791c0e1d27e60c6516fa67.bindTooltip(
+                `<div>
+                     🚁 BASE SUR — Parque Pradolongo, Usera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3509f51bb4791c0e1d27e60c6516fa67.setIcon(div_icon_e7661fa0136ab3ed25a42a8f12c636f4);
+            
+    
+            feature_group_d34429692bc74c818e266cd2087b84ea.addTo(map_f4fed06732c2243bbaeb05a81e1e3819);
+        
+    
+            var layer_control_a9d34718ffb54b7213eb2db5d85b6d64_layers = {
+                base_layers : {
+                    "cartodbdarkmatter" : tile_layer_b6bf9f40bd1ca603c5651101605f850d,
+                },
+                overlays :  {
+                    "\ud83d\udd17 Grafo completo K8 (28 aristas)" : feature_group_2824ceac68c0fa20e1d8ba0643c5a1ca,
+                    "\u2b50 Red MST \u2014 coste m\u00ednimo" : feature_group_893984527809579d590029b721d760b4,
+                    "\ud83c\udfe5 Hospitales" : feature_group_ec03bcad8f7e35c8d137cc796e88e883,
+                    "\ud83d\ude81 Bases de drones (ubicaciones reales)" : feature_group_d34429692bc74c818e266cd2087b84ea,
+                },
+            };
+            let layer_control_a9d34718ffb54b7213eb2db5d85b6d64 = L.control.layers(
+                layer_control_a9d34718ffb54b7213eb2db5d85b6d64_layers.base_layers,
+                layer_control_a9d34718ffb54b7213eb2db5d85b6d64_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_f4fed06732c2243bbaeb05a81e1e3819);
+
+        
+</script>
+</html>
