@@ -1,0 +1,17 @@
+# Directorios de dependencias locales
+lib/
+venv/
+env/
+.env
+
+# Archivos compilados en caché
+__pycache__/
+*.py[cod]
+*$py.class
+# Archivos de datos generados y logs
+datos_retiro_5y.json
+reporte_viabilidad.txt
+
+# Herramientas del sistema
+.vscode/
+.idea/

@@ -1,0 +1,69 @@
+extracción completa y detallada de todas las características de este dron:
+
+1. Rendimiento General (Performance)
+Rango: 94 km.
+Carga útil máxima (Max Payload): 4.7 kg.
+Velocidad: 25 m/s (durante operaciones de ala fija).
+Altitud máxima: Probada a 2500 m; objetivo de 3000 m.
+
+2. Especificaciones Físicas
+Dimensiones (Largo x Ancho x Alto): 198 cm x 152 cm x 65 cm.
+Peso Máximo al Despegue (MTOW): 25.0 kg.
+Peso Operativo en Vacío (OEW): 20.3 kg.
+
+3. Condiciones Operativas y Ambientales
+Límites de Viento (Probados): 10 m/s promedio y ráfagas de hasta 15 m/s.
+Límites de Viento (Objetivo): 15 m/s promedio y ráfagas de hasta 20 m/s.
+Temperatura Operativa: Desde 0°C hasta +45°C.
+Entornos Permitidos:
+- Entornos costeros (requiere mantenimiento adicional).
+- Lluvia moderada (capaz de operar hasta 12.7 mm/hr).
+Restricciones de Entorno (No Operar): Lluvia fuerte, condiciones de hielo, granizo y tormentas eléctricas.
+
+4. Relación Rango y Carga Útil (Tabla detallada)
+El rango recomendado varía según el peso al despegue (TOW) y la carga:
+- Sin carga útil (OEW): 94 km de rango.
+- Con 21 kg TOW (0.8 kg de carga): 86 km de rango.
+- Con 23 kg TOW (2.8 kg de carga): 77 km de rango.
+- Con MTOW máximo (4.7 kg de carga): 72 km de rango.
+Nota: Se recomienda un margen de seguridad del 20% de batería (aprox. 20 km de reserva).
+
+5. Limitaciones de Altitud y Peso
+El rendimiento disminuye según la altitud de densidad:
+0 - 1499 m: Carga máx. 4.7 kg / MTOW 25.0 kg.
+1500 - 1999 m: Carga máx. 3.7 kg / MTOW 24.0 kg.
+2000 - 2499 m: Datos por determinar (TBD).
+2500 - 3000 m: Datos por determinar (TBD).
+> 3000 m: No hay operación.
+
+6. Sistema de Entrega (Aerodynamic Delivery Box - ADB)
+Dimensiones del Paquete (LxWxH): 12.5 cm x 23.5 cm x 28.5 cm.
+Volumen del Paquete: 8 Litros.
+Peso de la caja (ADB): 0.8 kg.
+Peso del Paquete: 3.9 kg.
+Peso Máximo de Carga Útil (Total): 4.7 kg.
+
+7. Batería y Carga
+Baterías: 2 paquetes de baterías de Li-ion.
+Capacidad: "Hot swap" (intercambio en caliente).
+Estación de carga: Dual (para dos baterías).
+Tiempo de carga: Del 20% a carga completa en 50 minutos.
+
+8. Seguridad, Redundancia y Telemetría
+El sistema cuenta con múltiples redundancias y sistemas de seguridad:
+- Sistemas Redundantes: Fuente de alimentación, Sistemas de comunicación, Sensores de velocidad del aire, Magnetómetro, Sistema GNSS.
+- Comunicaciones y Rastreo: Telemetría Celular y Satelital, ADS-B IN, FLARM, Remote ID.
+- Seguridad de Vuelo: Geocerca 2D (Geo-cage), Carga automática de registros de telemetría, Transmisión de cámara FPV, Verificación automática del estado del dron, Advertencias de límite de altura.
+- Chequeos: Verificación pre-vuelo de superficie de timón, control de vector de empuje y motores.
+
+9. Planificación de Misión
+- Estación de control portátil.
+- Mapas satelitales y de elevación.
+- Reacción configurable ante geocercas.
+- Chequeos de seguridad de misión.
+- Datos de corrección GNSS configurables.
+
+10. Descargos de Responsabilidad (Disclaimers)
+Los datos de peso son promedios; es posible una variación de +/- 300 gr.
+Los datos de rendimiento tienen una posible inexactitud de hasta el 10% y están sujetos a verificación durante pruebas y certificación.
+El rendimiento asume condiciones ideales: sin viento, nivel del mar, temperatura del aire de 15°C, velocidad de crucero ideal y factor de forma de carga estándar.
