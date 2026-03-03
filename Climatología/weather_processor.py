@@ -5,7 +5,7 @@ import sys
 # Agregar la carpeta 'lib' local al path para mantener la raíz limpia
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 
-from aemet_client import AEMETClient
+from Climatología.aemet_client import AEMETClient
 
 # Especificaciones del dron (extraidas de especificaciones_dron.txt)
 MAX_TEMP = 45.0
