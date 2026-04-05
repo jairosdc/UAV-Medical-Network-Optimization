@@ -4,7 +4,7 @@ from controllers.simulation_controller import SimulationController
 from controllers.fleet_controller import FleetController
 from   models.models import MissionRequest
 from services.network_service import NetworkService
-from simulators.random_calls_simulator import RandomCallsSimulator
+from simulators.generador_pedidos import RandomCallsSimulator
 from   config import (
     DEFAULT_SIMULATION_MINUTES,
     DEFAULT_CALL_PROBABILITY_PER_MIN,

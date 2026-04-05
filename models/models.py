@@ -1,14 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
 
-
 @dataclass
-class Node:
-    name: str
+class Nodo:
+    nombre: str
     lat: float
     lon: float
-    kind: str  # "hospital" o "base"
-
+    tipo: str
 
 @dataclass
 class DroneSpec:
