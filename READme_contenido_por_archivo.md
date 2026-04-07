@@ -57,3 +57,7 @@ simulador inicial, hay que revisarlo tambien
 ## Parametros_globales
 
 Contiene los parametros globales que se usaran en muchos de los archivos
+
+## Cola prioridad
+
+Archivo en el cual aparece la cola de prioridad. Es una cola formada por cuatro niveles, dependiendo de la urgencia, a la cual irán llegando los diferentes pedidos, y una vez el dron llegue a su destino estos pedidods se eliminarán de la cola.
