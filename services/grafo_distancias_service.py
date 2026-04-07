@@ -1,7 +1,7 @@
 import math
 from typing import Dict, Tuple
-from  models.models import Node, RoutePlan
-from  network_data import HOSPITALS, BASES
+from  models.clases_models import Node, RoutePlan
+from  hospitales_almacenes_data import HOSPITALS, BASES
 
 
 class NetworkService:

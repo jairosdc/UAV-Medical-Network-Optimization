@@ -1,6 +1,6 @@
-from  config import BATTERY_RESERVE_PERCENT, CRUISE_SPEED_M_S
-from  models.models import DispatchDecision
-from services.battery_service import BatteryService
+from  parametros_globales import BATTERY_RESERVE_PERCENT, CRUISE_SPEED_M_S
+from  models.clases_models import DispatchDecision
+from services.funcionamiento_bateria_service import BatteryService
 
 
 class DispatcherService:

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 @dataclass
-class Nodo:
+class Node:
     nombre: str
     lat: float
     lon: float

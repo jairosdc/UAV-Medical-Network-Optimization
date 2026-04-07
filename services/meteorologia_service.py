@@ -2,7 +2,7 @@ import json
 import os
 from typing import Optional, List, Dict, Any
 
-from   config import (
+from   parametros_globales import (
     WEATHER_CACHE_FILE,
     DEFAULT_AEMET_STATION_ID,
     MIN_TEMP_C,

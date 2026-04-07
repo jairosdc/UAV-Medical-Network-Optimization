@@ -1,4 +1,4 @@
-from config import CHARGE_RATE_PERCENT_PER_MIN
+from parametros_globales import CHARGE_RATE_PERCENT_PER_MIN
 
 
 class ChargingService:

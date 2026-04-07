@@ -1,4 +1,4 @@
-from config import MAX_PAYLOAD_KG, MAX_RANGE_KM_EMPTY
+from parametros_globales import CARGA_MAXIMA_KG, MAX_RANGE_KM_EMPTY
 
 
 class BatteryService:
@@ -6,9 +6,9 @@ class BatteryService:
     def autonomy_km(payload_kg: float) -> float:
         if payload_kg < 0:
             raise ValueError("La carga no puede ser negativa.")
-        if payload_kg > MAX_PAYLOAD_KG:
-            raise ValueError(f"La carga excede el máximo permitido ({MAX_PAYLOAD_KG} kg).")
-        return MAX_RANGE_KM_EMPTY - (22.0 * payload_kg) / MAX_PAYLOAD_KG
+        if payload_kg > CARGA_MAXIMA_KG:
+            raise ValueError(f"La carga excede el máximo permitido ({CARGA_MAXIMA_KG} kg).")
+        return MAX_RANGE_KM_EMPTY - (22.0 * payload_kg) / CARGA_MAXIMA_KG
 
     @staticmethod
     def consumption_percent(payload_kg: float, distance_km: float) -> float:

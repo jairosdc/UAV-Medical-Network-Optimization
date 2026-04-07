@@ -1,14 +1,11 @@
 import argparse
 
 from controllers.simulation_controller import SimulationController
-from controllers.fleet_controller import FleetController
-from   models.models import MissionRequest
-from services.network_service import NetworkService
-from simulators.generador_pedidos import RandomCallsSimulator
-from   config import (
-    DEFAULT_SIMULATION_MINUTES,
-    DEFAULT_CALL_PROBABILITY_PER_MIN,
-)
+from controllers.gestor_flota_controller import FleetController
+from models.clases_models import MissionRequest
+from services.grafo_distancias_service import NetworkService
+from simulators.generador_pedidos import GeneradorPedidos
+from parametros_globales import DEFAULT_SIMULATION_MINUTES
 
 
 def build_parser():
@@ -26,7 +23,7 @@ def build_parser():
 
     # modo fleet
     parser.add_argument("--minutes", type=int, default=DEFAULT_SIMULATION_MINUTES, help="Duración simulación en minutos")
-    parser.add_argument("--call-probability", type=float, default=DEFAULT_CALL_PROBABILITY_PER_MIN, help="Probabilidad de llamada por minuto")
+    parser.add_argument("--stress-factor", type=float, default=1.0, help="Multiplicador escalar para la intensidad de la demanda λ(t)")
     parser.add_argument("--drones-per-base", type=int, default=2, help="Número de drones por base")
     parser.add_argument("--seed", type=int, default=42, help="Semilla aleatoria")
     parser.add_argument("--verbose", action="store_true", help="Mostrar eventos minuto a minuto")
@@ -83,24 +80,24 @@ def run_fleet_mode(args):
     fleet = FleetController(network)
     fleet.initialize_default_fleet(drones_per_base=args.drones_per_base)
 
-    simulator = RandomCallsSimulator(
-        hospitals=network.list_hospitals(),
-        seed=args.seed,
+    # Inyección de dependencias adaptada a la nueva firma del generador NHPP
+    simulator = GeneradorPedidos(
+        hospitales=network.list_hospitals(),
+        semilla=args.seed,
+        factor_estres=args.stress_factor
     )
 
     print("\n========== INICIO SIMULACIÓN FLOTILLA ==========")
     print(f"Duración: {args.minutes} min")
-    print(f"Llamadas/min prob.: {args.call_probability}")
+    print(f"Factor de Estrés de Demanda: {args.stress_factor}x")
     print(f"Drones por base: {args.drones_per_base}")
     print("================================================\n")
 
     for minute in range(args.minutes):
         fleet.update_time(minute)
 
-        call = simulator.maybe_generate_call(
-            current_minute=minute,
-            probability=args.call_probability
-        )
+        # Consulta en tiempo constante O(1) al diccionario precalculado
+        call = simulator.generar_pedido(minuto_actual=minute)
 
         if call is not None:
             decision = fleet.assign_call(call, current_minute=minute)
@@ -122,7 +119,7 @@ def run_fleet_mode(args):
                         f"dur={decision.estimated_duration_min}min"
                     )
 
-        if args.verbose and minute % 60 == 0:
+        if args.verbose and minute > 0 and minute % 60 == 0:
             snapshot = fleet.get_status_snapshot()
             print(
                 f"[t={minute:04d}] STATUS | "
@@ -178,7 +175,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Ejemplo uso: python main.py --mode fleet
-# python main.py --mode fleet --minutes 1440 --call-probability 0.2 --drones-per-base 3 --verbose
-# python main.py --mode single --origin "La Paz" --destination "Gregorio Marañón" --payload 3 --battery 100 --ignore-weather

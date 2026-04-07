@@ -1,6 +1,6 @@
-from models.models import Drone, DeliveryCall, SimulationStats
-from services.charging_service import ChargingService
-from services.dispatcher_service import DispatcherService
+from models.clases_models import Drone, DeliveryCall, SimulationStats
+from services.cargar_drone_service import ChargingService
+from services.optimizador_asignacion_service import DispatcherService
 
 
 class FleetController:

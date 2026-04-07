@@ -1,4 +1,4 @@
-from   models.models import Node
+from   models.clases_models import Node
 
 HOSPITALS = {
     "La Paz": Node("La Paz", 40.4733, -3.6899, "hospital"),

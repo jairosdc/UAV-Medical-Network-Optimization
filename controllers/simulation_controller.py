@@ -1,11 +1,11 @@
-from config import (
+from parametros_globales import (
     BATTERY_RESERVE_PERCENT,
     CRUISE_SPEED_M_S,
 )
-from models.models import MissionRequest, MissionResult
-from services.battery_service import BatteryService
-from services.network_service import NetworkService
-from services.weather_service import WeatherService
+from models.clases_models import MissionRequest, MissionResult
+from services.funcionamiento_bateria_service import BatteryService
+from services.grafo_distancias_service import NetworkService
+from services.meteorologia_service import WeatherService
 
 
 class SimulationController:

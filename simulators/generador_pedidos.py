@@ -39,7 +39,7 @@ CÓMO USARLO DESDE main.py:
 import random
 import numpy as np
 from collections import defaultdict
-from models.models import DeliveryCall
+from models.clases_models import DeliveryCall
 
 
 # =============================================================================
