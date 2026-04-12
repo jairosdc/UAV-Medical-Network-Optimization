@@ -1,80 +1,87 @@
-from  parametros_globales import BATTERY_RESERVE_PERCENT, CRUISE_SPEED_M_S
-from  models.clases_models import DispatchDecision
-from services.funcionamiento_bateria_service import BatteryService
+from typing import List, Optional
+from parametros_globales import BATTERY_RESERVE_PERCENT, CRUISE_SPEED_M_S
+from models.clases_models import DispatchDecision, Drone, DeliveryCall
+from services.funcionamiento_bateria_service import calcular_bateria_restante
 
-
-class DispatcherService:
+class ServicioDespacho:
+    
     def __init__(self, network_service):
-        self.network = network_service
+        self.red = network_service
 
     @staticmethod
-    def estimate_duration_min(distance_km: float) -> int:
-        speed_km_h = CRUISE_SPEED_M_S * 3.6
-        minutes = (distance_km / speed_km_h) * 60.0
-        return max(1, int(round(minutes)))
+    def estimar_duracion_minutos(distancia_km: float) -> int:
+        # Conversión de m/s a km/h y cálculo del tiempo
+        velocidad_km_h = CRUISE_SPEED_M_S * 3.6
+        minutos = (distancia_km / velocidad_km_h) * 60.0
+        return max(1, int(round(minutos)))
 
-    @staticmethod
-    def dispatch_score(priority: int, distance_to_origin_km: float, battery_after_percent: float) -> float:
-        # score más bajo = mejor
-        if priority == 1:
-            return distance_to_origin_km * 10.0 - battery_after_percent * 0.05
-        elif priority == 2:
-            return distance_to_origin_km * 5.0 - battery_after_percent * 0.08
-        else:
-            return distance_to_origin_km * 3.0 - battery_after_percent * 0.10
+    def choose_best_drone(self, drones: List[Drone], pedido: DeliveryCall) -> Optional[DispatchDecision]:
+        """
+        Filtra los drones que pueden realizar la misión y elige al mejor candidato 
+        basándose en reglas lógicas directas según la prioridad del pedido.
+        """
+        candidatos = []
 
-    def choose_best_drone(self, drones, call):
-        candidates = []
+        nodo_origen_pedido = self.red.get_hospital(pedido.origin_hospital)
+        nodo_destino_pedido = self.red.get_hospital(pedido.destination_hospital)
 
-        origin_node = self.network.get_hospital(call.origin_hospital)
-        destination_node = self.network.get_hospital(call.destination_hospital)
-
-        for drone in drones:
-            if drone.status != "available":
+        # 1. EVALUAR QUÉ DRONES SON CAPACES DE HACER EL VIAJE
+        for dron in drones:
+            if dron.status != "available":
                 continue
 
-            base_node = self.network.get_base(drone.base_name)
+            # Ubicación real del dron en este momento
+            nodo_actual_dron = self.red.get_node(dron.current_node)
 
-            distance_to_origin = self.network.distance_between_nodes(base_node, origin_node)
-            distance_origin_to_destination = self.network.distance_between_nodes(origin_node, destination_node)
-            total_distance = distance_to_origin + distance_origin_to_destination
+            # Cálculo de las distancias
+            distancia_al_origen = self.red.distance_between_nodes(nodo_actual_dron, nodo_origen_pedido)
+            distancia_origen_destino = self.red.distance_between_nodes(nodo_origen_pedido, nodo_destino_pedido)
+            distancia_total = distancia_al_origen + distancia_origen_destino
 
             try:
-                battery_after = BatteryService.battery_after(
-                    payload_kg=call.payload_kg,
-                    distance_km=total_distance,
-                    battery_start_percent=drone.battery_percent,
+                # Invocación directa a la función importada
+                bateria_final = calcular_bateria_restante(
+                    carga_kg=pedido.payload_kg,
+                    distancia_km=distancia_total,
+                    bateria_inicial_pct=dron.battery_percent,
                 )
             except ValueError:
                 continue
 
-            if battery_after < BATTERY_RESERVE_PERCENT:
+            # Descartar si viola el margen de seguridad
+            if bateria_final < BATTERY_RESERVE_PERCENT:
                 continue
 
-            score = self.dispatch_score(
-                priority=call.priority,
-                distance_to_origin_km=distance_to_origin,
-                battery_after_percent=battery_after,
-            )
+            tiempo_estimado_min = self.estimar_duracion_minutos(distancia_total)
 
-            duration_min = self.estimate_duration_min(total_distance)
-
-            candidates.append(
+            candidatos.append(
                 DispatchDecision(
-                    drone_id=drone.drone_id,
-                    call_id=call.call_id,
-                    priority=call.priority,
-                    distance_to_origin_km=distance_to_origin,
-                    distance_total_km=total_distance,
-                    battery_before_percent=drone.battery_percent,
-                    battery_after_percent=battery_after,
-                    estimated_duration_min=duration_min,
-                    score=score,
+                    drone_id=dron.drone_id,
+                    call_id=pedido.call_id,
+                    priority=pedido.priority,
+                    distance_to_origin_km=distancia_al_origen,
+                    distance_total_km=distancia_total,
+                    battery_before_percent=dron.battery_percent,
+                    battery_after_percent=bateria_final,
+                    estimated_duration_min=tiempo_estimado_min,
+                    score=0.0 
                 )
             )
 
-        if not candidates:
+        # Si nadie puede hacer el viaje, se devuelve None
+        if not candidatos:
             return None
 
-        candidates.sort(key=lambda x: x.score)
-        return candidates[0]
+        if pedido.priority == 1:
+            candidatos.sort(key=lambda x: x.distance_to_origin_km)
+
+        elif pedido.priority == 2:
+            candidatos.sort(key=lambda x: x.distance_total_km)
+
+        else:
+            # RUTINARIO: Ordenar de mayor a menor batería restante (reverse=True).
+            # Priorizamos conservar la energía general de la flota de drones.
+            candidatos.sort(key=lambda x: x.battery_after_percent, reverse=True)
+        
+        # El primer elemento de la lista ordenada es nuestro dron ideal
+        return candidatos[0]
