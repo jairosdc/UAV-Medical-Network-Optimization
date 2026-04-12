@@ -1,19 +1,18 @@
 from parametros_globales import CHARGE_RATE_PERCENT_PER_MIN
 
+def procesar_recarga_dron(dron, minutos_transcurridos: int = 1):
 
-class ChargingService:
-    @staticmethod
-    def update_drone_charging(drone, elapsed_minutes: int = 1):
-        if drone.status != "charging":
-            return
+    if dron.status != "charging":
+        return
 
-        drone.battery_percent = min(
-            100.0,
-            drone.battery_percent + CHARGE_RATE_PERCENT_PER_MIN * elapsed_minutes
-        )
+    # Proyección lineal del estado de la batería
+    bateria_proyectada = dron.battery_percent + (CHARGE_RATE_PERCENT_PER_MIN * minutos_transcurridos)
 
-        if drone.battery_percent >= 100.0:
-            drone.battery_percent = 100.0
-            drone.status = "available"
-            drone.busy_until_min = 0
-            drone.current_call_id = None
+    # Evaluación de saturación
+    if bateria_proyectada >= 100.0:
+        dron.battery_percent = 100.0
+        dron.status = "available"
+        dron.busy_until_min = 0
+        dron.current_call_id = None
+    else:
+        dron.battery_percent = bateria_proyectada

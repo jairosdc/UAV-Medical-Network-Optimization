@@ -1,107 +1,83 @@
-import numpy as np
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
 
-# =============================================================================
-# CONFIGURACIÓN MAESTRA DE INVENTARIO Y POLÍTICAS (s, Q)
-# =============================================================================
-# Valores ajustados para simular un hospital general estándar.
-# Las tasas (lambda_int) representan el consumo interno esperado en unidades/hora.
+from typing import Dict, List
 
-CONFIG_HOSPITALES = {
-    # Prioridad 1 (Críticos) - Stock bajo, consumo lento, reposición rápida
-    "sangre":              {"stock_inicial": 50,   "s": 15,  "Q": 30,  "lambda_int": 0.5},
-    "farmaco_uci":         {"stock_inicial": 30,   "s": 10,  "Q": 20,  "lambda_int": 0.2},
-    
-    # Prioridad 2 (Urgentes)
-    "antibiotico":         {"stock_inicial": 300,  "s": 80,  "Q": 150, "lambda_int": 3.0},
-    "suero":               {"stock_inicial": 500,  "s": 150, "Q": 250, "lambda_int": 5.0},
-    "plasma":              {"stock_inicial": 80,   "s": 20,  "Q": 40,  "lambda_int": 0.8},
-    
-    # Prioridad 3 (Rutinarios) - Alto volumen de rotación
-    "analgesico":          {"stock_inicial": 800,  "s": 200, "Q": 400, "lambda_int": 8.0},
-    "material_sanitario":  {"stock_inicial": 1000, "s": 300, "Q": 500, "lambda_int": 10.0},
-    "medicamento_general": {"stock_inicial": 600,  "s": 150, "Q": 300, "lambda_int": 6.0},
+# Diccionario de estado inicial
+CONFIG_INVENTARIO = {
+    "sangre":              {"inicial": 50,   "s": 15,  "Q": 30},
+    "farmaco_uci":         {"inicial": 30,   "s": 10,  "Q": 20},
+    "antibiotico":         {"inicial": 300,  "s": 80,  "Q": 150},
+    "suero":               {"inicial": 500,  "s": 150, "Q": 250},
+    "plasma":              {"inicial": 80,   "s": 20,  "Q": 40},
+    "analgesico":          {"inicial": 800,  "s": 200, "Q": 400},
+    "material_sanitario":  {"inicial": 1000, "s": 300, "Q": 500},
+    "medicamento_general": {"inicial": 600,  "s": 150, "Q": 300},
 }
 
-# Los almacenes (bases) deben poseer una magnitud escalar significativamente mayor
-# para soportar la absorción de los sumideros (hospitales). Factor de escala estático: x50.
-FACTOR_ESCALA_BASE = 50
-
+# Constante escalar para el inventario inicial de los almacenes
+FACTOR_ESCALA_ALMACEN = 50
 
 @dataclass
-class EstadoProducto:
-    stock_fisico: int
-    s: int
-    Q: int
-    lambda_int: float
-    stock_en_transito: int = 0
+class Producto:
+    stock_fisico: int # stock de un producto en el instante t
+    umbral_s: int 
+    cantidad_a_pedir_Q: int
+    stock_en_camino: int = 0
     
     @property
-    def posicion_inventario(self) -> int:
-        """IP(t) = I(t) + T(t)"""
-        return self.stock_fisico + self.stock_en_transito
+    def stock_total_estimado(self) -> int:
+
+        # Suma el stock en la estantería más el stock que está en el aire para no hacer dobles reposiciones.
+        return self.stock_fisico + self.stock_en_camino
 
 
-class InventarioNodo:
-    """Clase base topológica para gestionar los vectores de estado de un nodo V."""
-    def __init__(self, nombre: str, es_base: bool = False):
-        self.nombre = nombre
-        self.es_base = es_base
-        self.productos: Dict[str, EstadoProducto] = {}
-        self._inicializar_matriz_estado()
+class Inventario:
+    
+    def __init__(self, es_almacen_central: bool = False):
+        # Es almacen: True o False
+        self.es_almacen = es_almacen_central
+        # Inicializamos diccionario
+        self.productos: Dict[str, Producto] = {}
+        self._inicializar_stocks()
 
-    def _inicializar_matriz_estado(self):
-        multiplicador = FACTOR_ESCALA_BASE if self.es_base else 1
+    def _inicializar_stocks(self):
         
-        for prod, conf in CONFIG_HOSPITALES.items():
-            # Desacoplamiento de memoria: cada nodo instancia su propio objeto de estado
-            self.productos[prod] = EstadoProducto(
-                stock_fisico=conf["stock_inicial"] * multiplicador,
-                s=conf["s"] * multiplicador if not self.es_base else 0, # Las bases no hacen pedidos
-                Q=conf["Q"],
-                lambda_int=conf["lambda_int"] if not self.es_base else 0.0 # Las bases no consumen internamente
+        multiplicador = FACTOR_ESCALA_ALMACEN if self.es_almacen else 1
+        
+        # Iteramos sobre cada producto y sus parámetros en el diccionario global.
+        for nombre, datos in CONFIG_INVENTARIO.items():
+            
+            # Instanciamos un nuevo objeto 'Producto' y lo guardamos en el diccionario del nodo.
+            self.productos[nombre] = Producto(
+                stock_fisico = datos["inicial"] * multiplicador,
+                # Si es almacen quitamos el umbral para que no haga reposición sobre almacenes    
+                umbral_s = 0 if self.es_almacen else datos["s"],
+                # Asignamos la cantidad de lote de reposición estipulada.
+                cantidad_a_pedir_Q = datos["Q"]
             )
 
-    def procesar_consumo_horario(self) -> List[Tuple[str, int]]:
-        """
-        Calcula la perturbación estocástica N ~ Poisson(λ) sobre el inventario.
-        Aplica exclusivamente a subgrafos hospitalarios.
+    def registrar_consumo(self, nombre_producto: str, cantidad_consumida: int) -> int:
         
-        Retorna:
-            Lista de tuplas (nombre_producto, cantidad_a_pedir_Q) que violan la restricción (s).
-        """
-        if self.es_base:
-            return [] # Invariancia topológica: las bases solo distribuyen, no consumen.
-
-        pedidos_emitidos = []
+        if self.es_almacen or nombre_producto not in self.productos:
+            return 0  # No se hace nada, retorna 0 pedidos.
+        prod = self.productos[nombre_producto]
+        # Evitamos que haya stock negativo
+        prod.stock_fisico = max(0, prod.stock_fisico - cantidad_consumida)
         
-        for nombre_prod, estado in self.productos.items():
-            consumo_real = np.random.poisson(estado.lambda_int)
-            
-            # Operador de frontera: el stock no puede pertenecer a Z- (evitar negativos físicos)
-            estado.stock_fisico = max(0, estado.stock_fisico - consumo_real)
-            
-            # Evaluación del espacio de soluciones de la política (s, Q)
-            if estado.posicion_inventario <= estado.s:
-                pedidos_emitidos.append((nombre_prod, estado.Q))
-                
-        return pedidos_emitidos
+        # Evaluamos de forma continua el stock
+        if prod.stock_total_estimado <= prod.umbral_s:
+            prod.stock_en_camino += prod.cantidad_a_pedir_Q
+            return prod.cantidad_a_pedir_Q
+        return 0
 
-    def registrar_salida_mercancia(self, producto: str, cantidad: int):
-        """Reduce el stock físico de un nodo emisor (Base)."""
-        if producto in self.productos:
-            estado = self.productos[producto]
-            estado.stock_fisico = max(0, estado.stock_fisico - cantidad)
+    def enviar_dron(self, nombre_producto: str, cantidad: int):
+        if nombre_producto in self.productos:
+            prod = self.productos[nombre_producto]
+            prod.stock_fisico = max(0, prod.stock_fisico - cantidad)
 
-    def registrar_pedido_en_transito(self, producto: str, cantidad: int):
-        """Aumenta el T(t) del nodo receptor para estabilizar el IP(t)."""
-        if producto in self.productos:
-            self.productos[producto].stock_en_transito += cantidad
-
-    def recepcionar_mercancia(self, producto: str, cantidad: int):
-        """Transformación de estado: El dron aterriza. Transito -> Físico."""
-        if producto in self.productos:
-            estado = self.productos[producto]
-            estado.stock_fisico += cantidad
-            estado.stock_en_transito = max(0, estado.stock_en_transito - cantidad)
+    def recibir_dron(self, nombre_producto: str, cantidad: int):
+        
+        if nombre_producto in self.productos:
+            prod = self.productos[nombre_producto]
+            prod.stock_fisico += cantidad
+            prod.stock_en_camino = max(0, prod.stock_en_camino - cantidad)

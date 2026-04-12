@@ -1,25 +1,35 @@
 from parametros_globales import CARGA_MAXIMA_KG, MAX_RANGE_KM_EMPTY
 
+def calcular_autonomia_km(carga_kg: float) -> float:
+    """
+    Calcula la distancia máxima que puede recorrer el dron con una carga específica.
+    A mayor peso, menor autonomía.
+    """
+    if carga_kg < 0:
+        raise ValueError("La carga no puede ser negativa.")
+    if carga_kg > CARGA_MAXIMA_KG:
+        raise ValueError(f"La carga excede el máximo permitido ({CARGA_MAXIMA_KG} kg).")
+        
+    return MAX_RANGE_KM_EMPTY - (22.0 * carga_kg) / CARGA_MAXIMA_KG
 
-class BatteryService:
-    @staticmethod
-    def autonomy_km(payload_kg: float) -> float:
-        if payload_kg < 0:
-            raise ValueError("La carga no puede ser negativa.")
-        if payload_kg > CARGA_MAXIMA_KG:
-            raise ValueError(f"La carga excede el máximo permitido ({CARGA_MAXIMA_KG} kg).")
-        return MAX_RANGE_KM_EMPTY - (22.0 * payload_kg) / CARGA_MAXIMA_KG
+def calcular_consumo_porcentaje(carga_kg: float, distancia_km: float) -> float:
+    """
+    Calcula el porcentaje de batería que se consumirá para recorrer una distancia dada.
+    """
+    autonomia = calcular_autonomia_km(carga_kg)
+    return (distancia_km / autonomia) * 100.0
 
-    @staticmethod
-    def consumption_percent(payload_kg: float, distance_km: float) -> float:
-        autonomy = BatteryService.autonomy_km(payload_kg)
-        return (distance_km / autonomy) * 100.0
+def calcular_bateria_restante(carga_kg: float, distancia_km: float, bateria_inicial_pct: float) -> float:
+    """
+    Devuelve el porcentaje de batería que quedará al finalizar el vuelo.
+    """
+    consumo = calcular_consumo_porcentaje(carga_kg, distancia_km)
+    return bateria_inicial_pct - consumo
 
-    @staticmethod
-    def battery_after(payload_kg: float, distance_km: float, battery_start_percent: float) -> float:
-        return battery_start_percent - BatteryService.consumption_percent(payload_kg, distance_km)
-
-    @staticmethod
-    def has_enough_battery(payload_kg: float, distance_km: float, battery_start_percent: float, reserve_percent: float) -> bool:
-        battery_end = BatteryService.battery_after(payload_kg, distance_km, battery_start_percent)
-        return battery_end >= reserve_percent
+def tiene_bateria_suficiente(carga_kg: float, distancia_km: float, bateria_inicial_pct: float, reserva_minima_pct: float) -> bool:
+    """
+    Evalúa la función indicatriz de viabilidad energética.
+    Retorna True si el dron puede completar el vuelo y mantener el umbral de reserva de seguridad.
+    """
+    bateria_final = calcular_bateria_restante(carga_kg, distancia_km, bateria_inicial_pct)
+    return bateria_final >= reserva_minima_pct
