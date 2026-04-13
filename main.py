@@ -1,10 +1,10 @@
 import argparse
 
 from controllers.simulation_controller import SimulationController
-from controllers.gestor_flota_controller import FleetController
+from controllers.gestor_flota_controller import GestorFlotaController
 from models.clases_models import MissionRequest
 from services.grafo_distancias_service import NetworkService
-from simulators.generador_pedidos import GeneradorPedidos
+from simulators.generador_pedidos import GeneradorEscenario
 from parametros_globales import DEFAULT_SIMULATION_MINUTES
 
 
@@ -77,11 +77,11 @@ def run_single_mode(args):
 
 def run_fleet_mode(args):
     network = NetworkService()
-    fleet = FleetController(network)
+    fleet = GestorFlotaController(network)
     fleet.initialize_default_fleet(drones_per_base=args.drones_per_base)
 
     # Inyección de dependencias adaptada a la nueva firma del generador NHPP
-    simulator = GeneradorPedidos(
+    simulator = GeneradorEscenario(
         hospitales=network.list_hospitals(),
         semilla=args.seed,
         factor_estres=args.stress_factor
