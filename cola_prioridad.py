@@ -1,6 +1,6 @@
 class GestorPrioridad:
     def __init__(self):
-        # Lista plana donde guardaremos los objetos 'Pedido'
+        # Lista plana donde guardaremos los objetos 'DeliveryCall'
         self.pedidos_pendientes = []
 
     def añadir_pedido(self, pedido):
@@ -8,18 +8,20 @@ class GestorPrioridad:
         self.pedidos_pendientes.append(pedido)
 
     def obtener_siguiente_pedido(self):
-        # Usa el sistema de desempate establecido en el documento, como aun no hay tiempo de isquemia se usa FIFO
         if not self.pedidos_pendientes:
             return None
 
-        # Ordenamos la lista antes de extraer:
+        # Establecemos la relación de orden total:
+        # 1. Prioridad clínica (menor valor = mayor criticidad).
+        # 2. Instante temporal (FIFO en caso de misma prioridad).
+        # 3. Identificador de llamada (desempate determinista si ocurren en el mismo minuto).
         self.pedidos_pendientes.sort(key=lambda p: (
-            p.prioridad_clinica, 
-            p.limite_isquemia_minuto if p.limite_isquemia_minuto is not None else float('inf'),
-            p.minuto_creacion
+            p.priority, 
+            p.timestamp_min,
+            p.call_id
         ))
 
-        # El método pop(0) extrae el que ha quedado primero tras el sorteo
+        # El método pop(0) extrae el nodo con mayor precedencia tras la evaluación topológica
         return self.pedidos_pendientes.pop(0)
 
     def size(self):

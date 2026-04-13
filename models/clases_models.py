@@ -2,6 +2,13 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 @dataclass
+class Node:
+    nombre: str
+    lat: float
+    lon: float
+    tipo: str
+
+@dataclass
 class Hospital:
     nombre: str
     lat: float

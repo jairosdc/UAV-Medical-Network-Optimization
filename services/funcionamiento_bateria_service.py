@@ -1,4 +1,4 @@
-from parametros_globales import CARGA_MAXIMA_KG, MAX_RANGE_KM_EMPTY
+from parametros_globales import CARGA_MAXIMA_KG, AUTONOMIA_MAX_EN_VACIO
 
 def calcular_autonomia_km(carga_kg: float) -> float:
     """
@@ -10,7 +10,7 @@ def calcular_autonomia_km(carga_kg: float) -> float:
     if carga_kg > CARGA_MAXIMA_KG:
         raise ValueError(f"La carga excede el máximo permitido ({CARGA_MAXIMA_KG} kg).")
         
-    return MAX_RANGE_KM_EMPTY - (22.0 * carga_kg) / CARGA_MAXIMA_KG
+    return AUTONOMIA_MAX_EN_VACIO - (22.0 * carga_kg) / CARGA_MAXIMA_KG
 
 def calcular_consumo_porcentaje(carga_kg: float, distancia_km: float) -> float:
     """

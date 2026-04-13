@@ -31,7 +31,7 @@ class ServicioDespacho:
                 continue
 
             # Ubicación real del dron en este momento
-            nodo_actual_dron = self.red.get_node(dron.current_node)
+            nodo_actual_dron = self.red.get_base(dron.current_node)
 
             # Cálculo de las distancias
             distancia_al_origen = self.red.distance_between_nodes(nodo_actual_dron, nodo_origen_pedido)

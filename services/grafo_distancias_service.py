@@ -69,3 +69,13 @@ class NetworkService:
 
     def list_bases(self):
         return list(self.bases.keys())
+
+    # --- NUEVO MÉTODO AÑADIDO PARA EVITAR EL ERROR ---
+    def get_node(self, name: str) -> Node:
+        """Busca un nodo topológico independientemente de si es hospital o almacén."""
+        if name in self.hospitals:
+            return self.hospitals[name]
+        elif name in self.bases:
+            return self.bases[name]
+        else:
+            raise ValueError(f"Nodo no encontrado en la red topológica: {name}")

@@ -13,7 +13,7 @@ class GestorFlotaController:
     def __init__(self, servicio_red):
         self.red = servicio_red
         # El optimizador decide qué dron es el más eficiente para cada pedido
-        self.optimizador = DispatcherService(servicio_red)
+        self.optimizador = ServicioDespacho(servicio_red)
         
         # Diccionario para buscar drones rápidamente por su identificador (ej: "D01")
         self.drones: Dict[str, Drone] = {}
@@ -71,7 +71,7 @@ class GestorFlotaController:
             # Si está recargando
             elif dron.status == "charging":
                 # Se incrementa su batería según la capacidad técnica del cargador en 1 minuto
-                ChargingService.update_drone_charging(dron, elapsed_minutes=1)
+                procesar_recarga_dron(dron, minutos_transcurridos=1)
 
         # 2. Actualizar la situación de los paquetes en tránsito
         pedidos_aun_activos = []

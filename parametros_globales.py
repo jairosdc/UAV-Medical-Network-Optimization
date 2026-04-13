@@ -3,10 +3,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 
 # --- Dron / misión ---
-CARGA_MAXIMA_KG = 4.7
-MAX_RANGE_KM_EMPTY = 94.0
-BATTERY_RESERVE_PERCENT = 20.0
-CRUISE_SPEED_M_S = 25.0
+CARGA_MAXIMA_KG = 4.7 # (kg)
+AUTONOMIA_MAX_EN_VACIO = 94.0 # (km)
+BATERIA_MINIMA_VUELO = 20.0 # (%)
+VELOCIDAD_DRON_M_S = 25.0 # (m/s)
 
 # --- Clima operativo ---
 MIN_TEMP_C = 0.0
