@@ -2,89 +2,170 @@ import random
 import numpy as np
 from collections import defaultdict
 
-# Tasas base horarias (lambda)
+from models.clases_models import DeliveryCall
+
+
+# ---------------------------------------------------------------------------
+# Tasas base de consumo horario por producto (eventos por hora)
+# ---------------------------------------------------------------------------
 TASAS_PRODUCTOS = {
-    "organo": 0.05, "sangre": 0.30, "farmaco_uci": 0.20,
-    "antibiotico": 0.80, "suero": 0.60, "plasma": 0.25,
-    "analgesico": 1.20, "material_sanitario": 1.00, "medicamento_general": 0.90
+    "sangre":              0.30,
+    "farmaco_uci":         0.20,
+    "antibiotico":         0.80,
+    "suero":               0.60,
+    "plasma":              0.25,
+    "analgesico":          1.20,
+    "material_sanitario":  1.00,
+    "medicamento_general": 0.90,
 }
 
-# Prioridades clínicas
-PRIORIDADES = {
-    "organo": 1, "sangre": 1, "farmaco_uci": 1,
-    "antibiotico": 2, "suero": 2, "plasma": 2,
-    "analgesico": 3, "material_sanitario": 3, "medicamento_general": 3
+# ---------------------------------------------------------------------------
+# Prioridad clínica de cada producto (1=crítica, 2=urgente, 3=rutinaria)
+# ---------------------------------------------------------------------------
+PRIORIDAD_PRODUCTO = {
+    "sangre":              1,
+    "farmaco_uci":         1,
+    "antibiotico":         2,
+    "suero":               2,
+    "plasma":              2,
+    "analgesico":          3,
+    "material_sanitario":  3,
+    "medicamento_general": 3,
 }
 
+# ---------------------------------------------------------------------------
+# Peso aproximado por unidad de cada producto (kg)
+# ---------------------------------------------------------------------------
+PESO_UNIDAD_KG = {
+    "sangre":              0.50,
+    "farmaco_uci":         0.10,
+    "antibiotico":         0.05,
+    "suero":               0.60,
+    "plasma":              0.25,
+    "analgesico":          0.02,
+    "material_sanitario":  0.10,
+    "medicamento_general": 0.05,
+}
+
+# ---------------------------------------------------------------------------
+# Factores horarios del NHPP (hora_inicio, hora_fin, factor_lambda)
+# ---------------------------------------------------------------------------
 FACTORES_HORARIOS = [
-    (0, 6, 0.48), (6, 9, 1.0), (9, 14, 1.6), 
-    (14, 16, 1.13), (16, 20, 1.3), (20, 24, 0.6)
+    ( 0,  6, 0.48),
+    ( 6,  9, 1.00),
+    ( 9, 14, 1.60),
+    (14, 16, 1.13),
+    (16, 20, 1.30),
+    (20, 24, 0.60),
 ]
 
-class GeneradorEscenario:
-    def __init__(self, hospitales, semilla=None):
-        self.hospitales = hospitales
-        self.agenda_eventos = defaultdict(list)
-        if semilla:
+
+class GeneradorPedidos:
+    """
+    Pregénera todos los eventos de consumo del día usando un Proceso de
+    Poisson No Homogéneo (NHPP) con factores horarios.
+
+    En cada minuto de la simulación, procesa los eventos de ese instante:
+    si el inventario del hospital cae por debajo del umbral s, genera
+    automáticamente un pedido de reposición desde la base al hospital.
+    """
+
+    def __init__(self, hospitales, bases, semilla=None):
+        self.hospitales = hospitales   # lista de Node tipo hospital
+        self.bases = bases             # lista de Node tipo base
+        self._contador_pedidos = 0
+        self._agenda = defaultdict(list)  # minuto -> lista de eventos
+
+        if semilla is not None:
             np.random.seed(semilla)
             random.seed(semilla)
-        
+
         self._pregenerar_dia()
 
+    # -----------------------------------------------------------------------
+    # Generación de la agenda diaria
+    # -----------------------------------------------------------------------
+
     def _pregenerar_dia(self):
-        """Calcula todos los eventos de consumo y emergencias del día de golpe."""
+        """Calcula todos los eventos de consumo del día de una sola vez."""
         for h_inicio, h_fin, factor in FACTORES_HORARIOS:
-            duracion_h = h_fin - h_inicio
             t_inicio_min = h_inicio * 60
-            t_fin_min = h_fin * 60
+            t_fin_min    = h_fin    * 60
+            duracion_h   = h_fin - h_inicio
 
             for producto, tasa_base in TASAS_PRODUCTOS.items():
-                # Calculamos cuántas veces ocurrirá este evento en este tramo
-                tasa_tramo = tasa_base * factor * duracion_h
-                n_eventos = np.random.poisson(tasa_tramo)
+                # Número de eventos en este tramo según la tasa ajustada
+                n_eventos = np.random.poisson(tasa_base * factor * duracion_h)
 
-                # Repartimos los eventos aleatoriamente en el tiempo del tramo
-                minutos_evento = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
+                # Distribuimos los eventos uniformemente dentro del tramo
+                minutos = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
 
-                for m in minutos_evento:
-                    min_discreto = int(m)
-                    # Decidimos qué hospital sufre el evento
+                for m in minutos:
                     hospital = random.choice(self.hospitales)
-                    
-                    # Guardamos el evento en la agenda
-                    self.agenda_eventos[min_discreto].append({
+                    self._agenda[int(m)].append({
                         "hospital": hospital,
                         "producto": producto,
-                        "es_emergencia": (producto == "organo")
                     })
 
-    def actualizar_minuto(self, minuto_actual, inventarios, cola, fabrica_pedidos):
-        """
-        Se ejecuta cada minuto. 
-        Si hay un evento, lo procesa según sea consumo o emergencia.
-        """
-        eventos = self.agenda_eventos.get(minuto_actual, [])
-        
-        for ev in eventos:
-            hospital = ev["hospital"]
-            prod = ev["producto"]
+    # -----------------------------------------------------------------------
+    # Ejecución minuto a minuto
+    # -----------------------------------------------------------------------
 
-            if ev["es_emergencia"]:
-                # FLUJO EMERGENCIAS: Hospital a Hospital (Punto a Punto)
-                origen = hospital # El que tiene el órgano
-                destino = random.choice([h for h in self.hospitales if h != origen])
-                
-                # Creamos el pedido y lo mandamos a la cola directamente
-                pedido = fabrica_pedidos.crear_emergencia(origen, destino, prod, minuto_actual)
-                cola.añadir_pedido(pedido)
-            
-            else:
-                # FLUJO CONSUMO: El hospital gasta una unidad de su inventario
-                inventario_h = inventarios[hospital.nombre]
-                unidades_a_pedir = inventario_h.registrar_consumo(prod, 1)
+    def procesar_minuto(self, minuto_actual, inventarios, cola_pedidos):
+        """
+        Procesa todos los eventos de consumo del minuto actual.
+        Si algún inventario cae por debajo del umbral s, genera un
+        pedido de reposición y lo añade a la cola.
+        """
+        for evento in self._agenda.get(minuto_actual, []):
+            hospital = evento["hospital"]
+            producto = evento["producto"]
 
-                # Si el inventario dice que hay que reponer (rompe stock s,Q)
-                if unidades_a_pedir > 0:
-                    # Creamos pedido de la Base al Hospital (Reposición)
-                    pedido = fabrica_pedidos.crear_reposicion(hospital, prod, unidades_a_pedir, minuto_actual)
-                    cola.añadir_pedido(pedido)
+            inventario_hospital = inventarios[hospital.nombre]
+            unidades_a_reponer  = inventario_hospital.registrar_consumo(producto, 1)
+
+            if unidades_a_reponer > 0:
+                pedido = self._crear_pedido_reposicion(
+                    hospital         = hospital,
+                    producto         = producto,
+                    unidades         = unidades_a_reponer,
+                    minuto_actual    = minuto_actual,
+                )
+                cola_pedidos.añadir_pedido(pedido)
+
+    # -----------------------------------------------------------------------
+    # Creación de pedidos
+    # -----------------------------------------------------------------------
+
+    def _crear_pedido_reposicion(self, hospital, producto, unidades, minuto_actual) -> DeliveryCall:
+        """Construye el DeliveryCall de reposición desde la base más cercana al hospital."""
+        self._contador_pedidos += 1
+
+        base_origen = self._base_mas_cercana(hospital)
+        payload_kg  = round(unidades * PESO_UNIDAD_KG[producto], 3)
+
+        return DeliveryCall(
+            call_id              = self._contador_pedidos,
+            timestamp_min        = minuto_actual,
+            origin_hospital      = base_origen.nombre,
+            destination_hospital = hospital.nombre,
+            payload_kg           = payload_kg,
+            priority             = PRIORIDAD_PRODUCTO[producto],
+        )
+
+    def _base_mas_cercana(self, hospital):
+        """Devuelve la base más cercana al hospital (sin importar ServicioRed)."""
+        import math
+        def dist(a, b):
+            dlat = math.radians(b.lat - a.lat)
+            dlon = math.radians(b.lon - a.lon)
+            x = math.sin(dlat/2)**2 + math.cos(math.radians(a.lat)) * math.cos(math.radians(b.lat)) * math.sin(dlon/2)**2
+            return 6371 * 2 * math.atan2(math.sqrt(x), math.sqrt(1-x))
+        return min(self.bases, key=lambda b: dist(hospital, b))
+
+    # -----------------------------------------------------------------------
+    # Utilidades
+    # -----------------------------------------------------------------------
+
+    def total_eventos_dia(self) -> int:
+        return sum(len(v) for v in self._agenda.values())

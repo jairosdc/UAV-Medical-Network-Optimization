@@ -1,81 +1,91 @@
 import math
 from typing import Dict, Tuple
-from  models.clases_models import Node, RoutePlan
-from  hospitales_almacenes_data import HOSPITALS, BASES
+
+from models.clases_models import Node, RoutePlan
+from hospitales_almacenes_data import HOSPITALS, BASES
 
 
-class NetworkService:
+class ServicioRed:
+    """Gestiona la red de hospitales y bases, y calcula rutas entre ellos."""
+
     def __init__(self):
-        self.hospitals: Dict[str, Node] = HOSPITALS
+        self.hospitales: Dict[str, Node] = HOSPITALS
         self.bases: Dict[str, Node] = BASES
 
     @staticmethod
-    def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-        r = 6371.0
-        p1 = math.radians(lat1)
-        p2 = math.radians(lat2)
-        dp = math.radians(lat2 - lat1)
-        dl = math.radians(lon2 - lon1)
+    def _distancia_haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+        """Calcula la distancia en km entre dos coordenadas usando la fórmula de Haversine."""
+        RADIO_TIERRA_KM = 6371.0
+        lat1_r, lat2_r = math.radians(lat1), math.radians(lat2)
+        diferencia_lat  = math.radians(lat2 - lat1)
+        diferencia_lon  = math.radians(lon2 - lon1)
 
-        a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        return r * c
+        a = (math.sin(diferencia_lat / 2) ** 2
+             + math.cos(lat1_r) * math.cos(lat2_r) * math.sin(diferencia_lon / 2) ** 2)
+        return RADIO_TIERRA_KM * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-    def distance_between_nodes(self, a: Node, b: Node) -> float:
-        return self.haversine_km(a.lat, a.lon, b.lat, b.lon)
+    def distancia_entre_nodos_km(self, nodo_a: Node, nodo_b: Node) -> float:
+        # Devuelve la distancia en km entre dos nodos de la red. Es la matriz de adyacencia
+        return self._distancia_haversine_km(nodo_a.lat, nodo_a.lon, nodo_b.lat, nodo_b.lon)
 
-    def get_hospital(self, name: str) -> Node:
-        if name not in self.hospitals:
-            raise ValueError(f"Hospital no encontrado: {name}")
-        return self.hospitals[name]
+    # ------------------------------------------------------------------
+    # Acceso a nodos
+    # ------------------------------------------------------------------
 
-    def get_base(self, name: str) -> Node:
-        if name not in self.bases:
-            raise ValueError(f"Base no encontrada: {name}")
-        return self.bases[name]
+    def obtener_hospital(self, nombre: str) -> Node:
+        """Devuelve el hospital con ese nombre, o lanza error si no existe."""
+        if nombre not in self.hospitales:
+            raise ValueError(f"Hospital no encontrado: {nombre}")
+        return self.hospitales[nombre]
 
-    def choose_best_base_for_origin(self, origin_hospital_name: str) -> Tuple[str, float]:
-        origin = self.get_hospital(origin_hospital_name)
+    def obtener_base(self, nombre: str) -> Node:
+        """Devuelve la base con ese nombre, o lanza error si no existe."""
+        if nombre not in self.bases:
+            raise ValueError(f"Base no encontrada: {nombre}")
+        return self.bases[nombre]
 
-        best_base_name = None
-        best_distance = float("inf")
+    def obtener_nodo(self, nombre: str) -> Node:
+        """Devuelve cualquier nodo de la red (hospital o base) por su nombre."""
+        if nombre in self.hospitales:
+            return self.hospitales[nombre]
+        if nombre in self.bases:
+            return self.bases[nombre]
+        raise ValueError(f"Nodo no encontrado en la red: {nombre}")
 
-        for base_name, base in self.bases.items():
-            d = self.distance_between_nodes(base, origin)
-            if d < best_distance:
-                best_distance = d
-                best_base_name = base_name
+    def listar_hospitales(self) -> list:
+        """Devuelve los nombres de todos los hospitales disponibles."""
+        return list(self.hospitales.keys())
 
-        return best_base_name, best_distance
-
-    def build_route_plan(self, origin_hospital_name: str, destination_hospital_name: str) -> RoutePlan:
-        origin = self.get_hospital(origin_hospital_name)
-        destination = self.get_hospital(destination_hospital_name)
-
-        best_base_name, base_to_origin = self.choose_best_base_for_origin(origin_hospital_name)
-        origin_to_destination = self.distance_between_nodes(origin, destination)
-
-        return RoutePlan(
-            start_base=best_base_name,
-            origin_hospital=origin_hospital_name,
-            destination_hospital=destination_hospital_name,
-            distance_base_to_origin_km=base_to_origin,
-            distance_origin_to_destination_km=origin_to_destination,
-            distance_total_km=base_to_origin + origin_to_destination,
-        )
-
-    def list_hospitals(self):
-        return list(self.hospitals.keys())
-
-    def list_bases(self):
+    def listar_bases(self) -> list:
+        """Devuelve los nombres de todas las bases disponibles."""
         return list(self.bases.keys())
 
-    # --- NUEVO MÉTODO AÑADIDO PARA EVITAR EL ERROR ---
-    def get_node(self, name: str) -> Node:
-        """Busca un nodo topológico independientemente de si es hospital o almacén."""
-        if name in self.hospitals:
-            return self.hospitals[name]
-        elif name in self.bases:
-            return self.bases[name]
-        else:
-            raise ValueError(f"Nodo no encontrado en la red topológica: {name}")
+    # ------------------------------------------------------------------
+    # Lógica de rutas
+    # ------------------------------------------------------------------
+
+    def base_mas_cercana_a(self, nombre_hospital: str) -> Tuple[str, float]:
+        """Devuelve la base más cercana a un hospital y la distancia en km hasta él."""
+        hospital = self.obtener_hospital(nombre_hospital)
+        nombre_base, nodo_base = min(
+            self.bases.items(),
+            key=lambda item: self.distancia_entre_nodos_km(item[1], hospital)
+        )
+        return nombre_base, self.distancia_entre_nodos_km(nodo_base, hospital)
+
+    def planificar_reposicion(self, nombre_hospital: str) -> RoutePlan:
+        """
+        Calcula la ruta de reposición:
+            base más cercana → hospital que necesita stock
+        """
+        hospital = self.obtener_hospital(nombre_hospital)
+        base, distancia = self.base_mas_cercana_a(nombre_hospital)
+
+        return RoutePlan(
+            start_base                        = base,
+            origin_hospital                   = base,          # el origen ES la base
+            destination_hospital              = nombre_hospital,
+            distance_base_to_origin_km        = 0.0,           # no hay tramo previo
+            distance_origin_to_destination_km = distancia,
+            distance_total_km                 = distancia,
+        )
