@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 from models.clases_models import Drone, DeliveryCall, SimulationStats
-from services.cargar_drone_service import ChargingService
-from services.optimizador_asignacion_service import DispatcherService
+from services.cargar_drone_service import procesar_recarga_dron
+from services.optimizador_asignacion_service import ServicioDespacho
 
 
 class GestorFlotaController:

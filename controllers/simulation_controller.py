@@ -3,7 +3,10 @@ from parametros_globales import (
     CRUISE_SPEED_M_S,
 )
 from models.clases_models import MissionRequest, MissionResult
-from services.funcionamiento_bateria_service import BatteryService
+from services.funcionamiento_bateria_service import (
+    calcular_bateria_restante,
+    tiene_bateria_suficiente,
+)
 from services.grafo_distancias_service import NetworkService
 from services.meteorologia_service import WeatherService
 
@@ -31,19 +34,19 @@ class SimulationController:
         )
 
         try:
-            battery_after = BatteryService.battery_after(
-                payload_kg=request.payload_kg,
-                distance_km=route.distance_total_km,
-                battery_start_percent=request.battery_start_percent,
+            battery_after = calcular_bateria_restante(
+                carga_kg=request.payload_kg,
+                distancia_km=route.distance_total_km,
+                bateria_inicial_pct=request.battery_start_percent,
             )
         except ValueError as e:
             return MissionResult(feasible=False, reasons=[str(e)])
 
-        enough_battery = BatteryService.has_enough_battery(
-            payload_kg=request.payload_kg,
-            distance_km=route.distance_total_km,
-            battery_start_percent=request.battery_start_percent,
-            reserve_percent=BATTERY_RESERVE_PERCENT,
+        enough_battery = tiene_bateria_suficiente(
+            carga_kg=request.payload_kg,
+            distancia_km=route.distance_total_km,
+            bateria_inicial_pct=request.battery_start_percent,
+            reserva_minima_pct=BATTERY_RESERVE_PERCENT,
         )
 
         if not enough_battery:
