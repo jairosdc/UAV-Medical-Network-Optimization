@@ -1,6 +1,7 @@
+from typing import Optional
 from parametros_globales import (
-    BATTERY_RESERVE_PERCENT,
-    CRUISE_SPEED_M_S,
+    BATERIA_MINIMA_VUELO,
+    VELOCIDAD_DRON_M_S,
 )
 from models.clases_models import MissionRequest, MissionResult
 from services.funcionamiento_bateria_service import (
@@ -9,6 +10,7 @@ from services.funcionamiento_bateria_service import (
 )
 from services.grafo_distancias_service import NetworkService
 from services.meteorologia_service import WeatherService
+from models.inventario import Inventario
 
 
 class SimulationController:
@@ -46,15 +48,15 @@ class SimulationController:
             carga_kg=request.payload_kg,
             distancia_km=route.distance_total_km,
             bateria_inicial_pct=request.battery_start_percent,
-            reserva_minima_pct=BATTERY_RESERVE_PERCENT,
+            reserva_minima_pct=BATERIA_MINIMA_VUELO,
         )
 
         if not enough_battery:
             reasons.append(
-                f"Batería insuficiente: quedaría {battery_after:.2f}% y la reserva mínima es {BATTERY_RESERVE_PERCENT:.2f}%."
+                f"Batería insuficiente: quedaría {battery_after:.2f}% y la reserva mínima es {BATERIA_MINIMA_VUELO:.2f}%."
             )
 
-        estimated_minutes = self.km_to_minutes(route.distance_total_km, CRUISE_SPEED_M_S)
+        estimated_minutes = self.km_to_minutes(route.distance_total_km, VELOCIDAD_DRON_M_S)
 
         weather_ok = None
         if request.ignore_weather:
@@ -86,3 +88,20 @@ class SimulationController:
             weather_ok=weather_ok,
             route_plan=route,
         )
+
+    def verificar_politica_inventario(self, inventario: Inventario, nombre_producto: str) -> Optional[int]:
+        """
+        Valida la política (s, Q): si el stock total (físico + en camino) cae por debajo
+        o igual al umbral 's' (umbral SQ), se debe disparar una reposición de 'Q' elementos.
+        Retorna la cantidad Q a reponer si se cumple la condición, o None si no es necesario.
+        """
+        if nombre_producto not in inventario.productos:
+            return None
+            
+        producto = inventario.productos[nombre_producto]
+        
+        # Lógica (s, Q): umbral SQ
+        if producto.stock_total_estimado <= producto.umbral_s:
+            return producto.cantidad_a_pedir_Q
+            
+        return None

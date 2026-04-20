@@ -20,8 +20,8 @@ class ServicioDespacho:
 
     def elegir_mejor_dron(self, drones: List[Drone], pedido: DeliveryCall) -> Optional[DispatchDecision]:
         
-        hospital_origen  = self.red.obtener_hospital(pedido.origin_hospital)
-        hospital_destino = self.red.obtener_hospital(pedido.destination_hospital)
+        hospital_origen  = self.red.obtener_nodo(pedido.origin_hospital)
+        hospital_destino = self.red.obtener_nodo(pedido.destination_hospital)
 
         candidatos = []
 
