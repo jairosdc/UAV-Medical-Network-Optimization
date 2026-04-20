@@ -57,7 +57,7 @@ class GestorFlotaController:
         self.estadisticas.total_calls += 1
        
         # Selección del vector de transporte mediante el optimizador
-        decision = self.optimizador.choose_best_drone(list(self.drones.values()), pedido)
+        decision = self.optimizador.elegir_mejor_dron(list(self.drones.values()), pedido)
 
         if decision is None:
             pedido.status = "rejected"

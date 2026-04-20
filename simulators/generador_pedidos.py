@@ -111,7 +111,7 @@ class GeneradorPedidos:
     # Ejecución minuto a minuto
     # -----------------------------------------------------------------------
 
-    def procesar_minuto(self, minuto_actual, inventarios, cola_pedidos):
+    def procesar_minuto(self, minuto_actual, inventarios, cola_pedidos, verbose=False):
         """
         Procesa todos los eventos de consumo del minuto actual.
         Si algún inventario cae por debajo del umbral s, genera un
@@ -121,10 +121,16 @@ class GeneradorPedidos:
             hospital = evento["hospital"]
             producto = evento["producto"]
 
+            if verbose:
+                print(f"  [t={minuto_actual:04d}] CONSUMO: {hospital.nombre} gasta 1 unidad de {producto}")
+
             inventario_hospital = inventarios[hospital.nombre]
             unidades_a_reponer  = inventario_hospital.registrar_consumo(producto, 1)
 
             if unidades_a_reponer > 0:
+                if verbose:
+                    print(f"  [!] UMBRAL ALCANZADO: {hospital.nombre} solicita {unidades_a_reponer} unidades de {producto}")
+                
                 pedido = self._crear_pedido_reposicion(
                     hospital         = hospital,
                     producto         = producto,
