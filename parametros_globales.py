@@ -21,7 +21,7 @@ WEATHER_CACHE_FILE = BASE_DIR / "datos_retiro_5y.json"
 
 # --- Simulación de flota ---
 DEFAULT_IGNORE_WEATHER = True
-DEFAULT_SIMULATION_MINUTES = 720
+DEFAULT_SIMULATION_MINUTES = 7200
 DEFAULT_CALL_PROBABILITY_PER_MIN = 0.15
 
 # Carga: de 20% a 100% en 50 min => 80/50 = 1.6 %/min

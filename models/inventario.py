@@ -3,15 +3,18 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 # Diccionario de estado inicial
+# Stock inicial = aprox 1-2 dias de consumo (realista para un hospital)
+# Tasa media consumo/hospital: sangre ~7/dia, antibiotico ~19/dia, analgesico ~29/dia...
+# Umbral s = ~85% del stock inicial para activar reposicion antes de agotar
 CONFIG_INVENTARIO = {
-    "sangre":              {"inicial": 50,   "s": 15,  "Q": 30},
-    "farmaco_uci":         {"inicial": 30,   "s": 10,  "Q": 20},
-    "antibiotico":         {"inicial": 300,  "s": 80,  "Q": 150},
-    "suero":               {"inicial": 500,  "s": 150, "Q": 250},
-    "plasma":              {"inicial": 80,   "s": 20,  "Q": 40},
-    "analgesico":          {"inicial": 800,  "s": 200, "Q": 400},
-    "material_sanitario":  {"inicial": 1000, "s": 300, "Q": 500},
-    "medicamento_general": {"inicial": 600,  "s": 150, "Q": 300},
+    "sangre":              {"inicial": 20,   "s": 8,   "Q": 15},
+    "farmaco_uci":         {"inicial": 12,   "s": 5,   "Q": 10},
+    "antibiotico":         {"inicial": 60,   "s": 25,  "Q": 40},
+    "suero":               {"inicial": 80,   "s": 30,  "Q": 50},
+    "plasma":              {"inicial": 25,   "s": 10,  "Q": 15},
+    "analgesico":          {"inicial": 100,  "s": 40,  "Q": 60},
+    "material_sanitario":  {"inicial": 150,  "s": 60,  "Q": 80},
+    "medicamento_general": {"inicial": 90,   "s": 35,  "Q": 55},
 }
 
 # Constante escalar para el inventario inicial de los almacenes

@@ -62,50 +62,78 @@ FACTORES_HORARIOS = [
 
 class GeneradorPedidos:
     """
-    Pregénera todos los eventos de consumo del día usando un Proceso de
-    Poisson No Homogéneo (NHPP) con factores horarios.
+    Pregénera todos los eventos de consumo para la duración completa de la
+    simulación usando un Proceso de Poisson No Homogéneo (NHPP) con factores
+    horarios que se ciclan día a día.
 
-    En cada minuto de la simulación, procesa los eventos de ese instante:
-    si el inventario del hospital cae por debajo del umbral s, genera
-    automáticamente un pedido de reposición desde la base al hospital.
+    En cada minuto, procesa los eventos de ese instante: si el inventario
+    del hospital cae por debajo del umbral s, genera automáticamente un
+    pedido de reposición desde la base al hospital.
     """
 
-    def __init__(self, hospitales, bases, semilla=None):
+    def __init__(self, hospitales, bases, semilla=None, duracion_min=1440):
         self.hospitales = hospitales   # lista de Node tipo hospital
         self.bases = bases             # lista de Node tipo base
         self._contador_pedidos = 0
         self._agenda = defaultdict(list)  # minuto -> lista de eventos
+        self._duracion_min = duracion_min
 
         if semilla is not None:
             np.random.seed(semilla)
             random.seed(semilla)
 
-        self._pregenerar_dia()
+        self._pregenerar_periodo()
 
     # -----------------------------------------------------------------------
-    # Generación de la agenda diaria
+    # Generación de la agenda para el periodo completo de simulación
     # -----------------------------------------------------------------------
 
-    def _pregenerar_dia(self):
-        """Calcula todos los eventos de consumo del día de una sola vez."""
-        for h_inicio, h_fin, factor in FACTORES_HORARIOS:
-            t_inicio_min = h_inicio * 60
-            t_fin_min    = h_fin    * 60
-            duracion_h   = h_fin - h_inicio
+    def _pregenerar_periodo(self):
+        """
+        Genera todos los eventos de consumo para la duración completa de la
+        simulación (multi-día). El patrón NHPP horario se cicla día a día.
 
-            for producto, tasa_base in TASAS_PRODUCTOS.items():
-                # Número de eventos en este tramo según la tasa ajustada
-                n_eventos = np.random.poisson(tasa_base * factor * duracion_h)
+        BUG CORREGIDO: la versión anterior solo generaba eventos para el
+        primer día (minutos 0-1440), dejando el resto de la simulación vacío.
+        """
+        minutos_por_dia = 1440   # 24 h × 60 min
 
-                # Distribuimos los eventos uniformemente dentro del tramo
-                minutos = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
+        dias_completos = self._duracion_min // minutos_por_dia
+        minutos_extra  = self._duracion_min % minutos_por_dia
 
-                for m in minutos:
-                    hospital = random.choice(self.hospitales)
-                    self._agenda[int(m)].append({
-                        "hospital": hospital,
-                        "producto": producto,
-                    })
+        # ---- Días completos ------------------------------------------------
+        for dia in range(dias_completos):
+            offset = dia * minutos_por_dia
+            for h_inicio, h_fin, factor in FACTORES_HORARIOS:
+                t_inicio = offset + h_inicio * 60
+                t_fin    = offset + h_fin    * 60
+                dur_h    = h_fin - h_inicio
+                self._generar_tramo(t_inicio, t_fin, dur_h, factor)
+
+        # ---- Último tramo parcial (si la duración no es múltiplo de 1440) --
+        if minutos_extra > 0:
+            offset = dias_completos * minutos_por_dia
+            for h_inicio, h_fin, factor in FACTORES_HORARIOS:
+                t_inicio = offset + h_inicio * 60
+                t_fin    = min(offset + h_fin * 60, self._duracion_min)
+                if t_inicio >= self._duracion_min:
+                    break
+                dur_h = (t_fin - t_inicio) / 60.0
+                self._generar_tramo(t_inicio, t_fin, dur_h, factor)
+
+    def _generar_tramo(self, t_inicio_min: int, t_fin_min: int, duracion_h: float, factor: float):
+        """Genera eventos NHPP dentro de un tramo horario y los inserta en la agenda."""
+        for producto, tasa_base in TASAS_PRODUCTOS.items():
+            n_eventos = np.random.poisson(tasa_base * factor * duracion_h)
+            if n_eventos == 0:
+                continue
+            minutos = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
+            for m in minutos:
+                hospital = random.choice(self.hospitales)
+                self._agenda[int(m)].append({
+                    "hospital": hospital,
+                    "producto": producto,
+                })
 
     # -----------------------------------------------------------------------
     # Ejecución minuto a minuto
@@ -117,6 +145,8 @@ class GeneradorPedidos:
         Si algún inventario cae por debajo del umbral s, genera un
         pedido de reposición y lo añade a la cola.
         """
+        from parametros_globales import CARGA_MAXIMA_KG
+        
         for evento in self._agenda.get(minuto_actual, []):
             hospital = evento["hospital"]
             producto = evento["producto"]
@@ -131,13 +161,23 @@ class GeneradorPedidos:
                 if verbose:
                     print(f"  [!] UMBRAL ALCANZADO: {hospital.nombre} solicita {unidades_a_reponer} unidades de {producto}")
                 
-                pedido = self._crear_pedido_reposicion(
-                    hospital         = hospital,
-                    producto         = producto,
-                    unidades         = unidades_a_reponer,
-                    minuto_actual    = minuto_actual,
-                )
-                cola_pedidos.añadir_pedido(pedido)
+                peso_unitario = PESO_UNIDAD_KG[producto]
+                max_unidades_por_vuelo = int(CARGA_MAXIMA_KG / peso_unitario)
+                if max_unidades_por_vuelo == 0:
+                    max_unidades_por_vuelo = 1
+                
+                unidades_restantes = unidades_a_reponer
+                while unidades_restantes > 0:
+                    unidades_vuelo = min(unidades_restantes, max_unidades_por_vuelo)
+                    
+                    pedido = self._crear_pedido_reposicion(
+                        hospital         = hospital,
+                        producto         = producto,
+                        unidades         = unidades_vuelo,
+                        minuto_actual    = minuto_actual,
+                    )
+                    cola_pedidos.añadir_pedido(pedido)
+                    unidades_restantes -= unidades_vuelo
 
     # -----------------------------------------------------------------------
     # Creación de pedidos
@@ -157,6 +197,8 @@ class GeneradorPedidos:
             destination_hospital = hospital.nombre,
             payload_kg           = payload_kg,
             priority             = PRIORIDAD_PRODUCTO[producto],
+            producto             = producto,
+            unidades             = unidades
         )
 
     def _base_mas_cercana(self, hospital):

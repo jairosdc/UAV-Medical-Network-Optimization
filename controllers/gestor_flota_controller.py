@@ -49,14 +49,13 @@ class GestorFlotaController:
                 self.agregar_dron(dron)
                 contador += 1
 
-    def procesar_nuevo_pedido(self, pedido: DeliveryCall, tiempo_actual: float) -> Optional[float]:
+    def procesar_nuevo_pedido(self, pedido: DeliveryCall, tiempo_actual: float) -> Optional[tuple[float, object]]:
         """
         Evento: 'SOLICITUD_PEDIDO'.
-        Calcula la viabilidad y, de ser positiva, retorna el tiempo de llegada (ETA).
+        Calcula la viabilidad y retorna el tiempo de llegada al hospital y la decisión.
         """
         self.estadisticas.total_calls += 1
        
-        # Selección del vector de transporte mediante el optimizador
         decision = self.optimizador.elegir_mejor_dron(list(self.drones.values()), pedido)
 
         if decision is None:
@@ -65,12 +64,11 @@ class GestorFlotaController:
             self.estadisticas.rejected_calls += 1
             return None
 
-        # Transición de estado: Disponibilidad -> Misión
         dron = self.drones[decision.drone_id]
         dron.status = "mission"
         dron.current_call_id = pedido.call_id
        
-        # Actualización de variables de estado (consumo proyectado)
+        # Asumimos todo el consumo del viaje completo desde este momento
         dron.battery_percent = decision.battery_after_percent
         dron.current_node = pedido.destination_hospital
 
@@ -79,31 +77,50 @@ class GestorFlotaController:
         self.pedidos_activos[pedido.call_id] = pedido
         self.estadisticas.assigned_calls += 1
 
-        # Retorna el instante absoluto del evento 'ATERRIZAJE'
-        return tiempo_actual + decision.estimated_duration_min
+        eta_ida = tiempo_actual + decision.estimated_flight_ida_min
+        dron.flight_minutes += decision.estimated_flight_ida_min  # Registramos tiempo de vuelo ida
+        return eta_ida, decision
 
-    def procesar_evento_aterrizaje(self, id_dron: str, tiempo_actual: float) -> float:
+    def procesar_evento_llegada_hospital(self, id_dron: str, tiempo_actual: float, decision: object) -> tuple[float, Optional[DeliveryCall]]:
         """
-        Evento: 'ATERRIZAJE'.
-        Cierra el ciclo del pedido y proyecta el tiempo de recarga necesario.
+        Evento: 'LLEGADA_HOSPITAL'. Descarga el pedido y programa el viaje de vuelta a base.
         """
         dron = self.drones[id_dron]
-       
-        # 1. Finalización del proceso logístico del paquete
+        
         id_pedido = dron.current_call_id
+        pedido_completado = None
         if id_pedido in self.pedidos_activos:
             pedido = self.pedidos_activos.pop(id_pedido)
             pedido.status = "completed"
             self.pedidos_completados.append(pedido)
             self.estadisticas.completed_calls += 1
-
-        # 2. Transición de estado: Misión -> Recarga
-        dron.status = "charging"
+            pedido_completado = pedido
+            
+        dron.status = "returning"
+        dron.deliveries_made += 1
         dron.current_call_id = None
-       
-        # 3. Cálculo del horizonte temporal para el evento 'FIN_RECARGA'
-        minutos_recarga = calcular_tiempo_recarga_completa(dron.battery_percent)
-        return tiempo_actual + minutos_recarga
+        dron.flight_minutes += decision.estimated_flight_vuelta_min
+        
+        eta_base = tiempo_actual + decision.estimated_flight_vuelta_min
+        return eta_base, pedido_completado
+
+    def procesar_evento_aterrizaje_base(self, id_dron: str, tiempo_actual: float) -> Optional[float]:
+        """
+        Evento: 'ATERRIZAJE_BASE'. El dron llega a la base. Si la batería es <= 20% entra en recarga, si no, disponible.
+        """
+        from parametros_globales import BATERIA_MINIMA_VUELO
+        dron = self.drones[id_dron]
+        dron.current_node = dron.base_name
+        
+        # Solo recargamos si baja del umbral indicado (ej. 20%)
+        if dron.battery_percent <= BATERIA_MINIMA_VUELO:
+            dron.status = "charging"
+            minutos_recarga = calcular_tiempo_recarga_completa(dron.battery_percent)
+            dron.charging_minutes += int(minutos_recarga)
+            return tiempo_actual + minutos_recarga
+        else:
+            dron.status = "available"
+            return None
 
     def procesar_evento_fin_recarga(self, id_dron: str) -> None:
         """
@@ -116,7 +133,7 @@ class GestorFlotaController:
 
     def obtener_resumen_estado(self) -> Dict[str, int]:
         """Snapshot de la utilización de la flota."""
-        resumen = {"available": 0, "mission": 0, "charging": 0}
+        resumen = {"available": 0, "mission": 0, "returning": 0, "charging": 0}
         for d in self.drones.values():
             resumen[d.status] += 1
         return resumen

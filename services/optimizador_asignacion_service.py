@@ -34,13 +34,20 @@ class ServicioDespacho:
 
             distancia_base_a_origen  = self.red.distancia_entre_nodos_km(nodo_actual, hospital_origen)
             distancia_origen_destino = self.red.distancia_entre_nodos_km(hospital_origen, hospital_destino)
-            distancia_total          = distancia_base_a_origen + distancia_origen_destino
+            distancia_ida            = distancia_base_a_origen + distancia_origen_destino
+            distancia_vuelta         = self.red.distancia_entre_nodos_km(hospital_destino, nodo_actual)
+            distancia_total          = distancia_ida + distancia_vuelta
 
             try:
-                bateria_final = calcular_bateria_restante(
+                bat_ida = calcular_bateria_restante(
                     carga_kg            = pedido.payload_kg,
-                    distancia_km        = distancia_total,
+                    distancia_km        = distancia_ida,
                     bateria_inicial_pct = dron.battery_percent,
+                )
+                bateria_final = calcular_bateria_restante(
+                    carga_kg            = 0.0,
+                    distancia_km        = distancia_vuelta,
+                    bateria_inicial_pct = bat_ida
                 )
             except ValueError:
                 continue  # Carga inválida → descartar este dron
@@ -57,6 +64,8 @@ class ServicioDespacho:
                 battery_before_percent = dron.battery_percent,
                 battery_after_percent  = bateria_final,
                 estimated_duration_min = self.estimar_duracion_minutos(distancia_total),
+                estimated_flight_ida_min = self.estimar_duracion_minutos(distancia_ida),
+                estimated_flight_vuelta_min = self.estimar_duracion_minutos(distancia_vuelta),
                 score                  = 0.0,
             ))
 

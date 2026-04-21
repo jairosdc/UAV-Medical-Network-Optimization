@@ -74,10 +74,13 @@ class Drone:
     drone_id: str
     base_name: str
     battery_percent: float = 100.0
-    status: str = "available"   # available, mission, charging
+    status: str = "available"   # available, mission, returning, charging
     busy_until_min: int = 0
     current_node: Optional[str] = None
     current_call_id: Optional[int] = None
+    flight_minutes: int = 0
+    charging_minutes: int = 0
+    deliveries_made: int = 0
 
 
 @dataclass
@@ -91,6 +94,8 @@ class DeliveryCall:
     status: str = "pending"  # pending, assigned, completed, rejected
     assigned_drone_id: Optional[str] = None
     rejection_reason: Optional[str] = None
+    producto: Optional[str] = None
+    unidades: int = 0
 
 
 @dataclass
@@ -103,7 +108,9 @@ class DispatchDecision:
     battery_before_percent: float
     battery_after_percent: float
     estimated_duration_min: int
-    score: float
+    estimated_flight_ida_min: int = 0
+    estimated_flight_vuelta_min: int = 0
+    score: float = 0.0
 
 
 @dataclass
