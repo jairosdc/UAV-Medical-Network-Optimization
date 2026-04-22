@@ -49,14 +49,19 @@ class GestorFlotaController:
                 self.agregar_dron(dron)
                 contador += 1
 
-    def procesar_nuevo_pedido(self, pedido: DeliveryCall, tiempo_actual: float) -> Optional[tuple[float, object]]:
+    def procesar_nuevo_pedido(self, pedido: DeliveryCall, tiempo_actual: float, factor_velocidad: float = 1.0) -> Optional[tuple[float, object]]:
         """
         Evento: 'SOLICITUD_PEDIDO'.
         Calcula la viabilidad y retorna el tiempo de llegada al hospital y la decisión.
+
+        Parámetros:
+            pedido:           El pedido a despachar.
+            tiempo_actual:    Minuto actual de la simulación.
+            factor_velocidad: Penalización climática (1.0 = sin penalización).
         """
         self.estadisticas.total_calls += 1
        
-        decision = self.optimizador.elegir_mejor_dron(list(self.drones.values()), pedido)
+        decision = self.optimizador.elegir_mejor_dron(list(self.drones.values()), pedido, factor_velocidad)
 
         if decision is None:
             pedido.status = "rejected"

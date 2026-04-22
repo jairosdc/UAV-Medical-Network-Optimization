@@ -60,10 +60,6 @@ class ServicioRed:
         """Devuelve los nombres de todas las bases disponibles."""
         return list(self.bases.keys())
 
-    def list_bases(self) -> list:
-        """Alias en ingles para compatibilidad."""
-        return self.listar_bases()
-
     # ------------------------------------------------------------------
     # Lógica de rutas
     # ------------------------------------------------------------------
@@ -93,25 +89,3 @@ class ServicioRed:
             distance_origin_to_destination_km = distancia,
             distance_total_km                 = distancia,
         )
-
-    def build_route_plan(self, origin_hospital: str, destination_hospital: str) -> RoutePlan:
-        """Calcula la ruta: base mas cercana -> origen -> destino."""
-        base, distancia_base_origen = self.base_mas_cercana_a(origin_hospital)
-        nodo_origen = self.obtener_hospital(origin_hospital)
-        nodo_destino = self.obtener_hospital(destination_hospital)
-
-        distancia_origen_destino = self.distancia_entre_nodos_km(nodo_origen, nodo_destino)
-
-        return RoutePlan(
-            start_base=base,
-            origin_hospital=origin_hospital,
-            destination_hospital=destination_hospital,
-            distance_base_to_origin_km=distancia_base_origen,
-            distance_origin_to_destination_km=distancia_origen_destino,
-            distance_total_km=distancia_base_origen + distancia_origen_destino,
-        )
-
-
-class NetworkService(ServicioRed):
-    """Alias de compatibilidad para el nombre anterior."""
-    pass

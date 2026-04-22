@@ -12,13 +12,30 @@ class ServicioDespacho:
         self.red = servicio_red
 
     @staticmethod
-    def estimar_duracion_minutos(distancia_km: float) -> int:
-        """Estima el tiempo de vuelo en minutos para una distancia dada."""
-        velocidad_km_h = VELOCIDAD_DRON_M_S * 3.6
+    def estimar_duracion_minutos(distancia_km: float, factor_velocidad: float = 1.0) -> int:
+        """
+        Estima el tiempo de vuelo en minutos para una distancia dada.
+
+        Parámetros:
+            distancia_km:     Distancia a recorrer en kilómetros.
+            factor_velocidad: Multiplicador de velocidad por clima (1.0 = sin penalización).
+                              Un valor de 0.6 significa que el dron vuela al 60% de su velocidad.
+        """
+        # La velocidad efectiva se reduce según el clima actual
+        velocidad_efectiva_m_s = VELOCIDAD_DRON_M_S * factor_velocidad
+        velocidad_km_h = velocidad_efectiva_m_s * 3.6
         minutos = (distancia_km / velocidad_km_h) * 60.0
         return max(1, int(round(minutos)))
 
-    def elegir_mejor_dron(self, drones: List[Drone], pedido: DeliveryCall) -> Optional[DispatchDecision]:
+    def elegir_mejor_dron(self, drones: List[Drone], pedido: DeliveryCall, factor_velocidad: float = 1.0) -> Optional[DispatchDecision]:
+        """
+        Selecciona el dron óptimo para un pedido, considerando el clima.
+
+        Parámetros:
+            drones:           Lista de todos los drones de la flota.
+            pedido:           El pedido a atender.
+            factor_velocidad: Penalización climática sobre la velocidad (1.0 = sin penalización).
+        """
         
         hospital_origen  = self.red.obtener_nodo(pedido.origin_hospital)
         hospital_destino = self.red.obtener_nodo(pedido.destination_hospital)
@@ -63,9 +80,9 @@ class ServicioDespacho:
                 distance_total_km      = distancia_total,
                 battery_before_percent = dron.battery_percent,
                 battery_after_percent  = bateria_final,
-                estimated_duration_min = self.estimar_duracion_minutos(distancia_total),
-                estimated_flight_ida_min = self.estimar_duracion_minutos(distancia_ida),
-                estimated_flight_vuelta_min = self.estimar_duracion_minutos(distancia_vuelta),
+                estimated_duration_min = self.estimar_duracion_minutos(distancia_total, factor_velocidad),
+                estimated_flight_ida_min = self.estimar_duracion_minutos(distancia_ida, factor_velocidad),
+                estimated_flight_vuelta_min = self.estimar_duracion_minutos(distancia_vuelta, factor_velocidad),
                 score                  = 0.0,
             ))
 

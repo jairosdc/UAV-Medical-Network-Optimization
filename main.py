@@ -29,6 +29,7 @@ from models.inventario import Inventario
 from services.grafo_distancias_service import ServicioRed
 from controllers.gestor_flota_controller import GestorFlotaController
 from simulators.generador_pedidos import GeneradorPedidos
+from simulators.simulador_clima import SimuladorClima
 from cola_prioridad import GestorPrioridad
 
 
@@ -69,6 +70,13 @@ def main():
     # Cola de prioridad para gestionar los empates de llamada
     cola_pedidos = GestorPrioridad()
 
+    # Simulador de clima estocástico: cambia el clima cada 60 minutos simulados
+    clima_sim = SimuladorClima(intervalo_cambio_min=60, semilla=SEMILLA_ALEATORIA)
+
+    # Contadores para estadísticas de clima al final
+    conteo_clima = {}          # nombre_estado -> minutos en ese estado
+    estado_clima_anterior = None  # Para detectar cambios y mostrarlos
+
     # 'Calendario de eventos discretos'
     cola_eventos_des = []
     secuencia_evento = 0
@@ -87,6 +95,7 @@ def main():
     print(f"  Semilla:        {semilla_str}")
     print(f"  Eventos totales pregenerados: {generador.total_eventos_dia()}  "
           f"(~{generador.total_eventos_dia()/max(dias,1):.0f}/dia)")
+    print(f"  Clima:          Simulado (cambio cada {clima_sim.intervalo_cambio_min} min)")
     print("-" * 60)
     
     # -- Reporte de Inventario Inicial ----------------------------------------
@@ -102,6 +111,19 @@ def main():
     print("\nIniciando simulacion...\n")
 
     for minuto in range(MINUTOS_SIMULACION):
+
+        # -- PASO CLIMA: Actualizar el estado meteorológico -----------------
+        estado_clima = clima_sim.actualizar(minuto)
+        factor_vel = estado_clima.factor_velocidad
+
+        # Contabilizar minutos en cada estado (para estadísticas finales)
+        conteo_clima[estado_clima.nombre] = conteo_clima.get(estado_clima.nombre, 0) + 1
+
+        # Mostrar en consola cuando el clima cambia
+        if estado_clima is not estado_clima_anterior:
+            print(f"  [t={minuto:05d}] CLIMA       {estado_clima.descripcion}  "
+                  f"(velocidad x{factor_vel:.2f})")
+            estado_clima_anterior = estado_clima
 
         # -- PASO A: Procesar eventos DES vencidos ----------------------------
         # Los eventos del heap que ya "ocurrieron" (su tiempo <= minuto actual)
@@ -168,7 +190,7 @@ def main():
 
             # El gestor de flota intenta asignar el mejor dron disponible.
             # Retorna el ETA (tiempo de llegada) o None si no es viable.
-            resultado = gestor_flota.procesar_nuevo_pedido(pedido, minuto)
+            resultado = gestor_flota.procesar_nuevo_pedido(pedido, minuto, factor_vel)
 
             if resultado is not None:
                 eta_ida, decision = resultado
@@ -266,6 +288,17 @@ def main():
                   f"stock={prod.stock_fisico:5d}  "
                   f"en_camino={prod.stock_en_camino:5d}  "
                   f"umbral_s={prod.umbral_s:4d}{indicador}")
+
+    # Estadísticas meteorológicas
+    print("\n--- METEOROLOGÍA (simulada) ---")
+    from simulators.simulador_clima import ESTADOS_CLIMA
+    for estado in ESTADOS_CLIMA:
+        minutos_en_estado = conteo_clima.get(estado.nombre, 0)
+        porcentaje = (minutos_en_estado / MINUTOS_SIMULACION) * 100 if MINUTOS_SIMULACION else 0
+        print(f"  {estado.descripcion:25s}  "
+              f"{minutos_en_estado:5d} min  ({porcentaje:5.1f}%)  "
+              f"vel. x{estado.factor_velocidad:.2f}")
+    print(f"\n  Cambios de clima registrados: {len(clima_sim.historial)}")
 
     print("\n" + "=" * 60)
     print("  FIN DE LA SIMULACION")
