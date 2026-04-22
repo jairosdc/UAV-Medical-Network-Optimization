@@ -36,7 +36,7 @@ class GestorFlotaController:
     def inicializar_flota(self, drones_por_base: int = 2) -> None:
         """Puebla el sistema situando recursos en los nodos de almacenamiento."""
         contador = 1
-        for nombre_base in self.grafo.list_bases():
+        for nombre_base in self.grafo.listar_bases():
             for _ in range(drones_por_base):
                 id_dron = f"D{contador:02d}"
                 dron = Drone(
