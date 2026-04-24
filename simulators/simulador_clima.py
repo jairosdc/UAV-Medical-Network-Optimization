@@ -62,37 +62,37 @@ class EstadoClima:
 ESTADOS_CLIMA: List[EstadoClima] = [
     EstadoClima(
         nombre="dia_normal",
-        probabilidad=0.40,
+        probabilidad=0.67,
         factor_velocidad=1.00,
         descripcion="[SOL] Dia normal",
     ),
     EstadoClima(
         nombre="lluvia_normal",
-        probabilidad=0.15,
+        probabilidad=0.12,
         factor_velocidad=0.85,
         descripcion="[LLU] Lluvia ligera",
     ),
     EstadoClima(
         nombre="lluvia_fuerte",
-        probabilidad=0.05,
+        probabilidad=0.04,
         factor_velocidad=0.65,
         descripcion="[TOR] Lluvia fuerte",
     ),
     EstadoClima(
         nombre="calor",
-        probabilidad=0.15,
+        probabilidad=0.04,
         factor_velocidad=0.90,
         descripcion="[CAL] Calor extremo",
     ),
     EstadoClima(
         nombre="viento_normal",
-        probabilidad=0.15,
+        probabilidad=0.12,
         factor_velocidad=0.80,
         descripcion="[VIE] Viento moderado",
     ),
     EstadoClima(
         nombre="viento_fuerte",
-        probabilidad=0.10,
+        probabilidad=0.01,
         factor_velocidad=0.60,
         descripcion="[VEN] Viento fuerte",
     ),

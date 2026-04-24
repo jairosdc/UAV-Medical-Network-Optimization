@@ -17,14 +17,15 @@ Flujo:
 import heapq
 
 # Ajustes de simulacion
-MINUTOS_SIMULACION       = 50000       # 7200 = 5 dias; 1440 = 1 dia
-DRONES_POR_BASE          = 15
-SEMILLA_ALEATORIA        = None       # None = aleatorio real; pon un int (ej. 42) para reproducibilidad
+MINUTOS_SIMULACION       = 500000       
+DRONES_POR_BASE          = 25
+SEMILLA_ALEATORIA        = None       
 IMPRIMIR_EVENTOS_DRONES  = True
 IMPRIMIR_EVENTOS_HOSPITAL = False
-IMPRIMIR_EVENTOS_CLIMA   = False      # True = muestra cambios de clima en consola
+IMPRIMIR_EVENTOS_CLIMA   = True       
+INTERVALO_CAMBIO_CLIMA_MIN = 300
 STOCK_INICIAL_CERCA_UMBRAL = False
-ACTIVAR_METEOROLOGIA     = True       # True = penalizacion de velocidad por clima; False = siempre dia normal
+ACTIVAR_METEOROLOGIA     = True       
 
 from hospitales_almacenes_data import HOSPITALS, BASES
 from models.inventario import Inventario
@@ -72,8 +73,8 @@ def main():
     # Cola de prioridad para gestionar los empates de llamada
     cola_pedidos = GestorPrioridad()
 
-    # Simulador de clima estocastico: cambia el clima cada 60 minutos simulados
-    clima_sim = SimuladorClima(intervalo_cambio_min=60, semilla=SEMILLA_ALEATORIA)
+    # Simulador de clima estocastico: cambia el clima periodicamente
+    clima_sim = SimuladorClima(intervalo_cambio_min=INTERVALO_CAMBIO_CLIMA_MIN, semilla=SEMILLA_ALEATORIA)
 
     # Contadores para estadisticas de clima al final
     conteo_clima = {}          # nombre_estado -> minutos en ese estado
