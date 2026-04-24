@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
+import math
 
 @dataclass
 class Node:
@@ -96,6 +97,7 @@ class DeliveryCall:
     rejection_reason: Optional[str] = None
     producto: Optional[str] = None
     unidades: int = 0
+    deadline_min: float = math.inf
 
 
 @dataclass

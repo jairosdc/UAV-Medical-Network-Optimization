@@ -13,14 +13,7 @@ class ServicioDespacho:
 
     @staticmethod
     def estimar_duracion_minutos(distancia_km: float, factor_velocidad: float = 1.0) -> int:
-        """
-        Estima el tiempo de vuelo en minutos para una distancia dada.
-
-        Parámetros:
-            distancia_km:     Distancia a recorrer en kilómetros.
-            factor_velocidad: Multiplicador de velocidad por clima (1.0 = sin penalización).
-                              Un valor de 0.6 significa que el dron vuela al 60% de su velocidad.
-        """
+        
         # La velocidad efectiva se reduce según el clima actual
         velocidad_efectiva_m_s = VELOCIDAD_DRON_M_S * factor_velocidad
         velocidad_km_h = velocidad_efectiva_m_s * 3.6
