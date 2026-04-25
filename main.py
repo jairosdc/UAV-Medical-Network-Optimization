@@ -18,7 +18,7 @@ import heapq
 
 # Ajustes de simulacion
 MINUTOS_SIMULACION       = 500000       
-DRONES_POR_BASE          = 25
+DRONES_POR_BASE          = 67
 SEMILLA_ALEATORIA        = None       
 IMPRIMIR_EVENTOS_DRONES  = True
 IMPRIMIR_EVENTOS_HOSPITAL = False

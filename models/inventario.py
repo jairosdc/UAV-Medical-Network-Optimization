@@ -1,11 +1,7 @@
 from dataclasses import dataclass
+from typing import Dict
 
-from typing import Dict, List
-
-# Diccionario de estado inicial
-# Stock inicial = aprox 1-2 dias de consumo (realista para un hospital)
-# Tasa media consumo/hospital: sangre ~7/dia, antibiotico ~19/dia, analgesico ~29/dia...
-# Umbral s = ~85% del stock inicial para activar reposicion antes de agotar
+# Configuracion inicial de todos los inventarios
 CONFIG_INVENTARIO = {
     "sangre":              {"inicial": 20,   "s": 8,   "Q": 15},
     "farmaco_uci":         {"inicial": 12,   "s": 5,   "Q": 10},
@@ -17,70 +13,101 @@ CONFIG_INVENTARIO = {
     "medicamento_general": {"inicial": 90,   "s": 35,  "Q": 55},
 }
 
-# Constante escalar para el inventario inicial de los almacenes
+
+# Los almacenes centrales tienen mucho más stock que los hospitales.
 FACTOR_ESCALA_ALMACEN = 50
+
 
 @dataclass
 class Producto:
-    stock_fisico: int # stock de un producto en el instante t
-    umbral_s: int 
+    stock_fisico: int
+    umbral_s: int
     cantidad_a_pedir_Q: int
     stock_en_camino: int = 0
-    
-    @property
-    def stock_total_estimado(self) -> int:
 
-        # Suma el stock en la estantería más el stock que está en el aire para no hacer dobles reposiciones.
+    @property
+    def stock_total_estimado(self):
         return self.stock_fisico + self.stock_en_camino
 
 
 class Inventario:
-    
+    """
+    Inventario de un hospital o de un almacén central.
+
+    En hospitales:
+    - se consume stock,
+    - se activa reposición al caer bajo el umbral s.
+
+    En almacenes:
+    - no se activa reposición,
+    - solo se descuenta stock cuando sale un dron.
+    """
+
     def __init__(self, es_almacen_central: bool = False):
-        # Es almacen: True o False
         self.es_almacen = es_almacen_central
-        # Inicializamos diccionario
         self.productos: Dict[str, Producto] = {}
+
         self._inicializar_stocks()
 
     def _inicializar_stocks(self):
-        
         multiplicador = FACTOR_ESCALA_ALMACEN if self.es_almacen else 1
-        
-        # Iteramos sobre cada producto y sus parámetros en el diccionario global.
+
         for nombre, datos in CONFIG_INVENTARIO.items():
-            
-            # Instanciamos un nuevo objeto 'Producto' y lo guardamos en el diccionario del nodo.
             self.productos[nombre] = Producto(
-                stock_fisico = datos["inicial"] * multiplicador,
-                # Si es almacen quitamos el umbral para que no haga reposición sobre almacenes    
-                umbral_s = 0 if self.es_almacen else datos["s"],
-                # Asignamos la cantidad de lote de reposición estipulada.
-                cantidad_a_pedir_Q = datos["Q"]
+                stock_fisico=datos["inicial"] * multiplicador,
+                umbral_s=0 if self.es_almacen else datos["s"],
+                cantidad_a_pedir_Q=datos["Q"]
             )
 
-    def registrar_consumo(self, nombre_producto: str, cantidad_consumida: int) -> int:
-        
-        if self.es_almacen or nombre_producto not in self.productos:
-            return 0  # No se hace nada, retorna 0 pedidos.
-        prod = self.productos[nombre_producto]
-        # Evitamos que haya stock negativo
-        prod.stock_fisico = max(0, prod.stock_fisico - cantidad_consumida)
-        
-        # Evaluamos de forma continua el stock
-        if prod.stock_total_estimado <= prod.umbral_s:
-            prod.stock_en_camino += prod.cantidad_a_pedir_Q
-            return prod.cantidad_a_pedir_Q
+    def registrar_consumo(self, nombre_producto: str, cantidad_consumida: int):
+
+        # Los almacenes no tienen consumo
+        if self.es_almacen:
+            return 0
+
+        if nombre_producto not in self.productos:
+            return 0
+
+        producto = self.productos[nombre_producto]
+
+        producto.stock_fisico = max(
+            0,
+            producto.stock_fisico - cantidad_consumida
+        )
+
+        if producto.stock_total_estimado <= producto.umbral_s:
+            producto.stock_en_camino += producto.cantidad_a_pedir_Q
+            return producto.cantidad_a_pedir_Q
+
         return 0
 
     def enviar_dron(self, nombre_producto: str, cantidad: int):
-        if nombre_producto in self.productos:
-            prod = self.productos[nombre_producto]
-            prod.stock_fisico = max(0, prod.stock_fisico - cantidad)
+        """
+        Descuenta stock cuando un dron sale con un producto.
+
+        Devuelve:
+        - True si el producto existía y se pudo descontar.
+        - False si el producto no existe.
+        """
+        if nombre_producto not in self.productos:
+            return False
+
+        producto = self.productos[nombre_producto]
+        producto.stock_fisico = max(0, producto.stock_fisico - cantidad)
+
+        return True
 
     def recibir_dron(self, nombre_producto: str, cantidad: int):
-        
-        if nombre_producto in self.productos:
-            prod = self.productos[nombre_producto]
-            prod.stock_fisico += cantidad
-            prod.stock_en_camino = max(0, prod.stock_en_camino - cantidad)
+
+        if nombre_producto not in self.productos:
+            return False
+
+        producto = self.productos[nombre_producto]
+
+        producto.stock_fisico += cantidad
+        producto.stock_en_camino = max(
+            0,
+            producto.stock_en_camino - cantidad
+        )
+
+        return True

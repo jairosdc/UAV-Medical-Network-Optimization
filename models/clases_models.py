@@ -62,13 +62,9 @@ class MissionResult:
     distance_total_km: Optional[float] = None
     estimated_flight_minutes: Optional[float] = None
     battery_after_percent: Optional[float] = None
-    weather_ok: Optional[bool] = None
+    weather_state: Optional[str] = None
+    weather_speed_factor: Optional[float] = None
     route_plan: Optional[RoutePlan] = None
-
-
-# --------------------------
-# NUEVO: modelos de flota
-# --------------------------
 
 @dataclass
 class Drone:
