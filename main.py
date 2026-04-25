@@ -18,7 +18,7 @@ import heapq
 
 # Ajustes de simulacion
 MINUTOS_SIMULACION       = 500000       
-DRONES_POR_BASE          = 67
+DRONES_POR_BASE          = 2
 SEMILLA_ALEATORIA        = None       
 IMPRIMIR_EVENTOS_DRONES  = True
 IMPRIMIR_EVENTOS_HOSPITAL = False
@@ -311,6 +311,14 @@ def main():
     print("\n" + "=" * 60)
     print("  FIN DE LA SIMULACION")
     print("=" * 60)
+
+    # FASE 5: GRÁFICAS Y VISUALIZACIONES
+    try:
+        from services.visualizaciones import mostrar_graficas_resultados
+        print("\n  Generando gráficas de resultados...")
+        mostrar_graficas_resultados(gestor_flota, total_gen, MINUTOS_SIMULACION)
+    except ImportError as e:
+        print(f"\n  [Aviso] No se pudieron generar las gráficas. ¿Está instalado matplotlib? Error: {e}")
 
 # PUNTO DE ENTRADA
 if __name__ == "__main__":

@@ -176,7 +176,11 @@ class GestorFlotaController:
         dron = self.drones[id_dron]
         dron.current_node = dron.base_name
 
-        if dron.battery_percent <= BATERIA_MINIMA_VUELO:
+        # Se suma un margen del 15% a BATERIA_MINIMA_VUELO (20% + 15% = 35%).
+        # Decidimos dejarlo en 35% porque la gran mayoría de trayectos gastan un 15% de batería.
+        # De esta forma, cualquier dron 'available' tiene energía suficiente para completar
+        # un viaje típico sin saltarse la norma de  seguridad obligatoria del 20% para poder volar.
+        if dron.battery_percent < (BATERIA_MINIMA_VUELO + 15.0):
             dron.status = "charging"
 
             minutos_recarga = calcular_tiempo_recarga_completa(dron.battery_percent)
