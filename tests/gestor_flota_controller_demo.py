@@ -1,4 +1,3 @@
-from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 
 # ---------------------------------------------------------
@@ -20,8 +19,8 @@ class DeliveryCall:
     destination_hospital: str
     priority: int
     status: str = "pending"
-    assigned_drone_id: Optional[str] = None
-    rejection_reason: Optional[str] = None
+    assigned_drone_id = None
+    rejection_reason = None
 
 @dataclass
 class DispatchDecision:

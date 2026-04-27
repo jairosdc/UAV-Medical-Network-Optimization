@@ -17,7 +17,11 @@ Flujo:
 import heapq
 
 # Ajustes de simulacion
+
 MINUTOS_SIMULACION       = 1440      
+
+MINUTOS_SIMULACION       = 525600     
+
 DRONES_POR_BASE          = 2
 SEMILLA_ALEATORIA        = None       
 IMPRIMIR_EVENTOS_DRONES  = True

@@ -21,7 +21,6 @@ Estados posibles (6):
 
 import random
 from dataclasses import dataclass
-from typing import Optional, List 
 
 # Estados climaticos con sus probabilidades y factores de velocidad
 @dataclass
@@ -32,7 +31,7 @@ class EstadoClima:
     factor_velocidad: float
     descripcion: str
 
-ESTADOS_CLIMA: List[EstadoClima] = [
+ESTADOS_CLIMA = [
     EstadoClima(
         nombre="dia_normal",
         probabilidad=0.67,
@@ -73,7 +72,7 @@ ESTADOS_CLIMA: List[EstadoClima] = [
 
 class SimuladorClima:
 
-    def __init__(self, intervalo_cambio_min: int = 60, semilla: Optional[int] = None):
+    def __init__(self, intervalo_cambio_min=60, semilla=None):
         
         self.intervalo_cambio_min = intervalo_cambio_min
         self.rng = random.Random(semilla) # Semilla para reproducibilidad
@@ -84,11 +83,11 @@ class SimuladorClima:
             f"ERROR: Las probabilidades deben sumar 1.0, pero suman {suma}"
         )
 
-        self.estado_actual: EstadoClima = self.estados[0]
-        self.ultimo_cambio_min: int = -self.intervalo_cambio_min
-        self.historial: List[dict] = []
+        self.estado_actual = self.estados[0]
+        self.ultimo_cambio_min = -self.intervalo_cambio_min
+        self.historial = []
 
-    def actualizar(self, minuto_actual: int) -> EstadoClima:
+    def actualizar(self, minuto_actual):
 
         if (minuto_actual - self.ultimo_cambio_min) >= self.intervalo_cambio_min:
             # Toca sortear un nuevo estado climático
@@ -106,17 +105,17 @@ class SimuladorClima:
 
         return self.estado_actual
 
-    def _sortear_estado(self) -> EstadoClima:
+    def _sortear_estado(self):
 
         pesos = [estado.probabilidad for estado in self.estados]
         elegido = self.rng.choices(self.estados, weights=pesos, k=1)[0]
         return elegido
 
-    def obtener_factor_velocidad(self) -> float:
+    def obtener_factor_velocidad(self):
         return self.estado_actual.factor_velocidad
 
-    def obtener_descripcion(self) -> str:
+    def obtener_descripcion(self):
         return self.estado_actual.descripcion
 
-    def obtener_nombre(self) -> str:
+    def obtener_nombre(self):
         return self.estado_actual.nombre

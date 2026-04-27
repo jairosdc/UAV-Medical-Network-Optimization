@@ -1,6 +1,5 @@
 import random
 import numpy as np
-from collections import defaultdict
 import math
 
 from parametros_globales import CARGA_MAXIMA_KG
@@ -82,7 +81,7 @@ class GeneradorPedidos:
         self.hospitales = hospitales
         self.bases = bases
         self._contador_pedidos = 0
-        self._agenda = defaultdict(list)
+        self._agenda = {}
         self._duracion_min = duracion_min
 
         if semilla is not None:
@@ -128,7 +127,7 @@ class GeneradorPedidos:
             if n_eventos > 0:
                 minutos = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
                 for m in minutos:
-                    self._agenda[int(m)].append({
+                    self._agenda.setdefault(int(m), []).append({
                         "tipo": "inventario",
                         "hospital": random.choice(self.hospitales),
                         "producto": producto,
@@ -141,7 +140,7 @@ class GeneradorPedidos:
             if n_eventos_org > 0:
                 minutos_org = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos_org)
                 for m in minutos_org:
-                    self._agenda[int(m)].append({
+                    self._agenda.setdefault(int(m), []).append({
                         "tipo": "organo",
                         "hospital": random.choice(self.hospitales),
                         "producto": organo,

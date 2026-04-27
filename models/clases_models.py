@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional, List
 import math
 
 @dataclass
@@ -10,41 +9,6 @@ class Node:
     tipo: str
 
 @dataclass
-class Hospital:
-    nombre: str
-    lat: float
-    lon: float
-    tipo: str
-
-@dataclass
-class DroneSpec:
-    max_payload_kg: float
-    max_range_km_empty: float
-    battery_reserve_percent: float
-    cruise_speed_m_s: float
-
-
-@dataclass
-class WeatherDay:
-    date: str
-    tmax: Optional[float] = None
-    tmin: Optional[float] = None
-    wind_avg: Optional[float] = None
-    wind_gust: Optional[float] = None
-    precip: Optional[float] = None
-
-
-@dataclass
-class MissionRequest:
-    origin_hospital: str
-    destination_hospital: str
-    payload_kg: float
-    battery_start_percent: float = 100.0
-    weather_date: Optional[str] = None
-    ignore_weather: bool = False
-
-
-@dataclass
 class RoutePlan:
     start_base: str
     origin_hospital: str
@@ -53,19 +17,6 @@ class RoutePlan:
     distance_origin_to_destination_km: float
     distance_total_km: float
 
-
-@dataclass
-class MissionResult:
-    feasible: bool
-    reasons: List[str] = field(default_factory=list)
-    selected_base: Optional[str] = None
-    distance_total_km: Optional[float] = None
-    estimated_flight_minutes: Optional[float] = None
-    battery_after_percent: Optional[float] = None
-    weather_state: Optional[str] = None
-    weather_speed_factor: Optional[float] = None
-    route_plan: Optional[RoutePlan] = None
-
 @dataclass
 class Drone:
     drone_id: str
@@ -73,8 +24,8 @@ class Drone:
     battery_percent: float = 100.0
     status: str = "available"   # available, mission, returning, charging
     busy_until_min: int = 0
-    current_node: Optional[str] = None
-    current_call_id: Optional[int] = None
+    current_node = None
+    current_call_id = None
     flight_minutes: int = 0
     charging_minutes: int = 0
     deliveries_made: int = 0
@@ -87,11 +38,11 @@ class DeliveryCall:
     origin_hospital: str
     destination_hospital: str
     payload_kg: float
-    priority: int   # 1=alta, 2=media, 3=baja
+    priority: int   # 0=Organo, 1=alta, 2=media, 3=baja
     status: str = "pending"  # pending, assigned, completed, rejected
-    assigned_drone_id: Optional[str] = None
-    rejection_reason: Optional[str] = None
-    producto: Optional[str] = None
+    assigned_drone_id = None
+    rejection_reason = None
+    producto = None
     unidades: int = 0
     deadline_min: float = math.inf
 
