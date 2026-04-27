@@ -1,0 +1,38 @@
+[
+  {
+    "id_dron": "D03",
+    "origen": {
+      "nombre": "La Princesa",
+      "lat": 40.4265,
+      "lon": -3.6908
+    },
+    "destino": {
+      "nombre": "La Paz",
+      "lat": 40.4733,
+      "lon": -3.6899
+    },
+    "t_salida": 790,
+    "t_llegada": 796,
+    "tipo_trayecto": "ida",
+    "bateria_inicial": 100.0,
+    "clima": "viento_normal"
+  },
+  {
+    "id_dron": "D03",
+    "origen": {
+      "nombre": "La Paz",
+      "lat": 40.4733,
+      "lon": -3.6899
+    },
+    "destino": {
+      "nombre": "BASE CENTRO",
+      "lat": 40.4382,
+      "lon": -3.7155
+    },
+    "t_salida": 796,
+    "t_llegada": 799,
+    "tipo_trayecto": "vuelta",
+    "bateria_inicial": 86.24,
+    "clima": "viento_normal"
+  }
+]
