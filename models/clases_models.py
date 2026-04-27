@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 import math
-import math
 
 @dataclass
 class Node:

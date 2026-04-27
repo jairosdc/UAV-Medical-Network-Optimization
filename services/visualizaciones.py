@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from collections import Counter
+
+def _contar_elementos(iterable):
+    """Cuenta elementos de un iterable sin usar Counter."""
+    conteo = {}
+    for item in iterable:
+        conteo[item] = conteo.get(item, 0) + 1
+    return conteo
 
 def mostrar_graficas_resultados(gestor_flota, total_generados, minutos_simulacion):
     """
@@ -71,7 +77,7 @@ def mostrar_graficas_resultados(gestor_flota, total_generados, minutos_simulacio
     # =========================================================================
     ax3 = plt.subplot(2, 3, 3)
     if gestor_flota.pedidos_completados:
-        conteo_prod = Counter(p.producto for p in gestor_flota.pedidos_completados)
+        conteo_prod = _contar_elementos(p.producto for p in gestor_flota.pedidos_completados)
         etiquetas_prod = list(conteo_prod.keys())
         valores_prod = list(conteo_prod.values())
         
@@ -89,7 +95,7 @@ def mostrar_graficas_resultados(gestor_flota, total_generados, minutos_simulacio
     # =========================================================================
     ax4 = plt.subplot(2, 3, 4)
     if gestor_flota.pedidos_completados:
-        conteo_hosp = Counter(p.destination_hospital for p in gestor_flota.pedidos_completados)
+        conteo_hosp = _contar_elementos(p.destination_hospital for p in gestor_flota.pedidos_completados)
         # Ordenar de mayor a menor demanda
         hosp_ordenados = sorted(conteo_hosp.items(), key=lambda x: x[1])
         etiquetas_hosp = [x[0] for x in hosp_ordenados]
