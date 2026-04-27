@@ -17,7 +17,7 @@ Flujo:
 import heapq
 
 # Ajustes de simulacion
-MINUTOS_SIMULACION       = 500000       
+MINUTOS_SIMULACION       = 1440      
 DRONES_POR_BASE          = 2
 SEMILLA_ALEATORIA        = None       
 IMPRIMIR_EVENTOS_DRONES  = True
@@ -34,6 +34,7 @@ from controllers.gestor_flota_controller import GestorFlotaController
 from simulators.generador_pedidos import GeneradorPedidos
 from simulators.simulador_clima import SimuladorClima
 from cola_prioridad import GestorPrioridad
+from services.telemetria_service import TelemetriaService
 
 
 def main():
@@ -72,6 +73,9 @@ def main():
 
     # Cola de prioridad para gestionar los empates de llamada
     cola_pedidos = GestorPrioridad()
+
+    # Servicio de telemetría para FlyRadar
+    telemetria = TelemetriaService()
 
     # Simulador de clima estocastico: cambia el clima periodicamente
     clima_sim = SimuladorClima(intervalo_cambio_min=INTERVALO_CAMBIO_CLIMA_MIN, semilla=SEMILLA_ALEATORIA)
@@ -149,6 +153,18 @@ def main():
                 )
                 if pedido_ok and pedido_ok.producto:
                     inventarios[pedido_ok.destination_hospital].recibir_dron(pedido_ok.producto, pedido_ok.unidades)
+                # Registrar tramo VUELTA en telemetría
+                dron_obj = gestor_flota.drones[id_dron]
+                telemetria.registrar_tramo(
+                    id_dron=id_dron,
+                    nombre_origen=pedido_ok.destination_hospital if pedido_ok else dron_obj.current_node,
+                    nombre_destino=dron_obj.base_name,
+                    t_salida=minuto,
+                    t_llegada=eta_base,
+                    tipo_trayecto="vuelta",
+                    bateria_inicial=dron_obj.battery_percent,
+                    clima=estado_clima.nombre if ACTIVAR_METEOROLOGIA else "dia_normal",
+                )
                 # Programamos regreso a base
                 secuencia_evento += 1
                 heapq.heappush(cola_eventos_des, (
@@ -207,6 +223,18 @@ def main():
 
                 if pedido.producto:
                     inventarios[pedido.origin_hospital].enviar_dron(pedido.producto, pedido.unidades)
+
+                # Registrar tramo IDA en telemetría
+                telemetria.registrar_tramo(
+                    id_dron=id_dron_asignado,
+                    nombre_origen=pedido.origin_hospital,
+                    nombre_destino=pedido.destination_hospital,
+                    t_salida=minuto,
+                    t_llegada=eta_ida,
+                    tipo_trayecto="ida",
+                    bateria_inicial=decision.battery_before_percent,
+                    clima=estado_clima.nombre if ACTIVAR_METEOROLOGIA else "dia_normal",
+                )
 
                 secuencia_evento += 1
                 heapq.heappush(cola_eventos_des, (
@@ -312,7 +340,10 @@ def main():
     print("  FIN DE LA SIMULACION")
     print("=" * 60)
 
-    # FASE 5: GRÁFICAS Y VISUALIZACIONES
+    # FASE 5: EXPORTAR TELEMETRÍA PARA FLYRADAR
+    telemetria.exportar_json("telemetria_vuelos.json")
+
+    # FASE 6: GRÁFICAS Y VISUALIZACIONES
     try:
         from services.visualizaciones import mostrar_graficas_resultados
         print("\n  Generando gráficas de resultados...")
