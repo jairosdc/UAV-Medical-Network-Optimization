@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, List
+import math
 import math
 
 @dataclass
@@ -25,8 +25,8 @@ class Drone:
     battery_percent: float = 100.0
     status: str = "available"   # available, mission, returning, charging
     busy_until_min: int = 0
-    current_node: Optional[str] = None
-    current_call_id: Optional[int] = None
+    current_node = None
+    current_call_id = None
     flight_minutes: int = 0
     charging_minutes: int = 0
     deliveries_made: int = 0
@@ -41,9 +41,9 @@ class DeliveryCall:
     payload_kg: float
     priority: int   # 0=Organo, 1=alta, 2=media, 3=baja
     status: str = "pending"  # pending, assigned, completed, rejected
-    assigned_drone_id: Optional[str] = None
-    rejection_reason: Optional[str] = None
-    producto: Optional[str] = None
+    assigned_drone_id = None
+    rejection_reason = None
+    producto = None
     unidades: int = 0
     deadline_min: float = math.inf
 

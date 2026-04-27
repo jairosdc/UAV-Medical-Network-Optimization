@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict
 
 # Configuracion inicial de todos los inventarios
 CONFIG_INVENTARIO = {
@@ -45,7 +44,7 @@ class Inventario:
 
     def __init__(self, es_almacen_central: bool = False):
         self.es_almacen = es_almacen_central
-        self.productos: Dict[str, Producto] = {}
+        self.productos = {}
 
         self._inicializar_stocks()
 
