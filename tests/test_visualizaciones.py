@@ -1,16 +1,23 @@
 import unittest
 from unittest.mock import MagicMock
-from services.visualizaciones import mostrar_graficas_resultados
+try:
+    import matplotlib.pyplot as plt
+    from services.visualizaciones import mostrar_graficas_resultados
+except ModuleNotFoundError as exc:
+    plt = None
+    mostrar_graficas_resultados = None
+    IMPORT_ERROR = exc
+else:
+    IMPORT_ERROR = None
 
 class TestVisualizaciones(unittest.TestCase):
+    @unittest.skipIf(IMPORT_ERROR is not None, f"Dependencia opcional no instalada: {IMPORT_ERROR}")
     def test_mostrar_graficas_no_falla(self):
         """
         Prueba que la función de mostrar_graficas_resultados se ejecuta sin
         lanzar excepciones con datos simulados. Se usa mock para evitar que
         plt.show() bloquee la ejecución.
         """
-        import matplotlib.pyplot as plt
-        
         # Guardamos la funcion original
         original_show = plt.show
         

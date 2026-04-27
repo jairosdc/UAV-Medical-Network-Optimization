@@ -1,4 +1,3 @@
-import pytest
 from simulators.simulador_clima import SimuladorClima, ESTADOS_CLIMA
 
 def test_probabilidades_suman_uno():
