@@ -1,6 +1,5 @@
 import random
 import numpy as np
-from collections import defaultdict
 import math
 
 from parametros_globales import CARGA_MAXIMA_KG
@@ -78,12 +77,13 @@ class GeneradorPedidos:
       2. HPP para órganos (eventos discretos independientes de prioridad 0).
     """
 
-    def __init__(self, hospitales, bases, semilla=None, duracion_min=1440):
+    def __init__(self, hospitales, bases, semilla=None, duracion_min=1440, escala_demanda=1.0):
         self.hospitales = hospitales
         self.bases = bases
         self._contador_pedidos = 0
-        self._agenda = defaultdict(list)
+        self._agenda = {}
         self._duracion_min = duracion_min
+        self.escala_demanda = max(0.0, float(escala_demanda))
 
         if semilla is not None:
             np.random.seed(semilla)
@@ -124,11 +124,11 @@ class GeneradorPedidos:
         
         # 1. Rutina de Inventario (NHPP condicionado por 'factor')
         for producto, tasa_base in TASAS_PRODUCTOS.items():
-            n_eventos = np.random.poisson(tasa_base * factor * duracion_h)
+            n_eventos = np.random.poisson(tasa_base * self.escala_demanda * factor * duracion_h)
             if n_eventos > 0:
                 minutos = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
                 for m in minutos:
-                    self._agenda[int(m)].append({
+                    self._agenda.setdefault(int(m), []).append({
                         "tipo": "inventario",
                         "hospital": random.choice(self.hospitales),
                         "producto": producto,
@@ -136,12 +136,12 @@ class GeneradorPedidos:
 
         # 2. Rutina de Órganos (HPP con lambda estático, independiente del factor horario)
         for organo, config in CONFIGURACION_ORGANOS.items():
-            tasa_lambda = config["tasa_lambda"]
+            tasa_lambda = config["tasa_lambda"] * self.escala_demanda
             n_eventos_org = np.random.poisson(tasa_lambda * duracion_h)
             if n_eventos_org > 0:
                 minutos_org = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos_org)
                 for m in minutos_org:
-                    self._agenda[int(m)].append({
+                    self._agenda.setdefault(int(m), []).append({
                         "tipo": "organo",
                         "hospital": random.choice(self.hospitales),
                         "producto": organo,

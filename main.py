@@ -1,23 +1,23 @@
 """
-main.py - Simulador Principal de Red de Drones Hospitalarios
-============================================================
-Punto de entrada del simulador. Orquesta todos los modulos existentes
-para ejecutar una simulacion de eventos discretos (DES).
+main.py - Entrada funcional del simulador de drones hospitalarios.
 
-Flujo:
-  1. Inicializar red (hospitales + bases), flota de drones e inventarios.
-  2. Pregenerar eventos de consumo del dia (NHPP via GeneradorPedidos).
-  3. Bucle minuto a minuto:
-     a. Procesar eventos DES vencidos (aterrizajes, fin de recargas).
-     b. Procesar consumo de inventario -> genera pedidos si stock <= umbral s.
-     c. Despachar pedidos pendientes asignando drones disponibles.
-  4. Imprimir metricas de rendimiento.
+Modos disponibles:
+  python main.py --list-hospitals
+  python main.py --mode single --origin "La Paz" --destination "12 de Octubre"
+  python main.py --mode fleet --minutes 1440 --drones-per-base 2
 """
 
+import argparse
 import heapq
+from dataclasses import dataclass
+
 
 # Ajustes de simulacion
+
 MINUTOS_SIMULACION       = 1440      
+
+MINUTOS_SIMULACION       = 525600     
+
 DRONES_POR_BASE          = 2
 SEMILLA_ALEATORIA        = None       
 IMPRIMIR_EVENTOS_DRONES  = True
@@ -33,324 +33,507 @@ from services.grafo_distancias_service import ServicioRed
 from controllers.gestor_flota_controller import GestorFlotaController
 from simulators.generador_pedidos import GeneradorPedidos
 from simulators.simulador_clima import SimuladorClima
+
 from cola_prioridad import GestorPrioridad
-from services.telemetria_service import TelemetriaService
+from controllers.gestor_flota_controller import GestorFlotaController
+from controllers.simulation_controller import SimulationController
+from hospitales_almacenes_data import BASES, HOSPITALS
+from models.clases_models import MissionRequest
+from models.inventario import Inventario
+from parametros_globales import (
+    DEFAULT_CALL_PROBABILITY_PER_MIN,
+    DEFAULT_SIMULATION_MINUTES,
+)
+from services.grafo_distancias_service import ServicioRed
+from simulators.generador_pedidos import GeneradorPedidos
+from simulators.simulador_clima import ESTADOS_CLIMA, SimuladorClima
 
 
-def main():
-    """Funcion principal del simulador."""
+@dataclass
+class FleetRunResult:
+    gestor_flota: GestorFlotaController
+    generador: GeneradorPedidos
+    cola_pedidos: GestorPrioridad
+    inventarios: dict
+    conteo_clima: dict
+    clima_sim: SimuladorClima
 
-    # Definición del grafo
-    red = ServicioRed()
 
-    # GestorFlotaController recibe el grafo y gestiona el ciclo de vida
-    gestor_flota = GestorFlotaController(red)
-    gestor_flota.inicializar_flota(drones_por_base=DRONES_POR_BASE)
+def build_parser():
+    parser = argparse.ArgumentParser(
+        description="Simulador de red de drones para transporte medico."
+    )
+    parser.add_argument("--list-hospitals", action="store_true")
+    parser.add_argument("--list-bases", action="store_true")
+    parser.add_argument("--mode", choices=("single", "fleet"), default="fleet")
 
+    parser.add_argument("--origin", help="Hospital origen para modo single.")
+    parser.add_argument("--destination", help="Hospital destino para modo single.")
+    parser.add_argument("--payload", type=float, default=1.0, help="Carga en kg.")
+    parser.add_argument("--battery", type=float, default=100.0, help="Bateria inicial en porcentaje.")
+    parser.add_argument("--date", help="Fecha YYYY-MM-DD para semilla meteorologica en modo single.")
+    parser.add_argument("--ignore-weather", action="store_true", help="Ignora meteorologia en modo single.")
+
+    parser.add_argument("--minutes", type=int, default=DEFAULT_SIMULATION_MINUTES)
+    parser.add_argument("--drones-per-base", type=int, default=2)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--weather-change-min", type=int, default=300)
+    parser.add_argument("--no-weather", action="store_true", help="Desactiva meteorologia en modo fleet.")
+    parser.add_argument("--verbose", action="store_true", help="Muestra eventos de drones y consumo.")
+    parser.add_argument("--show-inventory", action="store_true", help="Muestra inventario inicial y final.")
+    parser.add_argument("--stock-near-threshold", action="store_true", help="Arranca hospitales cerca del umbral s.")
+    parser.add_argument("--graphs", action="store_true", help="Muestra graficas matplotlib al terminar.")
+    parser.add_argument(
+        "--demand-scale",
+        type=float,
+        default=None,
+        help="Multiplicador de demanda del generador NHPP.",
+    )
+    parser.add_argument(
+        "--call-probability",
+        type=float,
+        default=DEFAULT_CALL_PROBABILITY_PER_MIN,
+        help="Compatibilidad con demos antiguas; se traduce a escala de demanda.",
+    )
+    return parser
+
+
+def list_network(red, show_hospitals=False, show_bases=False):
+    if show_hospitals:
+        print("Hospitales disponibles:")
+        for nombre in red.listar_hospitales():
+            nodo = red.obtener_hospital(nombre)
+            print(f" - {nodo.nombre} ({nodo.lat:.4f}, {nodo.lon:.4f})")
+
+    if show_bases:
+        print("Bases disponibles:")
+        for nombre in red.listar_bases():
+            nodo = red.obtener_base(nombre)
+            print(f" - {nodo.nombre} ({nodo.lat:.4f}, {nodo.lon:.4f})")
+
+
+def run_single_mode(args):
+    if not args.origin or not args.destination:
+        raise SystemExit("Modo single requiere --origin y --destination.")
+
+    request = MissionRequest(
+        origin_hospital=args.origin,
+        destination_hospital=args.destination,
+        payload_kg=args.payload,
+        battery_start_percent=args.battery,
+        ignore_weather=args.ignore_weather,
+        date=args.date,
+    )
+    result = SimulationController().simulate_mission(request)
+
+    print("=" * 58)
+    print(" RESULTADO MISION")
+    print("=" * 58)
+    print(f"Viable: {'SI' if result.feasible else 'NO'}")
+    print(f"Base seleccionada: {result.selected_base or '-'}")
+    print(f"Ruta: {request.origin_hospital} -> {request.destination_hospital}")
+    print(f"Carga: {request.payload_kg:.2f} kg")
+    print(f"Distancia base -> origen: {result.distance_base_to_origin_km:.2f} km")
+    print(f"Distancia origen -> destino: {result.distance_origin_to_destination_km:.2f} km")
+    print(f"Distancia destino -> base: {result.distance_destination_to_base_km:.2f} km")
+    print(f"Distancia total: {result.distance_total_km:.2f} km")
+    print(f"Tiempo entrega estimado: {result.estimated_delivery_time_min} min")
+    print(f"Tiempo total estimado: {result.estimated_time_min} min")
+    print(f"Bateria inicial: {result.battery_start_percent:.1f}%")
+    print(f"Bateria final estimada: {result.battery_end_percent:.1f}%")
+    print(f"Clima OK: {result.weather_ok} ({result.weather_description})")
+
+    if result.reasons:
+        print("\nMotivos / observaciones:")
+        for reason in result.reasons:
+            print(f" - {reason}")
+
+    return result
+
+
+def build_inventories(stock_near_threshold=False):
     inventarios = {}
 
-    lista_hospitales = []
-    for nombre, nodo in HOSPITALS.items():
-        inv_hosp = Inventario(es_almacen_central=False)
-        # Si esta activado, forzamos el stock a un 20% por encima del umbral s, para forzar rapida reposicion
-        if STOCK_INICIAL_CERCA_UMBRAL:
-            for nombre_prod, prod in inv_hosp.productos.items():
-                prod.stock_fisico = int(prod.umbral_s * 1.2) + 1
-        inventarios[nombre] = inv_hosp
-        lista_hospitales.append(nodo)
+    for nombre in HOSPITALS:
+        inventario = Inventario(es_almacen_central=False)
+        if stock_near_threshold:
+            for producto in inventario.productos.values():
+                producto.stock_fisico = producto.umbral_s + 1
+        inventarios[nombre] = inventario
 
-    lista_bases = []
-    for nombre, nodo in BASES.items():
+    for nombre in BASES:
         inventarios[nombre] = Inventario(es_almacen_central=True)
-        lista_bases.append(nodo)
+
+    return inventarios
+
+
+def print_inventory(title, inventarios):
+    print(f"\n--- {title} ---")
+    for nombre_hospital in HOSPITALS:
+        inv = inventarios[nombre_hospital]
+        print(f"\n{nombre_hospital}:")
+        for nombre_prod, prod in inv.productos.items():
+            marker = " [!]" if prod.stock_fisico <= prod.umbral_s else ""
+            print(
+                f"  {nombre_prod:24s} stock={prod.stock_fisico:5d} "
+                f"en_camino={prod.stock_en_camino:5d} umbral_s={prod.umbral_s:4d}{marker}"
+            )
+
+
+def resolve_demand_scale(args):
+    if args.demand_scale is not None:
+        return max(0.0, args.demand_scale)
+
+    if DEFAULT_CALL_PROBABILITY_PER_MIN <= 0:
+        return 1.0
+
+    return max(0.0, args.call_probability / DEFAULT_CALL_PROBABILITY_PER_MIN)
+
+
+def run_fleet_mode(args):
+    if args.minutes < 0:
+        raise SystemExit("--minutes debe ser mayor o igual que 0.")
+    if args.drones_per_base < 0:
+        raise SystemExit("--drones-per-base debe ser mayor o igual que 0.")
+
+    red = ServicioRed()
+    gestor_flota = GestorFlotaController(red)
+    gestor_flota.inicializar_flota(drones_por_base=args.drones_per_base)
+
+    inventarios = build_inventories(args.stock_near_threshold)
+    hospitales = list(HOSPITALS.values())
+    bases = list(BASES.values())
+    demand_scale = resolve_demand_scale(args)
 
     generador = GeneradorPedidos(
-        lista_hospitales,
-        lista_bases,
-        semilla=SEMILLA_ALEATORIA,
-        duracion_min=MINUTOS_SIMULACION,
+        hospitales,
+        bases,
+        semilla=args.seed,
+        duracion_min=args.minutes,
+        escala_demanda=demand_scale,
     )
-
-    # Cola de prioridad para gestionar los empates de llamada
     cola_pedidos = GestorPrioridad()
-
-    # Servicio de telemetría para FlyRadar
-    telemetria = TelemetriaService()
-
-    # Simulador de clima estocastico: cambia el clima periodicamente
-    clima_sim = SimuladorClima(intervalo_cambio_min=INTERVALO_CAMBIO_CLIMA_MIN, semilla=SEMILLA_ALEATORIA)
-
-    # Contadores para estadisticas de clima al final
-    conteo_clima = {}          # nombre_estado -> minutos en ese estado
-    estado_clima_anterior = None  # Para detectar cambios y mostrarlos
-
-    # 'Calendario de eventos discretos'
+    clima_sim = SimuladorClima(
+        intervalo_cambio_min=args.weather_change_min,
+        semilla=args.seed,
+    )
+    conteo_clima = {}
+    estado_clima_anterior = None
     cola_eventos_des = []
     secuencia_evento = 0
 
-    # FASE 2: BUCLE PRINCIPAL DE SIMULACION (minuto a minuto)
+    print("=" * 58)
+    print(" SIMULADOR DE RED DE DRONES HOSPITALARIOS")
+    print("=" * 58)
+    print(f"Duracion: {args.minutes} min ({args.minutes / 1440:.2f} dias)")
+    print(f"Drones/base: {args.drones_per_base}")
+    print(f"Hospitales: {len(HOSPITALS)}")
+    print(f"Bases: {len(BASES)}")
+    print(f"Semilla: {args.seed if args.seed is not None else 'aleatoria'}")
+    print(f"Escala demanda: x{demand_scale:.2f}")
+    print(f"Eventos pregenerados: {generador.total_eventos_dia()}")
+    print(f"Clima: {'desactivado' if args.no_weather else 'simulado'}")
 
-    print("=" * 60)
-    print("  SIMULADOR DE RED DE DRONES HOSPITALARIOS")
-    print("=" * 60)
-    dias = MINUTOS_SIMULACION / 1440
-    print(f"  Duracion:       {MINUTOS_SIMULACION} min  ({dias:.1f} dias)")
-    print(f"  Drones/base:    {DRONES_POR_BASE}")
-    print(f"  Hospitales:     {len(HOSPITALS)}")
-    print(f"  Bases:          {len(BASES)}")
-    semilla_str = str(SEMILLA_ALEATORIA) if SEMILLA_ALEATORIA is not None else "aleatorio (None)"
-    print(f"  Semilla:        {semilla_str}")
-    print(f"  Eventos totales pregenerados: {generador.total_eventos_dia()}  "
-          f"(~{generador.total_eventos_dia()/max(dias,1):.0f}/dia)")
-    clima_str = f"Simulado (cambio cada {clima_sim.intervalo_cambio_min} min)" if ACTIVAR_METEOROLOGIA else "Desactivado (Día normal)"
-    print(f"  Clima:          {clima_str}")
-    print("-" * 60)
-    
-    # -- Reporte de Inventario Inicial ----------------------------------------
-    print("\n--- INVENTARIO INICIAL (hospitales) ---")
-    for nombre_hospital in HOSPITALS:
-        inv = inventarios[nombre_hospital]
-        print(f"\n  {nombre_hospital}:")
-        for nombre_prod, prod in inv.productos.items():
-            print(f"    {nombre_prod:25s}  "
-                  f"stock={prod.stock_fisico:5d}  "
-                  f"umbral_s={prod.umbral_s:4d}")
-    print("-" * 60)
-    print("\nIniciando simulacion...\n")
+    if args.show_inventory:
+        print_inventory("INVENTARIO INICIAL (hospitales)", inventarios)
 
-    for minuto in range(MINUTOS_SIMULACION):
-
-        # -- PASO CLIMA: Actualizar el estado meteorologico -----------------
-        if ACTIVAR_METEOROLOGIA:
+    for minuto in range(args.minutes):
+        if args.no_weather:
+            factor_velocidad = 1.0
+        else:
             estado_clima = clima_sim.actualizar(minuto)
-            factor_vel = estado_clima.factor_velocidad
-
-            # Contabilizar minutos en cada estado (para estadisticas finales)
+            factor_velocidad = estado_clima.factor_velocidad
             conteo_clima[estado_clima.nombre] = conteo_clima.get(estado_clima.nombre, 0) + 1
-
-            # Mostrar en consola cuando el clima cambia
-            if IMPRIMIR_EVENTOS_CLIMA and estado_clima is not estado_clima_anterior:
-                print(f"  [t={minuto:05d}] CLIMA       {estado_clima.descripcion}  "
-                      f"(velocidad x{factor_vel:.2f})")
+            if args.verbose and estado_clima is not estado_clima_anterior:
+                print(
+                    f"[t={minuto:05d}] CLIMA      {estado_clima.descripcion} "
+                    f"(velocidad x{factor_velocidad:.2f})"
+                )
             estado_clima_anterior = estado_clima
-        else:
-            factor_vel = 1.0
 
-        # -- PASO A: Procesar eventos DES vencidos ----------------------------
-        # Los eventos del heap que ya "ocurrieron" (su tiempo <= minuto actual)
-        # se procesan en orden cronologico.
-        while cola_eventos_des and cola_eventos_des[0][0] <= minuto:
-            evento = heapq.heappop(cola_eventos_des)
-            if len(evento) == 4:
-                _, _, tipo_evento, id_dron = evento
-                decision = None
-            else:
-                _, _, tipo_evento, id_dron, decision = evento
+        secuencia_evento = process_due_events(
+            cola_eventos_des,
+            gestor_flota,
+            inventarios,
+            minuto,
+            secuencia_evento,
+            args.verbose,
+        )
 
-            if tipo_evento == "llegada_hospital":
-                eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
-                    id_dron, minuto, decision
-                )
-                if pedido_ok and pedido_ok.producto:
-                    inventarios[pedido_ok.destination_hospital].recibir_dron(pedido_ok.producto, pedido_ok.unidades)
-                # Registrar tramo VUELTA en telemetría
-                dron_obj = gestor_flota.drones[id_dron]
-                telemetria.registrar_tramo(
-                    id_dron=id_dron,
-                    nombre_origen=pedido_ok.destination_hospital if pedido_ok else dron_obj.current_node,
-                    nombre_destino=dron_obj.base_name,
-                    t_salida=minuto,
-                    t_llegada=eta_base,
-                    tipo_trayecto="vuelta",
-                    bateria_inicial=dron_obj.battery_percent,
-                    clima=estado_clima.nombre if ACTIVAR_METEOROLOGIA else "dia_normal",
-                )
-                # Programamos regreso a base
-                secuencia_evento += 1
-                heapq.heappush(cola_eventos_des, (
-                    eta_base, secuencia_evento, "aterrizaje_base", id_dron, None
-                ))
-                if IMPRIMIR_EVENTOS_DRONES:
-                    print(f"  [t={minuto:05d}] DESCARGA    {id_dron} en {pedido_ok.destination_hospital} "
-                          f"-> regreso ETA={eta_base:.0f}")
+        generador.procesar_minuto(
+            minuto,
+            inventarios,
+            cola_pedidos,
+            verbose=args.verbose,
+        )
 
-            elif tipo_evento == "aterrizaje_base":
-                bat_antes = gestor_flota.drones[id_dron].battery_percent
-                tiempo_fin_recarga = gestor_flota.procesar_evento_aterrizaje_base(id_dron, minuto)
-                if tiempo_fin_recarga is not None:
-                    secuencia_evento += 1
-                    heapq.heappush(cola_eventos_des, (
-                        tiempo_fin_recarga, secuencia_evento, "fin_recarga", id_dron, None
-                    ))
-                    if IMPRIMIR_EVENTOS_DRONES:
-                        print(f"  [t={minuto:05d}] ATERRIZAJE  {id_dron} en base bat={bat_antes:.1f}% -> RECARGA ETA={tiempo_fin_recarga:.0f}")
-                else:
-                    if IMPRIMIR_EVENTOS_DRONES:
-                        print(f"  [t={minuto:05d}] ATERRIZAJE  {id_dron} en base bat={bat_antes:.1f}% -> DISPONIBLE")
+        secuencia_evento = dispatch_pending_orders(
+            cola_pedidos,
+            cola_eventos_des,
+            gestor_flota,
+            inventarios,
+            minuto,
+            factor_velocidad,
+            secuencia_evento,
+            args.verbose,
+        )
 
-            elif tipo_evento == "fin_recarga":
-                gestor_flota.procesar_evento_fin_recarga(id_dron)
-                if IMPRIMIR_EVENTOS_DRONES:
-                    print(f"  [t={minuto:05d}] FIN RECARGA {id_dron} bat=100.0% -> DISPONIBLE")
+    drain_remaining_events(cola_eventos_des, gestor_flota, inventarios, args.verbose)
+    print_fleet_summary(
+        gestor_flota,
+        generador,
+        cola_pedidos,
+        inventarios,
+        conteo_clima,
+        clima_sim,
+        args,
+    )
 
-        # PASO B: Consumo de inventario y generacion de pedidos 
-        # GeneradorPedidos procesa los eventos de consumo pregenerados para
-        # este minuto. Si algun producto cae al umbral s, se crea un
-        # DeliveryCall y se encola automaticamente en cola_pedidos.
-        generador.procesar_minuto(minuto, inventarios, cola_pedidos, verbose=IMPRIMIR_EVENTOS_HOSPITAL)
+    if args.graphs:
+        from services.visualizaciones import mostrar_graficas_resultados
 
-        # -- PASO C: Despachar pedidos pendientes 
-        # Intentamos asignar drones a los pedidos en orden de prioridad.
-        # Si no hay drones disponibles, paramos (los pedidos quedan en cola).
-        while cola_pedidos.size() > 0:
-            # Verificamos si hay al menos un dron disponible antes de sacar el pedido
-            resumen = gestor_flota.obtener_resumen_estado()
-            if resumen["available"] == 0:
-                break  # No hay drones, los pedidos esperan al siguiente minuto
+        mostrar_graficas_resultados(
+            gestor_flota=gestor_flota,
+            total_generados=generador._contador_pedidos,
+            minutos_simulacion=args.minutes,
+        )
 
-            # Extraemos el pedido de mayor prioridad
-            pedido = cola_pedidos.obtener_siguiente_pedido()
-
-            # El gestor de flota intenta asignar el mejor dron disponible.
-            # Retorna el ETA (tiempo de llegada) o None si no es viable.
-            resultado = gestor_flota.procesar_nuevo_pedido(pedido, minuto, factor_vel)
-
-            if resultado is not None:
-                eta_ida, decision = resultado
-                id_dron_asignado = pedido.assigned_drone_id
-                bat_pre = 100.0  
-                bat_post = gestor_flota.drones[id_dron_asignado].battery_percent
-
-                if pedido.producto:
-                    inventarios[pedido.origin_hospital].enviar_dron(pedido.producto, pedido.unidades)
-
-                # Registrar tramo IDA en telemetría
-                telemetria.registrar_tramo(
-                    id_dron=id_dron_asignado,
-                    nombre_origen=pedido.origin_hospital,
-                    nombre_destino=pedido.destination_hospital,
-                    t_salida=minuto,
-                    t_llegada=eta_ida,
-                    tipo_trayecto="ida",
-                    bateria_inicial=decision.battery_before_percent,
-                    clima=estado_clima.nombre if ACTIVAR_METEOROLOGIA else "dia_normal",
-                )
-
-                secuencia_evento += 1
-                heapq.heappush(cola_eventos_des, (
-                    eta_ida, secuencia_evento, "llegada_hospital", id_dron_asignado, decision
-                ))
-                if IMPRIMIR_EVENTOS_DRONES:
-                    print(f"  [t={minuto:05d}] DESPACHO    {id_dron_asignado} "
-                          f"bat->{bat_post:.1f}% "
-                          f"| {pedido.producto} x{pedido.unidades} "
-                          f"-> {pedido.destination_hospital}  ETA={eta_ida:.0f}")
-            else:
-                if IMPRIMIR_EVENTOS_DRONES:
-                    print(f"  [t={minuto:05d}] RECHAZO     pedido #{pedido.call_id} "
-                          f"({pedido.producto} x{pedido.unidades})")
+    return FleetRunResult(
+        gestor_flota=gestor_flota,
+        generador=generador,
+        cola_pedidos=cola_pedidos,
+        inventarios=inventarios,
+        conteo_clima=conteo_clima,
+        clima_sim=clima_sim,
+    )
 
 
-    # FASE 3: PROCESAR EVENTOS DES RESTANTES (post-simulacion)
-    # Algunos drones aun estan volando o recargando al terminar el bucle.
-    # Los procesamos para que las estadisticas reflejen entregas completadas.
-    while cola_eventos_des:
-        evento = heapq.heappop(cola_eventos_des)
-        if len(evento) == 4:
-            _, _, tipo_evento, id_dron = evento
-            decision = None
-        else:
-            _, _, tipo_evento, id_dron, decision = evento
+def process_due_events(
+    cola_eventos_des,
+    gestor_flota,
+    inventarios,
+    minuto,
+    secuencia_evento,
+    verbose,
+):
+    while cola_eventos_des and cola_eventos_des[0][0] <= minuto:
+        event_time, _, tipo_evento, id_dron, decision = heapq.heappop(cola_eventos_des)
 
         if tipo_evento == "llegada_hospital":
-            eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(id_dron, MINUTOS_SIMULACION, decision)
+            eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
+                id_dron, event_time, decision
+            )
             if pedido_ok and pedido_ok.producto:
-                inventarios[pedido_ok.destination_hospital].recibir_dron(pedido_ok.producto, pedido_ok.unidades)
-            gestor_flota.procesar_evento_aterrizaje_base(id_dron, MINUTOS_SIMULACION)
+                inventarios[pedido_ok.destination_hospital].recibir_dron(
+                    pedido_ok.producto,
+                    pedido_ok.unidades,
+                )
+            secuencia_evento += 1
+            heapq.heappush(
+                cola_eventos_des,
+                (eta_base, secuencia_evento, "aterrizaje_base", id_dron, None),
+            )
+            if verbose and pedido_ok:
+                print(
+                    f"[t={minuto:05d}] DESCARGA   {id_dron} en "
+                    f"{pedido_ok.destination_hospital} -> regreso ETA={eta_base:.0f}"
+                )
+
         elif tipo_evento == "aterrizaje_base":
-            gestor_flota.procesar_evento_aterrizaje_base(id_dron, MINUTOS_SIMULACION)
+            battery_before = gestor_flota.drones[id_dron].battery_percent
+            recharge_end = gestor_flota.procesar_evento_aterrizaje_base(id_dron, event_time)
+            if recharge_end is not None:
+                secuencia_evento += 1
+                heapq.heappush(
+                    cola_eventos_des,
+                    (recharge_end, secuencia_evento, "fin_recarga", id_dron, None),
+                )
+                if verbose:
+                    print(
+                        f"[t={minuto:05d}] ATERRIZAJE {id_dron} "
+                        f"bat={battery_before:.1f}% -> RECARGA ETA={recharge_end:.0f}"
+                    )
+            elif verbose:
+                print(
+                    f"[t={minuto:05d}] ATERRIZAJE {id_dron} "
+                    f"bat={battery_before:.1f}% -> DISPONIBLE"
+                )
+
+        elif tipo_evento == "fin_recarga":
+            gestor_flota.procesar_evento_fin_recarga(id_dron)
+            if verbose:
+                print(f"[t={minuto:05d}] FIN RECARGA {id_dron} bat=100.0% -> DISPONIBLE")
+
+    return secuencia_evento
+
+
+def dispatch_pending_orders(
+    cola_pedidos,
+    cola_eventos_des,
+    gestor_flota,
+    inventarios,
+    minuto,
+    factor_velocidad,
+    secuencia_evento,
+    verbose,
+):
+    while cola_pedidos.size() > 0:
+        resumen = gestor_flota.obtener_resumen_estado()
+        if resumen["available"] == 0:
+            break
+
+        pedido = cola_pedidos.obtener_siguiente_pedido()
+        resultado = gestor_flota.procesar_nuevo_pedido(
+            pedido,
+            minuto,
+            factor_velocidad,
+        )
+
+        if resultado is None:
+            if verbose:
+                print(
+                    f"[t={minuto:05d}] RECHAZO    pedido #{pedido.call_id} "
+                    f"({pedido.producto} x{pedido.unidades})"
+                )
+            continue
+
+        eta_ida, decision = resultado
+        id_dron = pedido.assigned_drone_id
+
+        if pedido.producto and pedido.origin_hospital in inventarios:
+            inventarios[pedido.origin_hospital].enviar_dron(
+                pedido.producto,
+                pedido.unidades,
+            )
+
+        secuencia_evento += 1
+        heapq.heappush(
+            cola_eventos_des,
+            (eta_ida, secuencia_evento, "llegada_hospital", id_dron, decision),
+        )
+
+        if verbose:
+            print(
+                f"[t={minuto:05d}] DESPACHO   {id_dron} bat="
+                f"{decision.battery_before_percent:.1f}%->{decision.battery_after_percent:.1f}% "
+                f"| {pedido.producto} x{pedido.unidades} "
+                f"{pedido.origin_hospital} -> {pedido.destination_hospital} ETA={eta_ida:.0f}"
+            )
+
+    return secuencia_evento
+
+
+def drain_remaining_events(cola_eventos_des, gestor_flota, inventarios, verbose):
+    while cola_eventos_des:
+        event_time, _, tipo_evento, id_dron, decision = heapq.heappop(cola_eventos_des)
+
+        if tipo_evento == "llegada_hospital":
+            eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
+                id_dron,
+                event_time,
+                decision,
+            )
+            if pedido_ok and pedido_ok.producto:
+                inventarios[pedido_ok.destination_hospital].recibir_dron(
+                    pedido_ok.producto,
+                    pedido_ok.unidades,
+                )
+            recharge_end = gestor_flota.procesar_evento_aterrizaje_base(id_dron, eta_base)
+            if recharge_end is not None:
+                gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+        elif tipo_evento == "aterrizaje_base":
+            recharge_end = gestor_flota.procesar_evento_aterrizaje_base(id_dron, event_time)
+            if recharge_end is not None:
+                gestor_flota.procesar_evento_fin_recarga(id_dron)
+
         elif tipo_evento == "fin_recarga":
             gestor_flota.procesar_evento_fin_recarga(id_dron)
 
-    # FASE 4: METRICAS DE RENDIMIENTO
+    if verbose:
+        print("Eventos restantes procesados tras el horizonte de simulacion.")
+
+
+def print_fleet_summary(
+    gestor_flota,
+    generador,
+    cola_pedidos,
+    inventarios,
+    conteo_clima,
+    clima_sim,
+    args,
+):
     estadisticas = gestor_flota.estadisticas
-    resumen_flota = gestor_flota.obtener_resumen_estado()
+    resumen = gestor_flota.obtener_resumen_estado()
+    total_generated = generador._contador_pedidos
+    dias = args.minutes / 1440 if args.minutes else 0
 
-    print("\n" + "=" * 60)
-    print("  RESULTADOS DE LA SIMULACION")
-    print("=" * 60)
+    print("\n" + "=" * 58)
+    print(" FIN SIMULACION")
+    print("=" * 58)
+    print(f"Total pedidos generados: {total_generated}")
+    print(f"Procesados por flota: {estadisticas.total_calls}")
+    print(f"Asignados: {estadisticas.assigned_calls}")
+    print(f"Rechazados: {estadisticas.rejected_calls}")
+    print(f"Completados: {estadisticas.completed_calls}")
+    print(f"Pendientes en cola: {cola_pedidos.size()}")
+    if estadisticas.total_calls:
+        print(f"Tasa de servicio: {(estadisticas.completed_calls / estadisticas.total_calls) * 100:.1f}%")
+    if dias:
+        print(f"Entregas/dia: {estadisticas.completed_calls / dias:.1f}")
 
-    # Metricas de pedidos
-    total_gen = generador._contador_pedidos   # pedidos realmente generados por NHPP
-    print("\n--- PEDIDOS ---")
-    print(f"  Pedidos generados (NHPP):   {total_gen}")
-    print(f"  Pedidos procesados:         {estadisticas.total_calls}")
-    print(f"  Pedidos asignados (OK):     {estadisticas.assigned_calls}")
-    print(f"  Pedidos rechazados:         {estadisticas.rejected_calls}")
-    print(f"  Pedidos completados:        {estadisticas.completed_calls}")
-    print(f"  Pedidos aun en cola:        {cola_pedidos.size()}")
-    dias_sim = MINUTOS_SIMULACION / 1440
-    if estadisticas.total_calls > 0:
-        tasa_servicio = (estadisticas.completed_calls / estadisticas.total_calls) * 100
-        print(f"  Tasa de servicio:           {tasa_servicio:.1f}%")
-    if dias_sim > 0:
-        print(f"  Entregas/dia (completadas): {estadisticas.completed_calls/dias_sim:.1f}")
+    print("\n--- FLOTA ---")
+    print(f"Disponibles: {resumen['available']}")
+    print(f"En mision: {resumen['mission']}")
+    print(f"Regresando: {resumen['returning']}")
+    print(f"Recargando: {resumen['charging']}")
 
-    # Estado final de la flota 
-    print("\n--- FLOTA DE DRONES ---")
-    print(f"  Disponibles:  {resumen_flota['available']}")
-    print(f"  En mision:    {resumen_flota['mission']}")
-    print(f"  Recargando:   {resumen_flota['charging']}")
+    print("\nDetalle por dron:")
+    for id_dron, dron in sorted(gestor_flota.drones.items()):
+        vuelo = (dron.flight_minutes / args.minutes) * 100 if args.minutes else 0
+        carga = (dron.charging_minutes / args.minutes) * 100 if args.minutes else 0
+        disponible = max(0.0, 100.0 - vuelo - carga)
+        print(
+            f"  {id_dron}: bat={dron.battery_percent:5.1f}% estado={dron.status:10s} "
+            f"entregas={dron.deliveries_made:3d} vuelo={vuelo:5.1f}% "
+            f"carga={carga:5.1f}% disp={disponible:5.1f}%"
+        )
 
-    # Detalle por dron
-    print("\n  Detalle y utilizacion por dron:")
-    for id_dron, d in sorted(gestor_flota.drones.items()):
-        u_vuelo  = (d.flight_minutes / MINUTOS_SIMULACION) * 100 if MINUTOS_SIMULACION else 0
-        u_recarg = (d.charging_minutes / MINUTOS_SIMULACION) * 100 if MINUTOS_SIMULACION else 0
-        u_disp   = 100.0 - u_vuelo - u_recarg
-        print(f"    {id_dron}: bat={d.battery_percent:5.1f}%  estado={d.status:10s} "
-              f"| entregas={d.deliveries_made:2d} "
-              f"| vuelo={u_vuelo:4.1f}%  carga={u_recarg:4.1f}%  disp={u_disp:4.1f}%")
+    if args.show_inventory:
+        print_inventory("INVENTARIO FINAL (hospitales)", inventarios)
 
-    # Inventario final de cada hospital
-    print("\n--- INVENTARIO FINAL (hospitales) ---")
-    for nombre_hospital in HOSPITALS:
-        inv = inventarios[nombre_hospital]
-        print(f"\n  {nombre_hospital}:")
-        for nombre_prod, prod in inv.productos.items():
-            indicador = " [!]" if prod.stock_fisico <= prod.umbral_s else ""
-            print(f"    {nombre_prod:25s}  "
-                  f"stock={prod.stock_fisico:5d}  "
-                  f"en_camino={prod.stock_en_camino:5d}  "
-                  f"umbral_s={prod.umbral_s:4d}{indicador}")
-
-    # Estadisticas meteorologicas
-    if ACTIVAR_METEOROLOGIA:
-        print("\n--- METEOROLOGIA (simulada) ---")
-        from simulators.simulador_clima import ESTADOS_CLIMA
+    if not args.no_weather:
+        print("\n--- METEOROLOGIA ---")
         for estado in ESTADOS_CLIMA:
-            minutos_en_estado = conteo_clima.get(estado.nombre, 0)
-            porcentaje = (minutos_en_estado / MINUTOS_SIMULACION) * 100 if MINUTOS_SIMULACION else 0
-            print(f"  {estado.descripcion:25s}  "
-                  f"{minutos_en_estado:5d} min  ({porcentaje:5.1f}%)  "
-                  f"vel. x{estado.factor_velocidad:.2f}")
-        print(f"\n  Cambios de clima registrados: {len(clima_sim.historial)}")
+            minutos = conteo_clima.get(estado.nombre, 0)
+            pct = (minutos / args.minutes) * 100 if args.minutes else 0
+            print(
+                f"{estado.nombre:16s} {minutos:5d} min ({pct:5.1f}%) "
+                f"vel. x{estado.factor_velocidad:.2f}"
+            )
+        print(f"Cambios registrados: {len(clima_sim.historial)}")
 
-    print("\n" + "=" * 60)
-    print("  FIN DE LA SIMULACION")
-    print("=" * 60)
 
-    # FASE 5: EXPORTAR TELEMETRÍA PARA FLYRADAR
-    telemetria.exportar_json("telemetria_vuelos.json")
+def main(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
-    # FASE 6: GRÁFICAS Y VISUALIZACIONES
-    try:
-        from services.visualizaciones import mostrar_graficas_resultados
-        print("\n  Generando gráficas de resultados...")
-        mostrar_graficas_resultados(gestor_flota, total_gen, MINUTOS_SIMULACION)
-    except ImportError as e:
-        print(f"\n  [Aviso] No se pudieron generar las gráficas. ¿Está instalado matplotlib? Error: {e}")
+    red = ServicioRed()
+    if args.list_hospitals or args.list_bases:
+        list_network(
+            red,
+            show_hospitals=args.list_hospitals,
+            show_bases=args.list_bases,
+        )
+        return 0
 
-# PUNTO DE ENTRADA
+    if args.mode == "single":
+        run_single_mode(args)
+    else:
+        run_fleet_mode(args)
+
+    return 0
+
+
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

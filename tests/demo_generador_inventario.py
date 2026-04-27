@@ -58,8 +58,11 @@ print("----------------------------------------------")
 gen = GeneradorPedidos(hospitales, bases, semilla=42)
 print(f"  Eventos de consumo pregenerados para el dia: {gen.total_eventos_dia()}")
 
-from collections import Counter
-conteo = Counter(ev["producto"] for evs in gen._agenda.values() for ev in evs)
+conteo = {}
+for evs in gen._agenda.values():
+    for ev in evs:
+        producto = ev["producto"]
+        conteo[producto] = conteo.get(producto, 0) + 1
 print()
 print("  Distribucion por producto:")
 for prod_nombre, n in sorted(conteo.items(), key=lambda x: -x[1]):

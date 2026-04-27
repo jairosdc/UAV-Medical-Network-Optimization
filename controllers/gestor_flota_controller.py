@@ -1,7 +1,7 @@
 from models.clases_models import Drone, DeliveryCall, SimulationStats
 from services.cargar_drone_service import calcular_tiempo_recarga_completa
 from services.optimizador_asignacion_service import ServicioDespacho
-from parametros_globales import BATERIA_MINIMA_VUELO
+from parametros_globales import BATERIA_MINIMA_VUELO, CHARGE_TO_FULL
 
 
 class GestorFlotaController:
@@ -180,7 +180,13 @@ class GestorFlotaController:
         # Decidimos dejarlo en 35% porque la gran mayoría de trayectos gastan un 15% de batería.
         # De esta forma, cualquier dron 'available' tiene energía suficiente para completar
         # un viaje típico sin saltarse la norma de  seguridad obligatoria del 20% para poder volar.
-        if dron.battery_percent < (BATERIA_MINIMA_VUELO + 15.0):
+        debe_recargar = (
+            dron.battery_percent < 100.0
+            if CHARGE_TO_FULL
+            else dron.battery_percent < (BATERIA_MINIMA_VUELO + 15.0)
+        )
+
+        if debe_recargar:
             dron.status = "charging"
 
             minutos_recarga = calcular_tiempo_recarga_completa(dron.battery_percent)
