@@ -63,6 +63,33 @@ class DispatchDecision:
 
 
 @dataclass
+class MissionRequest:
+    origin_hospital: str
+    destination_hospital: str
+    payload_kg: float
+    battery_start_percent: float = 100.0
+    ignore_weather: bool = True
+    date: Optional[str] = None
+
+
+@dataclass
+class MissionResult:
+    feasible: bool
+    selected_base: Optional[str]
+    distance_base_to_origin_km: float
+    distance_origin_to_destination_km: float
+    distance_destination_to_base_km: float
+    distance_total_km: float
+    estimated_time_min: int
+    estimated_delivery_time_min: int
+    battery_start_percent: float
+    battery_end_percent: float
+    weather_ok: bool
+    weather_description: str = "Sin meteorologia"
+    reasons: List[str] = field(default_factory=list)
+
+
+@dataclass
 class SimulationStats:
     total_calls: int = 0
     assigned_calls: int = 0
