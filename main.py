@@ -22,10 +22,10 @@ MINUTOS_SIMULACION        = 525600
 DRONES_POR_BASE           = 2
 SEMILLA_ALEATORIA         = None
 IMPRIMIR_EVENTOS_DRONES   = True
-IMPRIMIR_EVENTOS_HOSPITAL = False
+IMPRIMIR_EVENTOS_HOSPITAL = True
 IMPRIMIR_EVENTOS_CLIMA    = True
 INTERVALO_CAMBIO_CLIMA_MIN = 300
-STOCK_INICIAL_CERCA_UMBRAL = False
+STOCK_INICIAL_CERCA_UMBRAL = True
 ACTIVAR_METEOROLOGIA      = True
 
 from hospitales_almacenes_data import HOSPITALS, BASES
@@ -658,6 +658,17 @@ def main():
             f"¿Esta instalado matplotlib? Error: {e}"
         )
 
+    total_vuelo = sum(d.flight_minutes for d in gestor_flota.drones.values())
+    total_recarga = sum(d.charging_minutes for d in gestor_flota.drones.values())
+    total_tiempo_flota = len(gestor_flota.drones) * MINUTOS_SIMULACION
+
+    print("DEBUG UTILIZACION")
+    print("Drones:", len(gestor_flota.drones))
+    print("Minutos simulacion:", MINUTOS_SIMULACION)
+    print("Tiempo total flota:", total_tiempo_flota)
+    print("Minutos vuelo:", total_vuelo)
+    print("Minutos recarga:", total_recarga)
+    print("Vuelo %:", total_vuelo / total_tiempo_flota * 100)
 
 # PUNTO DE ENTRADA
 if __name__ == "__main__":

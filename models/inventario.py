@@ -64,11 +64,19 @@ class Inventario:
     Importante:
     - Los órganos NO pertenecen al inventario.
     - Los órganos deben gestionarse como pedidos especiales hospital-hospital.
+
+    Además:
+    - Se registra si un producto ha llegado a stock cero.
+    - Ese indicador permite saber si una reposición llegó tarde.
     """
 
     def __init__(self, es_almacen_central: bool = False):
         self.es_almacen = es_almacen_central
         self.productos = {}
+
+        # stockout_activo[producto] = True significa:
+        # "este producto llegó a cero antes de recibir reposición".
+        self.stockout_activo = {}
 
         self._inicializar_stocks()
 
@@ -79,8 +87,10 @@ class Inventario:
             self.productos[nombre] = Producto(
                 stock_fisico=datos["inicial"] * multiplicador,
                 umbral_s=0 if self.es_almacen else datos["s"],
-                cantidad_a_pedir_Q=datos["Q"]
+                cantidad_a_pedir_Q=datos["Q"],
             )
+
+            self.stockout_activo[nombre] = False
 
     def _validar_no_es_organo(self, nombre_producto: str):
         """
@@ -104,13 +114,16 @@ class Inventario:
         """
         Registra consumo interno de un producto hospitalario.
 
-        Solo aplica a productos inventariables.
-        Los órganos no pueden consumirse desde inventario.
+        Devuelve:
+        - 0 si no hay que reponer.
+        - Q si el producto cae bajo el umbral s y se debe generar reposición.
+
+        Si el stock físico llega a cero, se activa stockout_activo.
         """
 
         self._validar_no_es_organo(nombre_producto)
 
-        # Los almacenes no tienen consumo.
+        # Los almacenes centrales no consumen productos.
         if self.es_almacen:
             return 0
 
@@ -124,6 +137,12 @@ class Inventario:
             producto.stock_fisico - cantidad_consumida
         )
 
+        # Si el producto llega a cero, el hospital ha sufrido stockout.
+        if producto.stock_fisico == 0:
+            self.stockout_activo[nombre_producto] = True
+
+        # Política (s, Q):
+        # si el stock total estimado cae bajo el umbral, se lanza reposición.
         if producto.stock_total_estimado <= producto.umbral_s:
             producto.stock_en_camino += producto.cantidad_a_pedir_Q
             return producto.cantidad_a_pedir_Q
@@ -148,7 +167,17 @@ class Inventario:
             return False
 
         producto = self.productos[nombre_producto]
-        producto.stock_fisico = max(0, producto.stock_fisico - cantidad)
+
+        producto.stock_fisico = max(
+            0,
+            producto.stock_fisico - cantidad
+        )
+
+        # También puede haber stockout en almacén si se agota.
+        # En principio no debería pasar por FACTOR_ESCALA_ALMACEN,
+        # pero lo registramos por coherencia.
+        if producto.stock_fisico == 0:
+            self.stockout_activo[nombre_producto] = True
 
         return True
 
@@ -158,6 +187,10 @@ class Inventario:
 
         Solo aplica a productos inventariables.
         Los órganos no pueden recibirse como stock.
+
+        Devuelve:
+        - True si el producto existía y se recibió.
+        - False si el producto no existe.
         """
 
         self._validar_no_es_organo(nombre_producto)
@@ -173,4 +206,70 @@ class Inventario:
             producto.stock_en_camino - cantidad
         )
 
+        # Una vez recibida la reposición, se limpia el stockout.
+        self.limpiar_stockout(nombre_producto)
+
         return True
+
+    def hay_stockout_activo(self, nombre_producto: str) -> bool:
+        """
+        Devuelve True si ese producto ha llegado a cero antes de recibir reposición.
+
+        Esto sirve para decidir si un pedido de inventario llegó tarde.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
+
+        return self.stockout_activo.get(nombre_producto, False)
+
+    def limpiar_stockout(self, nombre_producto: str):
+        """
+        Limpia el indicador de stockout después de recibir reposición.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
+
+        if nombre_producto in self.stockout_activo:
+            self.stockout_activo[nombre_producto] = False
+
+    def obtener_stock_fisico(self, nombre_producto: str) -> int:
+        """
+        Devuelve el stock físico actual de un producto.
+
+        Si el producto no existe, devuelve 0.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
+
+        if nombre_producto not in self.productos:
+            return 0
+
+        return self.productos[nombre_producto].stock_fisico
+
+    def obtener_stock_en_camino(self, nombre_producto: str) -> int:
+        """
+        Devuelve el stock actualmente en camino de un producto.
+
+        Si el producto no existe, devuelve 0.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
+
+        if nombre_producto not in self.productos:
+            return 0
+
+        return self.productos[nombre_producto].stock_en_camino
+
+    def obtener_stock_total_estimado(self, nombre_producto: str) -> int:
+        """
+        Devuelve stock físico + stock en camino.
+
+        Si el producto no existe, devuelve 0.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
+
+        if nombre_producto not in self.productos:
+            return 0
+
+        return self.productos[nombre_producto].stock_total_estimado

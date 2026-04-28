@@ -80,12 +80,11 @@ class ServicioDespacho:
 
             tiempo_total = tiempo_ida + tiempo_vuelta
 
-            # Si el pedido tiene deadline, descartamos drones que llegarían tarde.
-            # Esto es especialmente importante para órganos.
             eta_entrega = tiempo_actual + tiempo_ida
 
-            if eta_entrega > pedido.deadline_min:
-                continue
+            # No descartamos pedidos por llegar tarde.
+            # La tardanza se mide al completar la entrega.
+            # Si un órgano llega después de su isquemia, contará como organ_late.
 
             try:
                 bateria_despues_ida = calcular_bateria_restante(
