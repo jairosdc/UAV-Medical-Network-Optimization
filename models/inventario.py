@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
-# Configuracion inicial de todos los inventarios
+
+# ---------------------------------------------------------------------------
+# Productos que SI pertenecen al inventario
+# ---------------------------------------------------------------------------
+
 CONFIG_INVENTARIO = {
     "sangre":              {"inicial": 20,   "s": 8,   "Q": 15},
     "farmaco_uci":         {"inicial": 12,   "s": 5,   "Q": 10},
@@ -10,6 +14,22 @@ CONFIG_INVENTARIO = {
     "analgesico":          {"inicial": 100,  "s": 40,  "Q": 60},
     "material_sanitario":  {"inicial": 150,  "s": 60,  "Q": 80},
     "medicamento_general": {"inicial": 90,   "s": 35,  "Q": 55},
+}
+
+
+# ---------------------------------------------------------------------------
+# Productos que NO deben entrar nunca en inventario
+# ---------------------------------------------------------------------------
+# Los órganos son eventos críticos interhospitalarios.
+# No tienen stock inicial, ni umbral s, ni cantidad Q.
+# Si aparecen aquí por error, el programa debe avisar claramente.
+
+ORGANOS_NO_INVENTARIABLES = {
+    "corazon",
+    "pulmon",
+    "rinon",
+    "pancreas",
+    "higado",
 }
 
 
@@ -40,6 +60,10 @@ class Inventario:
     En almacenes:
     - no se activa reposición,
     - solo se descuenta stock cuando sale un dron.
+
+    Importante:
+    - Los órganos NO pertenecen al inventario.
+    - Los órganos deben gestionarse como pedidos especiales hospital-hospital.
     """
 
     def __init__(self, es_almacen_central: bool = False):
@@ -58,9 +82,35 @@ class Inventario:
                 cantidad_a_pedir_Q=datos["Q"]
             )
 
-    def registrar_consumo(self, nombre_producto: str, cantidad_consumida: int):
+    def _validar_no_es_organo(self, nombre_producto: str):
+        """
+        Evita que un órgano sea tratado como inventario.
 
-        # Los almacenes no tienen consumo
+        Si esto salta, significa que en algún punto del código se está intentando:
+        - consumir un órgano,
+        - descontar un órgano de un almacén,
+        - recibir un órgano como stock hospitalario.
+
+        Eso sería incorrecto en este modelo.
+        """
+        if nombre_producto in ORGANOS_NO_INVENTARIABLES:
+            raise ValueError(
+                f"ERROR DE MODELO: '{nombre_producto}' es un órgano y no debe "
+                f"gestionarse como inventario. Debe tratarse como un pedido "
+                f"especial interhospitalario."
+            )
+
+    def registrar_consumo(self, nombre_producto: str, cantidad_consumida: int):
+        """
+        Registra consumo interno de un producto hospitalario.
+
+        Solo aplica a productos inventariables.
+        Los órganos no pueden consumirse desde inventario.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
+
+        # Los almacenes no tienen consumo.
         if self.es_almacen:
             return 0
 
@@ -84,10 +134,16 @@ class Inventario:
         """
         Descuenta stock cuando un dron sale con un producto.
 
+        Solo aplica a productos inventariables.
+        Los órganos no pueden salir desde inventario.
+
         Devuelve:
         - True si el producto existía y se pudo descontar.
         - False si el producto no existe.
         """
+
+        self._validar_no_es_organo(nombre_producto)
+
         if nombre_producto not in self.productos:
             return False
 
@@ -97,6 +153,14 @@ class Inventario:
         return True
 
     def recibir_dron(self, nombre_producto: str, cantidad: int):
+        """
+        Aumenta stock cuando llega un dron con reposición.
+
+        Solo aplica a productos inventariables.
+        Los órganos no pueden recibirse como stock.
+        """
+
+        self._validar_no_es_organo(nombre_producto)
 
         if nombre_producto not in self.productos:
             return False

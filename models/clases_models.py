@@ -38,13 +38,14 @@ class DeliveryCall:
     origin_hospital: str
     destination_hospital: str
     payload_kg: float
-    priority: int   # 0=Organo, 1=alta, 2=media, 3=baja
-    status: str = "pending"  # pending, assigned, completed, rejected
+    priority: int
+    status: str = "pending"
     assigned_drone_id: str | None = None
     rejection_reason: str | None = None
     producto: str | None = None
     unidades: int = 0
     deadline_min: float = math.inf
+    tipo_pedido: str = "inventario"  # "inventario" u "organo"
 
 
 @dataclass
@@ -64,10 +65,21 @@ class DispatchDecision:
 
 @dataclass
 class SimulationStats:
+    # Estadísticas generales
     total_calls: int = 0
     assigned_calls: int = 0
     rejected_calls: int = 0
     completed_calls: int = 0
+
+    # Estadísticas por prioridad
     high_priority_calls: int = 0
     medium_priority_calls: int = 0
     low_priority_calls: int = 0
+
+    # Estadísticas específicas de órganos
+    organ_calls: int = 0      
+    organ_assigned: int = 0     
+    organ_completed: int = 0
+    organ_rejected: int = 0    
+    organ_on_time: int = 0    
+    organ_late: int = 0      

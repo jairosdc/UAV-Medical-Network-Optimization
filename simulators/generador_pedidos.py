@@ -188,26 +188,17 @@ class GeneradorPedidos:
             # ---- LÓGICA 2: Vuelo Directo Hospital-Hospital (Prioridad Absoluta) ----
             elif tipo_evento == "organo":
                 if verbose:
-                    print(f"  [!] CÓDIGO ROJO [t={minuto_actual:04d}]: Órgano disponible ({producto}) en {hospital_origen.nombre}")
-                
-                # Muestreo uniforme: P(h_j) = 1 / |H_dest| excluyendo el nodo donante
-                posibles_destinos = [h for h in self.hospitales if h.nombre != hospital_origen.nombre]
-                hospital_destino = random.choice(posibles_destinos)
-                
-                parametros_org = CONFIGURACION_ORGANOS[producto]
-                
-                self._contador_pedidos += 1
-                pedido_organo = DeliveryCall(
-                    call_id=self._contador_pedidos,
-                    timestamp_min=minuto_actual,
-                    origin_hospital=hospital_origen.nombre,
-                    destination_hospital=hospital_destino.nombre,
-                    payload_kg=parametros_org["peso_kg"],
-                    priority=PRIORIDAD_PRODUCTO[producto],
+                    print(
+                        f"  [!] CÓDIGO ROJO [t={minuto_actual:04d}]: "
+                        f"Órgano disponible ({producto}) en {hospital_origen.nombre}"
+                    )
+
+                pedido_organo = self._crear_pedido_organo(
+                    hospital_origen=hospital_origen,
                     producto=producto,
-                    unidades=1,
-                    deadline_min=minuto_actual + parametros_org["isquemia_min"]
+                    minuto_actual=minuto_actual
                 )
+
                 cola_pedidos.añadir_pedido(pedido_organo)
 
     # -----------------------------------------------------------------------
@@ -229,7 +220,42 @@ class GeneradorPedidos:
             priority=PRIORIDAD_PRODUCTO[producto],
             producto=producto,
             unidades=unidades,
-            deadline_min=math.inf # Los productos rutinarios no sufren caducidad en vuelo
+            deadline_min=math.inf,
+            tipo_pedido="inventario"
+        )
+
+    def _crear_pedido_organo(self, hospital_origen, producto, minuto_actual) -> DeliveryCall:
+        """
+        Crea un pedido especial de órgano:
+        - origen: hospital donante
+        - destino: hospital receptor aleatorio distinto
+        - no afecta a inventario
+        - prioridad máxima
+        - deadline según tiempo de isquemia
+        """
+
+        posibles_destinos = [
+            h for h in self.hospitales
+            if h.nombre != hospital_origen.nombre
+        ]
+
+        hospital_destino = random.choice(posibles_destinos)
+
+        parametros_org = CONFIGURACION_ORGANOS[producto]
+
+        self._contador_pedidos += 1
+
+        return DeliveryCall(
+            call_id=self._contador_pedidos,
+            timestamp_min=minuto_actual,
+            origin_hospital=hospital_origen.nombre,
+            destination_hospital=hospital_destino.nombre,
+            payload_kg=parametros_org["peso_kg"],
+            priority=0,
+            producto=producto,
+            unidades=1,
+            deadline_min=minuto_actual + parametros_org["isquemia_min"],
+            tipo_pedido="organo"
         )
 
     def _base_mas_cercana(self, hospital):
