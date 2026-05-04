@@ -4,7 +4,8 @@ from simulators.experimentacion import run_simulation
 def main():
     config = {
         "minutos_simulacion": 50000,
-        "drones_por_base": 8,
+        "drones_por_base": 4,
+        "drones_por_hospital": 1,
         "semilla": None,
 
         "activar_meteorologia": True,

@@ -29,7 +29,7 @@ class Drone:
     flight_minutes: int = 0
     charging_minutes: int = 0
     deliveries_made: int = 0
-
+    role: str = "base"  # "base" o "hospital"
 
 @dataclass
 class DeliveryCall:
