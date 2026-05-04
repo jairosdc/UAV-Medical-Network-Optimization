@@ -27,23 +27,14 @@ from cola_prioridad import GestorPrioridad
 # ---------------------------------------------------------------------------
 
 def es_pedido_inventario(pedido):
-    """
-    Devuelve True si el pedido corresponde a reposicion de inventario.
-    """
     return getattr(pedido, "tipo_pedido", "inventario") == "inventario"
 
 
 def es_pedido_organo(pedido):
-    """
-    Devuelve True si el pedido corresponde a un envio especial de organo.
-    """
     return getattr(pedido, "tipo_pedido", "inventario") == "organo"
 
 
 def descripcion_pedido(pedido):
-    """
-    Devuelve una descripcion legible para consola.
-    """
     if es_pedido_organo(pedido):
         return (
             f"ORGANO {pedido.producto.upper()} "
@@ -62,20 +53,20 @@ def descripcion_pedido(pedido):
 
 def run_simulation(config=None):
     """
-    Ejecuta una simulacion completa del sistema.
+    Ejecuta una simulación completa del sistema.
 
-    Parametro:
-        config: diccionario con parametros de simulacion.
+    Parámetro:
+        config: diccionario con parámetros de simulación.
 
     Devuelve:
-        resultado: diccionario con metricas basicas.
+        resultado: diccionario con métricas básicas.
     """
 
     if config is None:
         config = {}
 
     # -----------------------------------------------------------------------
-    # CONFIGURACION
+    # CONFIGURACIÓN
     # -----------------------------------------------------------------------
 
     MINUTOS_SIMULACION = config.get("minutos_simulacion", 1440)
@@ -85,19 +76,24 @@ def run_simulation(config=None):
 
     SEMILLA_ALEATORIA = config.get("semilla", None)
 
+    FACTOR_DEMANDA_INVENTARIO = config.get("factor_demanda_inventario", 1.0)
+    FACTOR_DEMANDA_ORGANOS = config.get("factor_demanda_organos", 1.0)
+    ESCENARIO_CLIMA = config.get("escenario_clima", "normal")
+
+    ACTIVAR_METEOROLOGIA = config.get("activar_meteorologia", True)
+    INTERVALO_CAMBIO_CLIMA_MIN = config.get("intervalo_cambio_clima_min", 300)
+
+    STOCK_INICIAL_CERCA_UMBRAL = config.get("stock_inicial_cerca_umbral", True)
+
+    GENERAR_GRAFICAS = config.get("generar_graficas", False)
+    VERBOSE = config.get("verbose", True)
+
     IMPRIMIR_EVENTOS_DRONES = config.get("imprimir_eventos_drones", False)
     IMPRIMIR_EVENTOS_HOSPITAL = config.get("imprimir_eventos_hospital", False)
     IMPRIMIR_EVENTOS_CLIMA = config.get("imprimir_eventos_clima", False)
 
-    INTERVALO_CAMBIO_CLIMA_MIN = config.get("intervalo_cambio_clima_min", 300)
-    STOCK_INICIAL_CERCA_UMBRAL = config.get("stock_inicial_cerca_umbral", True)
-    ACTIVAR_METEOROLOGIA = config.get("activar_meteorologia", True)
-
-    VERBOSE = config.get("verbose", True)
-    GENERAR_GRAFICAS = config.get("generar_graficas", False)
-
     # -----------------------------------------------------------------------
-    # FASE 1: INICIALIZACION
+    # FASE 1: INICIALIZACIÓN
     # -----------------------------------------------------------------------
 
     red = ServicioRed()
@@ -109,17 +105,16 @@ def run_simulation(config=None):
     )
 
     inventarios = {}
-
     lista_hospitales = []
 
     for nombre, nodo in HOSPITALS.items():
-        inv_hosp = Inventario(es_almacen_central=False)
+        inventario_hospital = Inventario(es_almacen_central=False)
 
         if STOCK_INICIAL_CERCA_UMBRAL:
-            for _, prod in inv_hosp.productos.items():
-                prod.stock_fisico = int(prod.umbral_s * 1.2) + 1
+            for _, producto in inventario_hospital.productos.items():
+                producto.stock_fisico = int(producto.umbral_s * 1.2) + 1
 
-        inventarios[nombre] = inv_hosp
+        inventarios[nombre] = inventario_hospital
         lista_hospitales.append(nodo)
 
     lista_bases = []
@@ -133,6 +128,8 @@ def run_simulation(config=None):
         lista_bases,
         semilla=SEMILLA_ALEATORIA,
         duracion_min=MINUTOS_SIMULACION,
+        factor_demanda_inventario=FACTOR_DEMANDA_INVENTARIO,
+        factor_demanda_organos=FACTOR_DEMANDA_ORGANOS,
     )
 
     cola_pedidos = GestorPrioridad()
@@ -140,6 +137,7 @@ def run_simulation(config=None):
     clima_sim = SimuladorClima(
         intervalo_cambio_min=INTERVALO_CAMBIO_CLIMA_MIN,
         semilla=SEMILLA_ALEATORIA,
+        escenario_clima=ESCENARIO_CLIMA,
     )
 
     conteo_clima = {}
@@ -166,6 +164,10 @@ def run_simulation(config=None):
         print(f"  Drones/hospital:   {DRONES_POR_HOSPITAL}")
         print(f"  Hospitales:        {len(HOSPITALS)}")
         print(f"  Bases:             {len(BASES)}")
+
+        print(f"  Demanda inventario: x{FACTOR_DEMANDA_INVENTARIO}")
+        print(f"  Demanda organos:    x{FACTOR_DEMANDA_ORGANOS}")
+        print(f"  Escenario clima:    {ESCENARIO_CLIMA}")
 
         semilla_str = (
             str(SEMILLA_ALEATORIA)
@@ -231,10 +233,6 @@ def run_simulation(config=None):
             else:
                 _, _, tipo_evento, id_dron, decision = evento
 
-            # ---------------------------------------------------------------
-            # Llegada al hospital destino
-            # ---------------------------------------------------------------
-
             if tipo_evento == "llegada_hospital":
                 eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
                     id_dron,
@@ -252,8 +250,6 @@ def run_simulation(config=None):
                         pedido_ok.unidades,
                     )
 
-                # Solo inventario vuelve a base.
-                # En órganos eta_base debe ser None.
                 if eta_base is not None:
                     secuencia_evento += 1
                     heapq.heappush(
@@ -282,10 +278,6 @@ def run_simulation(config=None):
                             f"| {pedido_ok.producto} x{pedido_ok.unidades} "
                             f"-> regreso ETA={eta_base:.0f}"
                         )
-
-            # ---------------------------------------------------------------
-            # Aterrizaje en base
-            # ---------------------------------------------------------------
 
             elif tipo_evento == "aterrizaje_base":
                 bat_antes = gestor_flota.drones[id_dron].battery_percent
@@ -322,10 +314,6 @@ def run_simulation(config=None):
                             f"en base bat={bat_antes:.1f}% -> DISPONIBLE"
                         )
 
-            # ---------------------------------------------------------------
-            # Fin de recarga
-            # ---------------------------------------------------------------
-
             elif tipo_evento == "fin_recarga":
                 gestor_flota.procesar_evento_fin_recarga(id_dron)
 
@@ -349,21 +337,8 @@ def run_simulation(config=None):
         # -------------------------------------------------------------------
         # PASO C: despachar cola por rondas
         # -------------------------------------------------------------------
-        # Se intentan procesar como máximo los pedidos que estaban en cola
-        # al inicio de este paso.
-        #
-        # Si un pedido no puede asignarse ahora:
-        # - vuelve a la cola;
-        # - no se rechaza;
-        # - no bloquea a los demás.
-        # -------------------------------------------------------------------
-
-                # -------------------------------------------------------------------
-        # PASO C: despachar cola por rondas
-        # -------------------------------------------------------------------
-        # Se extrae la cola una sola vez, ya ordenada.
-        # Si un pedido no puede asignarse ahora, vuelve a la cola.
-        # No bloquea al resto.
+        # Se intenta asignar cada pedido como máximo una vez por minuto.
+        # Si no se puede asignar, vuelve a la cola.
         # -------------------------------------------------------------------
 
         pedidos_ronda = cola_pedidos.extraer_ronda_ordenada()
@@ -372,8 +347,6 @@ def run_simulation(config=None):
 
             resumen = gestor_flota.obtener_resumen_estado()
 
-            # Evitamos llamar al optimizador si directamente no hay drones
-            # disponibles del tipo correcto.
             if es_pedido_organo(pedido) and resumen.get("hospital_available", 0) == 0:
                 cola_pedidos.añadir_pedido(pedido)
                 continue
@@ -453,8 +426,7 @@ def run_simulation(config=None):
     # -----------------------------------------------------------------------
     # FASE 3: PROCESAR EVENTOS DES RESTANTES POST-SIMULACION
     # -----------------------------------------------------------------------
-    # Se completan misiones ya asignadas, pero no se siguen despachando
-    # pedidos nuevos fuera del horizonte de simulacion.
+    # Se completan misiones ya asignadas, pero no se despachan pedidos nuevos.
     # -----------------------------------------------------------------------
 
     while cola_eventos_des:
@@ -505,7 +477,7 @@ def run_simulation(config=None):
             gestor_flota.procesar_evento_fin_recarga(id_dron)
 
     # -----------------------------------------------------------------------
-    # FASE 4: METRICAS
+    # FASE 4: MÉTRICAS
     # -----------------------------------------------------------------------
 
     estadisticas = gestor_flota.estadisticas
@@ -518,34 +490,34 @@ def run_simulation(config=None):
     pedidos_pendientes = getattr(cola_pedidos, "pedidos_pendientes", [])
 
     organos_completados = [
-        p for p in pedidos_completados
-        if es_pedido_organo(p)
+        pedido for pedido in pedidos_completados
+        if es_pedido_organo(pedido)
     ]
 
     organos_rechazados = [
-        p for p in pedidos_rechazados
-        if es_pedido_organo(p)
+        pedido for pedido in pedidos_rechazados
+        if es_pedido_organo(pedido)
     ]
 
     organos_pendientes = [
-        p for p in pedidos_pendientes
-        if es_pedido_organo(p)
+        pedido for pedido in pedidos_pendientes
+        if es_pedido_organo(pedido)
     ]
 
     inventario_completado = [
-        p for p in pedidos_completados
-        if es_pedido_inventario(p)
+        pedido for pedido in pedidos_completados
+        if es_pedido_inventario(pedido)
     ]
 
     inventario_pendiente = [
-        p for p in pedidos_pendientes
-        if es_pedido_inventario(p)
+        pedido for pedido in pedidos_pendientes
+        if es_pedido_inventario(pedido)
     ]
 
     organos_totales = estadisticas.organ_calls
 
-    total_vuelo = sum(d.flight_minutes for d in gestor_flota.drones.values())
-    total_recarga = sum(d.charging_minutes for d in gestor_flota.drones.values())
+    total_vuelo = sum(dron.flight_minutes for dron in gestor_flota.drones.values())
+    total_recarga = sum(dron.charging_minutes for dron in gestor_flota.drones.values())
     total_tiempo_flota = len(gestor_flota.drones) * MINUTOS_SIMULACION
 
     utilizacion_vuelo = (
@@ -591,6 +563,10 @@ def run_simulation(config=None):
         "total_drones": len(gestor_flota.drones),
         "numero_hospitales": len(HOSPITALS),
         "numero_bases": len(BASES),
+
+        "factor_demanda_inventario": FACTOR_DEMANDA_INVENTARIO,
+        "factor_demanda_organos": FACTOR_DEMANDA_ORGANOS,
+        "escenario_clima": ESCENARIO_CLIMA,
 
         "pedidos_generados": total_gen,
         "pedidos_procesados": estadisticas.total_calls,
@@ -689,7 +665,7 @@ def run_simulation(config=None):
         print("=" * 60)
 
     # -----------------------------------------------------------------------
-    # GRAFICAS OPCIONALES
+    # GRÁFICAS OPCIONALES
     # -----------------------------------------------------------------------
 
     if GENERAR_GRAFICAS:
@@ -704,11 +680,11 @@ def run_simulation(config=None):
                 cola_pedidos=cola_pedidos,
             )
 
-        except ImportError as e:
+        except ImportError as error:
             if VERBOSE:
                 print(
                     "\n  [Aviso] No se pudieron generar las graficas. "
-                    f"¿Esta instalado matplotlib? Error: {e}"
+                    f"¿Está instalado matplotlib? Error: {error}"
                 )
 
     return resultado

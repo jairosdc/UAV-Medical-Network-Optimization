@@ -134,9 +134,26 @@ class GeneradorPedidos:
        - Generan pedidos hospital -> hospital.
     """
 
-    def __init__(self, hospitales, bases, semilla=None, duracion_min=1440):
+    def __init__(
+        self,
+        hospitales,
+        bases,
+        semilla=None,
+        duracion_min=1440,
+        factor_demanda_inventario=1.0,
+        factor_demanda_organos=1.0,
+    ):
         self.hospitales = hospitales
         self.bases = bases
+
+        self.factor_demanda_inventario = float(factor_demanda_inventario)
+        self.factor_demanda_organos = float(factor_demanda_organos)
+
+        if self.factor_demanda_inventario < 0:
+            raise ValueError("factor_demanda_inventario no puede ser negativo")
+
+        if self.factor_demanda_organos < 0:
+            raise ValueError("factor_demanda_organos no puede ser negativo")
 
         self._contador_pedidos = 0
         self._agenda = {}
@@ -149,7 +166,7 @@ class GeneradorPedidos:
         self._pregenerar_periodo()
 
     # -----------------------------------------------------------------------
-    # PREGNERACIÓN DE EVENTOS
+    # PREGENERACIÓN DE EVENTOS
     # -----------------------------------------------------------------------
 
     def _pregenerar_periodo(self):
@@ -225,12 +242,17 @@ class GeneradorPedidos:
         Genera consumos de inventario.
 
         Cada hospital tiene su propio proceso de consumo.
-        Esta es la parte importante: la tasa NO se reparte entre hospitales.
+        La tasa NO se reparte entre hospitales.
         """
         for hospital in self.hospitales:
             for producto, tasa_base in TASAS_PRODUCTOS.items():
 
-                tasa_efectiva = tasa_base * factor
+                tasa_efectiva = (
+                    tasa_base
+                    * factor
+                    * self.factor_demanda_inventario
+                )
+
                 n_eventos = np.random.poisson(tasa_efectiva * duracion_h)
 
                 if n_eventos == 0:
@@ -261,7 +283,11 @@ class GeneradorPedidos:
         """
         for organo, config in CONFIGURACION_ORGANOS.items():
 
-            tasa_lambda = config["tasa_lambda"]
+            tasa_lambda = (
+                config["tasa_lambda"]
+                * self.factor_demanda_organos
+            )
+
             n_eventos = np.random.poisson(tasa_lambda * duracion_h)
 
             if n_eventos == 0:
