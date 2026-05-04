@@ -4,13 +4,13 @@ from simulators.experimentacion import run_simulation
 def main():
     config = {
         "minutos_simulacion": 50000,
-        "drones_por_base": 4,
+        "drones_por_base": 1,
         "drones_por_hospital": 1,
         "semilla": None,
 
         "activar_meteorologia": True,
         "intervalo_cambio_clima_min": 300,
-        "stock_inicial_cerca_umbral": True,
+        "stock_inicial_cerca_umbral": False,
 
         "imprimir_eventos_drones": False,
         "imprimir_eventos_hospital": False,

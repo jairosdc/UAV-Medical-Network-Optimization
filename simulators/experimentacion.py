@@ -358,13 +358,29 @@ def run_simulation(config=None):
         # - no bloquea a los demás.
         # -------------------------------------------------------------------
 
-        pedidos_en_ronda = cola_pedidos.size()
+                # -------------------------------------------------------------------
+        # PASO C: despachar cola por rondas
+        # -------------------------------------------------------------------
+        # Se extrae la cola una sola vez, ya ordenada.
+        # Si un pedido no puede asignarse ahora, vuelve a la cola.
+        # No bloquea al resto.
+        # -------------------------------------------------------------------
 
-        for _ in range(pedidos_en_ronda):
-            pedido = cola_pedidos.obtener_siguiente_pedido()
+        pedidos_ronda = cola_pedidos.extraer_ronda_ordenada()
 
-            if pedido is None:
-                break
+        for pedido in pedidos_ronda:
+
+            resumen = gestor_flota.obtener_resumen_estado()
+
+            # Evitamos llamar al optimizador si directamente no hay drones
+            # disponibles del tipo correcto.
+            if es_pedido_organo(pedido) and resumen.get("hospital_available", 0) == 0:
+                cola_pedidos.añadir_pedido(pedido)
+                continue
+
+            if es_pedido_inventario(pedido) and resumen.get("base_available", 0) == 0:
+                cola_pedidos.añadir_pedido(pedido)
+                continue
 
             resultado = gestor_flota.procesar_nuevo_pedido(
                 pedido,
@@ -395,7 +411,6 @@ def run_simulation(config=None):
             id_dron_asignado = pedido.assigned_drone_id
             bat_post = gestor_flota.drones[id_dron_asignado].battery_percent
 
-            # Solo inventario descuenta stock del almacén/base origen.
             if es_pedido_inventario(pedido) and pedido.producto:
                 inventarios[pedido.origin_hospital].enviar_dron(
                     pedido.producto,
@@ -685,6 +700,8 @@ def run_simulation(config=None):
                 gestor_flota,
                 total_gen,
                 MINUTOS_SIMULACION,
+                historial_longitud_cola=historial_longitud_cola,
+                cola_pedidos=cola_pedidos,
             )
 
         except ImportError as e:

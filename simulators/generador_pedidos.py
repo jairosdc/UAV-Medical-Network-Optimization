@@ -1,12 +1,20 @@
 import random
-import numpy as np
 import math
+import numpy as np
 
 from parametros_globales import CARGA_MAXIMA_KG
 from models.clases_models import DeliveryCall
 
 
-# Productos de Inventario (Sujetos a reposición desde almacén)
+# ---------------------------------------------------------------------------
+# TASAS DE CONSUMO INTRAHOSPITALARIO
+# ---------------------------------------------------------------------------
+# Interpretación:
+# - Cada tasa está en eventos/hora por hospital.
+# - Ejemplo: "suero": 0.60 significa que cada hospital consume suero
+#   con media 0.60 veces por hora.
+# ---------------------------------------------------------------------------
+
 TASAS_PRODUCTOS = {
     "sangre":              0.30,
     "farmaco_uci":         0.20,
@@ -18,7 +26,11 @@ TASAS_PRODUCTOS = {
     "medicamento_general": 0.90,
 }
 
-# Peso por unidad de cada producto (kg)
+
+# ---------------------------------------------------------------------------
+# PESO POR UNIDAD
+# ---------------------------------------------------------------------------
+
 PESO_UNIDAD_KG = {
     "sangre":              0.50,
     "farmaco_uci":         0.10,
@@ -30,56 +42,102 @@ PESO_UNIDAD_KG = {
     "medicamento_general": 0.05,
 }
 
-# Diccionario Unificado de Prioridades (0=órganos, 1=crítica, 2=urgente, 3=rutinaria)
+
+# ---------------------------------------------------------------------------
+# PRIORIDADES
+# ---------------------------------------------------------------------------
+# 0 = órgano / emergencia máxima
+# 1 = crítica
+# 2 = urgente
+# 3 = rutinaria
+# ---------------------------------------------------------------------------
+
 PRIORIDAD_PRODUCTO = {
     "corazon":             0,
     "pulmon":              0,
     "rinon":               0,
     "pancreas":            0,
+
     "sangre":              1,
     "farmaco_uci":         1,
+
     "antibiotico":         2,
     "suero":               2,
     "plasma":              2,
+
     "analgesico":          3,
     "material_sanitario":  3,
     "medicamento_general": 3,
 }
 
-# ---------------------------------------------------------------------------
-# Eventos Críticos Independientes (Vuelos directos Hospital-Hospital)
-# ---------------------------------------------------------------------------
-# Parámetros técnicos de carga encapsulados por clave
-CONFIGURACION_ORGANOS = {
-    "corazon":  {"isquemia_min": 240,  "peso_kg": 2.1, "tasa_lambda": 0.005},
-    "pulmon":   {"isquemia_min": 360,  "peso_kg": 2.5, "tasa_lambda": 0.008},
-    "pancreas": {"isquemia_min": 720,  "peso_kg": 1.9, "tasa_lambda": 0.020},
-    "rinon":    {"isquemia_min": 1440, "peso_kg": 3.2, "tasa_lambda": 0.020}
-}
 
 # ---------------------------------------------------------------------------
-# Factores horarios del NHPP (hora_inicio, hora_fin, factor_lambda)
+# ÓRGANOS
 # ---------------------------------------------------------------------------
+# Interpretación:
+# - Los órganos NO son inventario.
+# - Son eventos raros globales de la red.
+# - La tasa_lambda está en eventos/hora para toda la red.
+# ---------------------------------------------------------------------------
+
+CONFIGURACION_ORGANOS = {
+    "corazon": {
+        "isquemia_min": 240,
+        "peso_kg": 2.1,
+        "tasa_lambda": 0.005,
+    },
+    "pulmon": {
+        "isquemia_min": 360,
+        "peso_kg": 2.5,
+        "tasa_lambda": 0.008,
+    },
+    "pancreas": {
+        "isquemia_min": 720,
+        "peso_kg": 1.9,
+        "tasa_lambda": 0.020,
+    },
+    "rinon": {
+        "isquemia_min": 1440,
+        "peso_kg": 3.2,
+        "tasa_lambda": 0.020,
+    },
+}
+
+
+# ---------------------------------------------------------------------------
+# FACTORES HORARIOS DEL NHPP
+# ---------------------------------------------------------------------------
+# factor_lambda multiplica la intensidad de consumo según la franja horaria.
+# ---------------------------------------------------------------------------
+
 FACTORES_HORARIOS = [
-    ( 0,  6, 0.48),
-    ( 6,  9, 1.00),
-    ( 9, 14, 1.60),
-    (14, 16, 1.13),
-    (16, 20, 1.30),
-    (20, 24, 0.60),
+    (0,   6,  0.48),
+    (6,   9,  1.00),
+    (9,   14, 1.60),
+    (14,  16, 1.13),
+    (16,  20, 1.30),
+    (20,  24, 0.60),
 ]
 
 
 class GeneradorPedidos:
     """
-    Genera y despacha eventos de la simulación modelados mediante:
-      1. NHPP para bienes fungibles (dependiente del estrés horario).
-      2. HPP para órganos (eventos discretos independientes de prioridad 0).
+    Genera eventos de simulación:
+
+    1. Consumos intrahospitalarios de productos inventariables.
+       - Cada hospital consume según TASAS_PRODUCTOS.
+       - Si el inventario baja del umbral, se genera una reposición.
+
+    2. Aparición de órganos.
+       - Los órganos se generan como eventos raros globales.
+       - No pasan por inventario.
+       - Generan pedidos hospital -> hospital.
     """
 
     def __init__(self, hospitales, bases, semilla=None, duracion_min=1440):
         self.hospitales = hospitales
         self.bases = bases
+
         self._contador_pedidos = 0
         self._agenda = {}
         self._duracion_min = duracion_min
@@ -91,123 +149,309 @@ class GeneradorPedidos:
         self._pregenerar_periodo()
 
     # -----------------------------------------------------------------------
-    # Generación Estocástica de Eventos
+    # PREGNERACIÓN DE EVENTOS
     # -----------------------------------------------------------------------
 
     def _pregenerar_periodo(self):
-        """Puebla la agenda ciclando patrones diarios durante el horizonte T."""
+        """
+        Rellena la agenda de eventos para todo el horizonte de simulación.
+        """
         minutos_por_dia = 1440
+
         dias_completos = self._duracion_min // minutos_por_dia
-        minutos_extra  = self._duracion_min % minutos_por_dia
+        minutos_extra = self._duracion_min % minutos_por_dia
 
         for dia in range(dias_completos):
             offset = dia * minutos_por_dia
-            for h_inicio, h_fin, factor in FACTORES_HORARIOS:
-                t_inicio = offset + h_inicio * 60
-                t_fin    = offset + h_fin    * 60
-                dur_h    = h_fin - h_inicio
-                self._generar_tramo(t_inicio, t_fin, dur_h, factor)
+            self._pregenerar_dia(offset, minutos_por_dia)
 
         if minutos_extra > 0:
             offset = dias_completos * minutos_por_dia
-            for h_inicio, h_fin, factor in FACTORES_HORARIOS:
-                t_inicio = offset + h_inicio * 60
-                t_fin    = min(offset + h_fin * 60, self._duracion_min)
-                if t_inicio >= self._duracion_min:
-                    break
-                dur_h = (t_fin - t_inicio) / 60.0
-                self._generar_tramo(t_inicio, t_fin, dur_h, factor)
+            self._pregenerar_dia(offset, minutos_extra)
 
-    def _generar_tramo(self, t_inicio_min: int, t_fin_min: int, duracion_h: float, factor: float):
-        """Inyecta eventos diferenciados (inventario vs órganos) en el espacio temporal."""
-        
-        # 1. Rutina de Inventario (NHPP condicionado por 'factor')
-        for producto, tasa_base in TASAS_PRODUCTOS.items():
-            n_eventos = np.random.poisson(tasa_base * factor * duracion_h)
-            if n_eventos > 0:
-                minutos = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos)
-                for m in minutos:
-                    self._agenda.setdefault(int(m), []).append({
-                        "tipo": "inventario",
-                        "hospital": random.choice(self.hospitales),
-                        "producto": producto,
-                    })
+    def _pregenerar_dia(self, offset_min: int, duracion_dia_min: int):
+        """
+        Genera los eventos de un día completo o parcial.
+        """
+        fin_periodo = offset_min + duracion_dia_min
 
-        # 2. Rutina de Órganos (HPP con lambda estático, independiente del factor horario)
-        for organo, config in CONFIGURACION_ORGANOS.items():
-            tasa_lambda = config["tasa_lambda"]
-            n_eventos_org = np.random.poisson(tasa_lambda * duracion_h)
-            if n_eventos_org > 0:
-                minutos_org = np.random.uniform(t_inicio_min, t_fin_min, size=n_eventos_org)
-                for m in minutos_org:
-                    self._agenda.setdefault(int(m), []).append({
-                        "tipo": "organo",
-                        "hospital": random.choice(self.hospitales),
-                        "producto": organo,
-                    })
+        for h_inicio, h_fin, factor in FACTORES_HORARIOS:
+            t_inicio = offset_min + h_inicio * 60
+            t_fin = min(offset_min + h_fin * 60, fin_periodo)
 
-    # -----------------------------------------------------------------------
-    # Ejecución Discreta (Minuto a Minuto)
-    # -----------------------------------------------------------------------
+            if t_inicio >= fin_periodo:
+                break
 
-    def procesar_minuto(self, minuto_actual, inventarios, cola_pedidos, verbose=False):
-        """Bifurca el tratamiento del evento según su naturaleza topológica."""
-        
-        for evento in self._agenda.get(minuto_actual, []):
-            hospital_origen = evento["hospital"]
-            producto = evento["producto"]
-            tipo_evento = evento["tipo"]
+            duracion_h = (t_fin - t_inicio) / 60.0
 
-            # ---- LÓGICA 1: Reposición desde Almacén (Umbral s,Q) ----
-            if tipo_evento == "inventario":
-                if verbose:
-                    print(f"  [t={minuto_actual:04d}] CONSUMO: {hospital_origen.nombre} gasta 1ud {producto}")
+            self._generar_tramo(
+                t_inicio_min=t_inicio,
+                t_fin_min=t_fin,
+                duracion_h=duracion_h,
+                factor=factor,
+            )
 
-                inventario_hospital = inventarios[hospital_origen.nombre]
-                unidades_a_reponer = inventario_hospital.registrar_consumo(producto, 1)
+    def _generar_tramo(
+        self,
+        t_inicio_min: int,
+        t_fin_min: int,
+        duracion_h: float,
+        factor: float,
+    ):
+        """
+        Genera todos los eventos de una franja horaria.
+        """
+        self._generar_consumos_inventario(
+            t_inicio_min=t_inicio_min,
+            t_fin_min=t_fin_min,
+            duracion_h=duracion_h,
+            factor=factor,
+        )
 
-                if unidades_a_reponer > 0:
-                    if verbose:
-                        print(f"  [!] UMBRAL {producto}: {hospital_origen.nombre} solicita {unidades_a_reponer}uds")
-                    
-                    peso_unitario = PESO_UNIDAD_KG[producto]
-                    max_unidades_por_vuelo = max(1, int(CARGA_MAXIMA_KG / peso_unitario))
-                    
-                    unidades_restantes = unidades_a_reponer
-                    while unidades_restantes > 0:
-                        unidades_vuelo = min(unidades_restantes, max_unidades_por_vuelo)
-                        pedido = self._crear_pedido_reposicion(
-                            hospital=hospital_origen,
-                            producto=producto,
-                            unidades=unidades_vuelo,
-                            minuto_actual=minuto_actual,
-                        )
-                        cola_pedidos.añadir_pedido(pedido)
-                        unidades_restantes -= unidades_vuelo
+        self._generar_eventos_organos(
+            t_inicio_min=t_inicio_min,
+            t_fin_min=t_fin_min,
+            duracion_h=duracion_h,
+        )
 
-            # ---- LÓGICA 2: Vuelo Directo Hospital-Hospital (Prioridad Absoluta) ----
-            elif tipo_evento == "organo":
-                if verbose:
-                    print(
-                        f"  [!] CÓDIGO ROJO [t={minuto_actual:04d}]: "
-                        f"Órgano disponible ({producto}) en {hospital_origen.nombre}"
-                    )
+    def _generar_consumos_inventario(
+        self,
+        t_inicio_min: int,
+        t_fin_min: int,
+        duracion_h: float,
+        factor: float,
+    ):
+        """
+        Genera consumos de inventario.
 
-                pedido_organo = self._crear_pedido_organo(
-                    hospital_origen=hospital_origen,
-                    producto=producto,
-                    minuto_actual=minuto_actual
+        Cada hospital tiene su propio proceso de consumo.
+        Esta es la parte importante: la tasa NO se reparte entre hospitales.
+        """
+        for hospital in self.hospitales:
+            for producto, tasa_base in TASAS_PRODUCTOS.items():
+
+                tasa_efectiva = tasa_base * factor
+                n_eventos = np.random.poisson(tasa_efectiva * duracion_h)
+
+                if n_eventos == 0:
+                    continue
+
+                minutos = np.random.uniform(
+                    t_inicio_min,
+                    t_fin_min,
+                    size=n_eventos,
                 )
 
-                cola_pedidos.añadir_pedido(pedido_organo)
+                for minuto in minutos:
+                    self._agendar_evento(
+                        minuto=int(minuto),
+                        tipo="inventario",
+                        hospital=hospital,
+                        producto=producto,
+                    )
+
+    def _generar_eventos_organos(
+        self,
+        t_inicio_min: int,
+        t_fin_min: int,
+        duracion_h: float,
+    ):
+        """
+        Genera órganos como eventos raros globales de la red.
+        """
+        for organo, config in CONFIGURACION_ORGANOS.items():
+
+            tasa_lambda = config["tasa_lambda"]
+            n_eventos = np.random.poisson(tasa_lambda * duracion_h)
+
+            if n_eventos == 0:
+                continue
+
+            minutos = np.random.uniform(
+                t_inicio_min,
+                t_fin_min,
+                size=n_eventos,
+            )
+
+            for minuto in minutos:
+                self._agendar_evento(
+                    minuto=int(minuto),
+                    tipo="organo",
+                    hospital=random.choice(self.hospitales),
+                    producto=organo,
+                )
+
+    def _agendar_evento(self, minuto: int, tipo: str, hospital, producto: str):
+        """
+        Guarda un evento en la agenda interna.
+        """
+        self._agenda.setdefault(minuto, []).append({
+            "tipo": tipo,
+            "hospital": hospital,
+            "producto": producto,
+        })
 
     # -----------------------------------------------------------------------
-    # Utilidades y Enrutamiento Base
+    # EJECUCIÓN MINUTO A MINUTO
     # -----------------------------------------------------------------------
 
-    def _crear_pedido_reposicion(self, hospital, producto, unidades, minuto_actual) -> DeliveryCall:
-        """Instancia DeliveryCall para logística regular (Base -> Hospital)."""
+    def procesar_minuto(
+        self,
+        minuto_actual,
+        inventarios,
+        cola_pedidos,
+        verbose=False,
+    ):
+        """
+        Procesa los eventos programados para un minuto concreto.
+        """
+        eventos = self._agenda.get(minuto_actual, [])
+
+        for evento in eventos:
+            tipo_evento = evento["tipo"]
+
+            if tipo_evento == "inventario":
+                self._procesar_consumo_inventario(
+                    evento=evento,
+                    minuto_actual=minuto_actual,
+                    inventarios=inventarios,
+                    cola_pedidos=cola_pedidos,
+                    verbose=verbose,
+                )
+
+            elif tipo_evento == "organo":
+                self._procesar_evento_organo(
+                    evento=evento,
+                    minuto_actual=minuto_actual,
+                    cola_pedidos=cola_pedidos,
+                    verbose=verbose,
+                )
+
+    def _procesar_consumo_inventario(
+        self,
+        evento,
+        minuto_actual,
+        inventarios,
+        cola_pedidos,
+        verbose=False,
+    ):
+        """
+        Aplica un consumo intrahospitalario.
+
+        Si el producto cae bajo el umbral, crea uno o varios pedidos
+        de reposición desde la base más cercana.
+        """
+        hospital = evento["hospital"]
+        producto = evento["producto"]
+
+        if verbose:
+            print(
+                f"  [t={minuto_actual:04d}] CONSUMO: "
+                f"{hospital.nombre} gasta 1ud {producto}"
+            )
+
+        inventario_hospital = inventarios[hospital.nombre]
+
+        unidades_a_reponer = inventario_hospital.registrar_consumo(
+            producto,
+            1,
+        )
+
+        if unidades_a_reponer <= 0:
+            return
+
+        if verbose:
+            print(
+                f"  [!] UMBRAL {producto}: "
+                f"{hospital.nombre} solicita {unidades_a_reponer} uds"
+            )
+
+        pedidos_reposicion = self._crear_pedidos_reposicion(
+            hospital=hospital,
+            producto=producto,
+            unidades_totales=unidades_a_reponer,
+            minuto_actual=minuto_actual,
+        )
+
+        for pedido in pedidos_reposicion:
+            cola_pedidos.añadir_pedido(pedido)
+
+    def _procesar_evento_organo(
+        self,
+        evento,
+        minuto_actual,
+        cola_pedidos,
+        verbose=False,
+    ):
+        """
+        Crea un pedido hospital -> hospital para transportar un órgano.
+        """
+        hospital_origen = evento["hospital"]
+        producto = evento["producto"]
+
+        if verbose:
+            print(
+                f"  [!] CÓDIGO ROJO [t={minuto_actual:04d}]: "
+                f"Órgano disponible ({producto}) en {hospital_origen.nombre}"
+            )
+
+        pedido = self._crear_pedido_organo(
+            hospital_origen=hospital_origen,
+            producto=producto,
+            minuto_actual=minuto_actual,
+        )
+
+        cola_pedidos.añadir_pedido(pedido)
+
+    # -----------------------------------------------------------------------
+    # CREACIÓN DE PEDIDOS
+    # -----------------------------------------------------------------------
+
+    def _crear_pedidos_reposicion(
+        self,
+        hospital,
+        producto: str,
+        unidades_totales: int,
+        minuto_actual: int,
+    ):
+        """
+        Trocea una reposición grande en varios vuelos si supera la carga máxima.
+        """
+        peso_unitario = PESO_UNIDAD_KG[producto]
+        max_unidades_por_vuelo = max(1, int(CARGA_MAXIMA_KG / peso_unitario))
+
+        pedidos = []
+        unidades_restantes = unidades_totales
+
+        while unidades_restantes > 0:
+            unidades_vuelo = min(unidades_restantes, max_unidades_por_vuelo)
+
+            pedido = self._crear_pedido_reposicion(
+                hospital=hospital,
+                producto=producto,
+                unidades=unidades_vuelo,
+                minuto_actual=minuto_actual,
+            )
+
+            pedidos.append(pedido)
+            unidades_restantes -= unidades_vuelo
+
+        return pedidos
+
+    def _crear_pedido_reposicion(
+        self,
+        hospital,
+        producto: str,
+        unidades: int,
+        minuto_actual: int,
+    ) -> DeliveryCall:
+        """
+        Crea un pedido de reposición:
+
+        base más cercana -> hospital.
+        """
         self._contador_pedidos += 1
+
         base_origen = self._base_mas_cercana(hospital)
         payload_kg = round(unidades * PESO_UNIDAD_KG[producto], 3)
 
@@ -221,27 +465,28 @@ class GeneradorPedidos:
             producto=producto,
             unidades=unidades,
             deadline_min=math.inf,
-            tipo_pedido="inventario"
+            tipo_pedido="inventario",
         )
 
-    def _crear_pedido_organo(self, hospital_origen, producto, minuto_actual) -> DeliveryCall:
+    def _crear_pedido_organo(
+        self,
+        hospital_origen,
+        producto: str,
+        minuto_actual: int,
+    ) -> DeliveryCall:
         """
-        Crea un pedido especial de órgano:
-        - origen: hospital donante
-        - destino: hospital receptor aleatorio distinto
-        - no afecta a inventario
-        - prioridad máxima
-        - deadline según tiempo de isquemia
-        """
+        Crea un pedido de órgano:
 
+        hospital origen -> hospital destino.
+        """
         posibles_destinos = [
-            h for h in self.hospitales
-            if h.nombre != hospital_origen.nombre
+            hospital
+            for hospital in self.hospitales
+            if hospital.nombre != hospital_origen.nombre
         ]
 
         hospital_destino = random.choice(posibles_destinos)
-
-        parametros_org = CONFIGURACION_ORGANOS[producto]
+        parametros_organo = CONFIGURACION_ORGANOS[producto]
 
         self._contador_pedidos += 1
 
@@ -250,22 +495,54 @@ class GeneradorPedidos:
             timestamp_min=minuto_actual,
             origin_hospital=hospital_origen.nombre,
             destination_hospital=hospital_destino.nombre,
-            payload_kg=parametros_org["peso_kg"],
+            payload_kg=parametros_organo["peso_kg"],
             priority=0,
             producto=producto,
             unidades=1,
-            deadline_min=minuto_actual + parametros_org["isquemia_min"],
-            tipo_pedido="organo"
+            deadline_min=minuto_actual + parametros_organo["isquemia_min"],
+            tipo_pedido="organo",
         )
 
+    # -----------------------------------------------------------------------
+    # UTILIDADES
+    # -----------------------------------------------------------------------
+
     def _base_mas_cercana(self, hospital):
-        """Resolución geométrica por distancia Haversine mínima."""
-        def dist(a, b):
-            dlat = math.radians(b.lat - a.lat)
-            dlon = math.radians(b.lon - a.lon)
-            x = math.sin(dlat/2)**2 + math.cos(math.radians(a.lat)) * math.cos(math.radians(b.lat)) * math.sin(dlon/2)**2
-            return 6371 * 2 * math.atan2(math.sqrt(x), math.sqrt(1-x))
-        return min(self.bases, key=lambda b: dist(hospital, b))
+        """
+        Devuelve la base más cercana a un hospital.
+        """
+        return min(
+            self.bases,
+            key=lambda base: self._distancia_haversine_km(hospital, base),
+        )
+
+    @staticmethod
+    def _distancia_haversine_km(nodo_a, nodo_b):
+        """
+        Distancia geográfica aproximada entre dos nodos.
+        """
+        dlat = math.radians(nodo_b.lat - nodo_a.lat)
+        dlon = math.radians(nodo_b.lon - nodo_a.lon)
+
+        lat1 = math.radians(nodo_a.lat)
+        lat2 = math.radians(nodo_b.lat)
+
+        a = (
+            math.sin(dlat / 2) ** 2
+            + math.cos(lat1)
+            * math.cos(lat2)
+            * math.sin(dlon / 2) ** 2
+        )
+
+        return 6371 * 2 * math.atan2(
+            math.sqrt(a),
+            math.sqrt(1 - a),
+        )
 
     def total_eventos_dia(self) -> int:
-        return sum(len(v) for v in self._agenda.values())
+        """
+        Devuelve el número total de eventos pregenerados.
+
+        Ojo: incluye consumos y órganos, no solo pedidos finales.
+        """
+        return sum(len(eventos) for eventos in self._agenda.values())
