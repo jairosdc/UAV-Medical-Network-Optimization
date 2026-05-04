@@ -8,38 +8,34 @@ class GestorFlotaController:
     """
     Gestiona la flota de drones durante la simulación.
 
-    Esta clase no decide cómo se calcula la mejor ruta.
-    Para eso usa ServicioDespacho.
+    Reglas operativas principales:
 
-    Se encarga de:
-    - crear los drones iniciales,
-    - guardar el estado de cada dron,
-    - asignar pedidos a drones,
-    - procesar llegadas a hospitales,
-    - procesar regresos a base,
-    - procesar recargas,
-    - guardar estadísticas básicas.
+    1. Pedidos de reposición:
+       - El dron sale desde una base.
+       - Entrega en el hospital destino.
+       - Vuelve a su base.
+
+    2. Pedidos de órganos:
+       - El dron puede estar en una base o en un hospital.
+       - Se desplaza hasta el hospital origen.
+       - Transporta el órgano hasta el hospital destino.
+       - Se queda disponible en el hospital destino.
+       - No vuelve automáticamente a base.
     """
 
     def __init__(self, grafo):
         self.grafo = grafo
         self.optimizador = ServicioDespacho(grafo)
 
-        # Drones guardados por identificador.
         self.drones = {}
 
-        # Pedidos que ya han salido y todavía no han terminado.
         self.pedidos_activos = {}
 
-        # Historial de pedidos para analizar resultados al final.
         self.pedidos_completados = []
         self.pedidos_rechazados = []
 
         self.estadisticas = SimulationStats()
 
-        # Estadísticas específicas de órganos.
-        # Las inicializamos aquí para no depender de que ya estén añadidas
-        # en la dataclass SimulationStats.
         self._inicializar_estadisticas_organos()
 
     # -----------------------------------------------------------------------
@@ -49,9 +45,6 @@ class GestorFlotaController:
     def _inicializar_estadisticas_organos(self):
         """
         Añade contadores específicos de órganos si no existen todavía.
-
-        Esto evita errores aunque SimulationStats aún no tenga estos campos
-        definidos explícitamente.
         """
         if not hasattr(self.estadisticas, "organ_calls"):
             self.estadisticas.organ_calls = 0
@@ -74,10 +67,6 @@ class GestorFlotaController:
     def _es_pedido_organo(self, pedido: DeliveryCall) -> bool:
         """
         Devuelve True si el pedido es un envío especial de órgano.
-
-        Se comprueba por tipo_pedido, que es lo correcto.
-        Además, se deja una comprobación auxiliar por producto para evitar
-        problemas si algún pedido antiguo no tiene todavía tipo_pedido.
         """
         organos = {"corazon", "pulmon", "rinon", "pancreas", "higado"}
 
@@ -131,16 +120,21 @@ class GestorFlotaController:
         Intenta asignar un dron disponible al pedido.
 
         Devuelve:
-        - (eta_ida, decision) si se ha podido asignar un dron.
-        - None si ningún dron puede realizar el pedido.
+        - (eta_entrega, decision) si se ha podido asignar un dron.
+        - None si no se ha podido asignar en este instante.
         """
 
-        # Todo pedido que llega aquí cuenta como pedido procesado.
-        self.estadisticas.total_calls += 1
+        es_organo = self._es_pedido_organo(pedido)
 
-        # Si es órgano, aumenta el contador específico de órganos recibidos.
-        if self._es_pedido_organo(pedido):
-            self.estadisticas.organ_calls += 1
+        # Solo contamos el pedido la primera vez que entra al gestor.
+        # Esto evita contar varias veces un órgano que queda esperando en cola.
+        if not hasattr(pedido, "_ya_contabilizado"):
+            self.estadisticas.total_calls += 1
+
+            if es_organo:
+                self.estadisticas.organ_calls += 1
+
+            pedido._ya_contabilizado = True
 
         decision = self.optimizador.elegir_mejor_dron(
             list(self.drones.values()),
@@ -150,19 +144,24 @@ class GestorFlotaController:
         )
 
         # -------------------------------------------------------------------
-        # Caso 1: ningún dron puede realizar el pedido
+        # Caso 1: no hay dron viable ahora mismo
         # -------------------------------------------------------------------
 
         if decision is None:
+
+            # Los órganos NO se rechazan automáticamente.
+            # Si no hay dron viable ahora, deben quedarse pendientes.
+            if es_organo:
+                pedido.status = "pending"
+                pedido.rejection_reason = None
+                return None
+
+            # Los pedidos de reposición sí pueden rechazarse si no hay ruta viable.
             pedido.status = "rejected"
             pedido.rejection_reason = "No hay ningún dron viable para este pedido."
 
             self.pedidos_rechazados.append(pedido)
             self.estadisticas.rejected_calls += 1
-
-            # Estadística específica de órganos rechazados.
-            if self._es_pedido_organo(pedido):
-                self.estadisticas.organ_rejected += 1
 
             return None
 
@@ -175,7 +174,7 @@ class GestorFlotaController:
         dron.status = "mission"
         dron.current_call_id = pedido.call_id
 
-        # Reservamos desde ahora la batería estimada para todo el viaje.
+        # Reservamos desde ahora la batería estimada para toda la misión.
         dron.battery_percent = decision.battery_after_percent
 
         # Mientras está en misión, consideramos que su destino operativo
@@ -184,19 +183,15 @@ class GestorFlotaController:
 
         pedido.status = "assigned"
         pedido.assigned_drone_id = dron.drone_id
+        pedido.assigned_time_min = tiempo_actual
 
         self.pedidos_activos[pedido.call_id] = pedido
         self.estadisticas.assigned_calls += 1
 
-        # Estadística específica de órganos asignados.
-        if self._es_pedido_organo(pedido):
+        if es_organo:
             self.estadisticas.organ_assigned += 1
 
         # Estadísticas generales por nivel de prioridad.
-        # Prioridad 0 = órganos / máxima prioridad.
-        # Prioridad 1 = crítica.
-        # Prioridad 2 = urgente/media.
-        # Prioridad 3 = rutinaria/baja.
         if pedido.priority == 0:
             self.estadisticas.high_priority_calls += 1
         elif pedido.priority == 1:
@@ -206,10 +201,10 @@ class GestorFlotaController:
         else:
             self.estadisticas.low_priority_calls += 1
 
-        eta_ida = tiempo_actual + decision.estimated_flight_ida_min
+        eta_entrega = tiempo_actual + decision.estimated_flight_ida_min
         dron.flight_minutes += decision.estimated_flight_ida_min
 
-        return eta_ida, decision
+        return eta_entrega, decision
 
     def procesar_evento_llegada_hospital(
         self,
@@ -218,13 +213,19 @@ class GestorFlotaController:
         decision
     ):
         """
-        Procesa la llegada de un dron al hospital de destino.
+        Procesa la llegada de un dron al hospital destino.
 
-        En este punto:
-        - el pedido se marca como completado,
-        - el dron pasa a estado de regreso,
-        - se calcula cuándo llegará de vuelta a su base.
+        Si el pedido es de órgano:
+        - el pedido se completa,
+        - el dron se queda en el hospital destino,
+        - queda disponible allí,
+        - no vuelve a base.
+
+        Si el pedido es de reposición:
+        - el pedido se completa,
+        - el dron vuelve a su base.
         """
+
         dron = self.drones[id_dron]
 
         id_pedido = dron.current_call_id
@@ -234,14 +235,14 @@ class GestorFlotaController:
             pedido = self.pedidos_activos.pop(id_pedido)
 
             pedido.status = "completed"
+            pedido.completed_time_min = tiempo_actual
+
             self.pedidos_completados.append(pedido)
             self.estadisticas.completed_calls += 1
 
-            # Estadísticas específicas de órganos completados.
             if self._es_pedido_organo(pedido):
                 self.estadisticas.organ_completed += 1
 
-                # Comprobamos si llegó dentro del límite de isquemia.
                 if tiempo_actual <= pedido.deadline_min:
                     self.estadisticas.organ_on_time += 1
                 else:
@@ -249,9 +250,32 @@ class GestorFlotaController:
 
             pedido_completado = pedido
 
-        dron.status = "returning"
         dron.deliveries_made += 1
         dron.current_call_id = None
+
+        # -------------------------------------------------------------------
+        # Caso 1: órgano
+        # -------------------------------------------------------------------
+        # El dron se queda en el hospital destino.
+        # No se programa vuelta a base.
+        # -------------------------------------------------------------------
+
+        if (
+            pedido_completado is not None
+            and self._es_pedido_organo(pedido_completado)
+        ):
+            dron.status = "available"
+            dron.current_node = pedido_completado.destination_hospital
+
+            return None, pedido_completado
+
+        # -------------------------------------------------------------------
+        # Caso 2: reposición
+        # -------------------------------------------------------------------
+        # El dron vuelve a su base.
+        # -------------------------------------------------------------------
+
+        dron.status = "returning"
 
         dron.flight_minutes += decision.estimated_flight_vuelta_min
 
@@ -267,17 +291,11 @@ class GestorFlotaController:
         """
         Procesa la llegada de un dron a su base.
 
-        Si la batería está por debajo del umbral mínimo, entra en recarga.
-        Si no, queda disponible directamente.
+        Solo debería usarse para pedidos de reposición.
         """
         dron = self.drones[id_dron]
         dron.current_node = dron.base_name
 
-        # Se suma un margen del 15% a BATERIA_MINIMA_VUELO.
-        # Ejemplo:
-        # BATERIA_MINIMA_VUELO = 20%
-        # Margen extra = 15%
-        # Umbral operativo = 35%
         if dron.battery_percent < (BATERIA_MINIMA_VUELO + 15.0):
             dron.status = "charging"
 

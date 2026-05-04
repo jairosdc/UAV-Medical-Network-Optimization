@@ -1,19 +1,20 @@
 """
-experimentos.py - Motor configurable de simulacion
-==================================================
+experimentacion.py - Motor configurable de simulacion
+====================================================
 
 Este archivo convierte el antiguo main.py en una funcion reutilizable:
 
     resultado = run_simulation(config)
 
-La idea es que este archivo sirva despues para:
+Sirve para:
 - ejecutar escenarios distintos,
 - hacer Monte Carlo,
 - optimizar numero de drones,
 - comparar posiciones de bases.
 
-De momento NO modifica la logica interna del simulador.
-Solo la deja parametrizada.
+Reglas operativas importantes:
+- Reposicion: base -> hospital -> vuelve a base.
+- Organos: hospital origen -> hospital destino -> el dron se queda en el hospital destino.
 """
 
 import heapq
@@ -242,6 +243,7 @@ def run_simulation(config=None):
                     decision
                 )
 
+                # Solo los pedidos de inventario actualizan stock al llegar.
                 if (
                     pedido_ok is not None
                     and es_pedido_inventario(pedido_ok)
@@ -252,17 +254,21 @@ def run_simulation(config=None):
                         pedido_ok.unidades
                     )
 
-                secuencia_evento += 1
-                heapq.heappush(
-                    cola_eventos_des,
-                    (
-                        eta_base,
-                        secuencia_evento,
-                        "aterrizaje_base",
-                        id_dron,
-                        None
+                # Solo los pedidos de reposicion vuelven a base.
+                # En organos, eta_base es None porque el dron se queda
+                # en el hospital destino.
+                if eta_base is not None:
+                    secuencia_evento += 1
+                    heapq.heappush(
+                        cola_eventos_des,
+                        (
+                            eta_base,
+                            secuencia_evento,
+                            "aterrizaje_base",
+                            id_dron,
+                            None
+                        )
                     )
-                )
 
                 if IMPRIMIR_EVENTOS_DRONES and pedido_ok is not None:
                     if es_pedido_organo(pedido_ok):
@@ -270,7 +276,7 @@ def run_simulation(config=None):
                             f"  [t={minuto:05d}] ENTREGA ORG {id_dron} "
                             f"| {pedido_ok.producto.upper()} "
                             f"{pedido_ok.origin_hospital} -> {pedido_ok.destination_hospital} "
-                            f"| regreso ETA={eta_base:.0f}"
+                            f"| dron queda en destino"
                         )
                     else:
                         print(
@@ -367,6 +373,7 @@ def run_simulation(config=None):
                 id_dron_asignado = pedido.assigned_drone_id
                 bat_post = gestor_flota.drones[id_dron_asignado].battery_percent
 
+                # Solo los pedidos de inventario descuentan stock en origen.
                 if es_pedido_inventario(pedido) and pedido.producto:
                     inventarios[pedido.origin_hospital].enviar_dron(
                         pedido.producto,
@@ -405,18 +412,27 @@ def run_simulation(config=None):
                         )
 
             else:
-                if IMPRIMIR_EVENTOS_DRONES:
-                    if es_pedido_organo(pedido):
+                # Los organos no se rechazan automáticamente.
+                # Se devuelven a la cola y se reintentaran en otro minuto.
+                if es_pedido_organo(pedido):
+                    cola_pedidos.añadir_pedido(pedido)
+
+                    if IMPRIMIR_EVENTOS_DRONES:
                         print(
-                            f"  [t={minuto:05d}] RECHAZO ORG pedido #{pedido.call_id} "
+                            f"  [t={minuto:05d}] ESPERA ORG pedido #{pedido.call_id} "
                             f"({pedido.producto.upper()} "
                             f"{pedido.origin_hospital} -> {pedido.destination_hospital})"
                         )
-                    else:
-                        print(
-                            f"  [t={minuto:05d}] RECHAZO     pedido #{pedido.call_id} "
-                            f"({pedido.producto} x{pedido.unidades})"
-                        )
+
+                    # Cortamos para evitar bucle infinito en el mismo minuto.
+                    break
+
+                # Los pedidos normales sí pueden rechazarse.
+                if IMPRIMIR_EVENTOS_DRONES:
+                    print(
+                        f"  [t={minuto:05d}] RECHAZO pedido #{pedido.call_id} "
+                        f"({pedido.producto} x{pedido.unidades})"
+                    )
 
     # -----------------------------------------------------------------------
     # FASE 3: PROCESAR EVENTOS DES RESTANTES POST-SIMULACION
@@ -448,10 +464,11 @@ def run_simulation(config=None):
                     pedido_ok.unidades
                 )
 
-            gestor_flota.procesar_evento_aterrizaje_base(
-                id_dron,
-                eta_base
-            )
+            if eta_base is not None:
+                gestor_flota.procesar_evento_aterrizaje_base(
+                    id_dron,
+                    eta_base
+                )
 
         elif tipo_evento == "aterrizaje_base":
             gestor_flota.procesar_evento_aterrizaje_base(
@@ -484,7 +501,12 @@ def run_simulation(config=None):
         if es_pedido_organo(p)
     ]
 
-    organos_totales = len(organos_completados) + len(organos_rechazados)
+    organos_pendientes = [
+        p for p in getattr(cola_pedidos, "pedidos_pendientes", [])
+        if es_pedido_organo(p)
+    ]
+
+    organos_totales = estadisticas.organ_calls
 
     total_vuelo = sum(d.flight_minutes for d in gestor_flota.drones.values())
     total_recarga = sum(d.charging_minutes for d in gestor_flota.drones.values())
@@ -521,7 +543,7 @@ def run_simulation(config=None):
     )
 
     tasa_exito_organos = (
-        len(organos_completados) / organos_totales
+        estadisticas.organ_on_time / organos_totales
         if organos_totales > 0
         else 0
     )
@@ -544,6 +566,7 @@ def run_simulation(config=None):
         "organos_totales": organos_totales,
         "organos_completados": len(organos_completados),
         "organos_rechazados": len(organos_rechazados),
+        "organos_pendientes": len(organos_pendientes),
         "organos_on_time": estadisticas.organ_on_time,
         "organos_late": estadisticas.organ_late,
         "tasa_exito_organos": tasa_exito_organos,
@@ -579,10 +602,13 @@ def run_simulation(config=None):
         print(f"  Tasa de servicio:            {tasa_servicio * 100:.1f}%")
 
         print("\n--- ORGANOS ---")
+        print(f"  Organos totales:             {organos_totales}")
         print(f"  Organos completados:         {len(organos_completados)}")
         print(f"  Organos rechazados:          {len(organos_rechazados)}")
-        print(f"  Organos totales evaluados:   {organos_totales}")
-        print(f"  Tasa de exito organos:       {tasa_exito_organos * 100:.1f}%")
+        print(f"  Organos pendientes:          {len(organos_pendientes)}")
+        print(f"  Organos a tiempo:            {estadisticas.organ_on_time}")
+        print(f"  Organos tarde:               {estadisticas.organ_late}")
+        print(f"  Tasa exito organos:          {tasa_exito_organos * 100:.1f}%")
 
         print("\n--- COLA ---")
         print(f"  Longitud media de cola:      {longitud_media_cola:.2f}")
