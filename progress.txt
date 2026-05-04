@@ -1,0 +1,9 @@
+[x] Analizar y extraer estilos de Grafo/grafo.html
+[x] Crear el script Grafo/generar_mapa.py para generar el mapa programáticamente usando folium
+[x] Importar los datos de hospitales y bases al script y sobrescribir el HTML
+[x] Ejecutar y generar el nuevo grafo.html
+[x] Añadir áreas de cobertura de las bases al script
+[x] Determinar asignación (hospital -> base más cercana) usando ServicioRed
+[x] Trazar aristas intermitentes y añadir etiquetas de distancia kilométrica
+[x] Generar un script de pruebas unitarias test_generar_mapa.py
+[x] Finalizar tarea
