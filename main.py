@@ -16,7 +16,7 @@ def main():
         "imprimir_eventos_hospital": False,
         "imprimir_eventos_clima": False,
 
-        "generar_graficas": False,
+        "generar_graficas": True,
         "verbose": True,
     }
 
