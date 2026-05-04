@@ -16,6 +16,7 @@ import heapq
 from hospitales_almacenes_data import HOSPITALS, BASES
 from models.inventario import Inventario
 from services.grafo_distancias_service import ServicioRed
+from services.telemetria_service import TelemetriaLogger
 from controllers.gestor_flota_controller import GestorFlotaController
 from simulators.generador_pedidos import GeneradorPedidos
 from simulators.simulador_clima import SimuladorClima
@@ -148,6 +149,8 @@ def run_simulation(config=None):
 
     historial_longitud_cola = []
 
+    telemetria = TelemetriaLogger()
+
     # -----------------------------------------------------------------------
     # REPORTE INICIAL
     # -----------------------------------------------------------------------
@@ -261,6 +264,18 @@ def run_simulation(config=None):
                             id_dron,
                             None,
                         ),
+                    )
+
+                    # Telemetría: vuelo de VUELTA a base
+                    dron_vuelta = gestor_flota.drones[id_dron]
+                    telemetria.registrar_vuelo(
+                        dron_id=id_dron,
+                        origen=pedido_ok.destination_hospital if pedido_ok else dron_vuelta.current_node,
+                        destino=dron_vuelta.base_name,
+                        t_salida=minuto,
+                        t_llegada=eta_base,
+                        tipo_mision="vuelta_base",
+                        bateria=dron_vuelta.battery_percent,
                     )
 
                 if IMPRIMIR_EVENTOS_DRONES and pedido_ok is not None:
@@ -402,6 +417,18 @@ def run_simulation(config=None):
                 ),
             )
 
+            # Telemetría: vuelo de IDA
+            tipo_tel = "organo" if es_pedido_organo(pedido) else "inventario"
+            telemetria.registrar_vuelo(
+                dron_id=id_dron_asignado,
+                origen=pedido.origin_hospital,
+                destino=pedido.destination_hospital,
+                t_salida=minuto,
+                t_llegada=eta_ida,
+                tipo_mision=tipo_tel,
+                bateria=bat_post,
+            )
+
             if IMPRIMIR_EVENTOS_DRONES:
                 if es_pedido_organo(pedido):
                     print(
@@ -477,8 +504,10 @@ def run_simulation(config=None):
             gestor_flota.procesar_evento_fin_recarga(id_dron)
 
     # -----------------------------------------------------------------------
-    # FASE 4: MÉTRICAS
+    # FASE 4: MÉTRICAS  +  EXPORTAR TELEMETRÍA
     # -----------------------------------------------------------------------
+
+    telemetria.exportar_json()
 
     estadisticas = gestor_flota.estadisticas
     resumen_flota = gestor_flota.obtener_resumen_estado()
