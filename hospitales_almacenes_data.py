@@ -37,7 +37,7 @@ HOSPITALS = {
 
     "Hospital Universitario del Sureste": Node("Hospital Universitario del Sureste", 40.2968407, -3.4570632, "hospital"),
 
-    "Hospital Universitario del Tajo": Node("Hospital Universitario del Tajo", 40.0567701, -3.6110955, "hospital"),
+    #"Hospital Universitario del Tajo": Node("Hospital Universitario del Tajo", 40.0567701, -3.6110955, "hospital"),
 
     "Hospital Universitario Dr. Rodríguez Lafora": Node("Hospital Universitario Dr. Rodríguez Lafora", 40.5321449, -3.6919534, "hospital"),
 
@@ -75,11 +75,20 @@ HOSPITALS = {
 
     "Hospital Universitario Severo Ochoa": Node("Hospital Universitario Severo Ochoa", 40.3210980, -3.7687637, "hospital"),
 
-    "Hospital Asociado Universitario Virgen de la Poveda": Node("Hospital Asociado Universitario Virgen de la Poveda", 40.2478587, -4.2763669, "hospital"),
+    #"Hospital Asociado Universitario Virgen de la Poveda": Node("Hospital Asociado Universitario Virgen de la Poveda", 40.2478587, -4.2763669, "hospital"),
 }
 
 BASES = {
-    "BASE NORTE": Node("BASE NORTE", 40.4636, -3.7012, "base"),
-    "BASE CENTRO": Node("BASE CENTRO", 40.4382, -3.7155, "base"),
-    "BASE SUR": Node("BASE SUR", 40.3968, -3.6985, "base"),
+    # Cubre Guadarrama, Villalba, El Escorial y La Fuenfría
+    "BASE NOROESTE": Node("BASE NOROESTE", 40.6732, -4.0702, "base"),
+
+    # Cubre Madrid capital norte-centro y hospitales centrales
+    "BASE NORTE CAPITAL": Node("BASE NORTE CAPITAL", 40.4503, -3.6884, "base"),
+
+    # Cubre el este madrileño, pero sin quedar demasiado alejada de Madrid
+    # Zona recomendada: Coslada / San Fernando / Torrejón oeste
+    "BASE ESTE CORREDOR": Node("BASE ESTE CORREDOR", 40.4450, -3.5300, "base"),
+
+    # Cubre Fuenlabrada, Getafe, Móstoles, Alcorcón, Leganés y zona sur
+    "BASE SUR FUENLABRADA": Node("BASE SUR FUENLABRADA", 40.2964, -3.7954, "base"),
 }
