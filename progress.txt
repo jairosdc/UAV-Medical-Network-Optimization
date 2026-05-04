@@ -7,3 +7,15 @@
 [x] Trazar aristas intermitentes y añadir etiquetas de distancia kilométrica
 [x] Generar un script de pruebas unitarias test_generar_mapa.py
 [x] Finalizar tarea
+
+--- Integración de métricas de visualización (2026-05-04) ---
+[x] PASO 1: historial_longitud_cola y llamada actualizada en experimentacion.py (ya existente)
+[x] PASO 2: Reescribir services/visualizaciones.py con 5 figuras independientes
+    [x] Utilidades: _es_organo, _es_inventario, _contar_elementos, _porcentaje, _top_items
+    [x] Fig 1: Embudo global de pedidos (barras simples)
+    [x] Fig 2: Inventario vs Órganos (barras agrupadas)
+    [x] Fig 3: Cumplimiento de Órganos (A tiempo, Tarde, Pendientes, Rechazados)
+    [x] Fig 4: Top Hospitales Receptores (barras horizontales, figsize 10x12)
+    [x] Fig 5: Evolución de la cola (líneas, condicional)
+    [x] plt.show() único al final
+[x] Validación de import OK
