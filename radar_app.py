@@ -726,16 +726,24 @@ with col_pause:
         st.rerun()
 
 with col_status:
-    estado_txt = "🔴 EN REPRODUCCIÓN" if st.session_state.is_playing else "⏸️ Pausado"
-    vel_txt = f"{st.session_state.velocidad_reproduccion} min/frame"
+    placeholder_status = st.empty()
 
-    st.markdown(
+vel_txt = f"{st.session_state.velocidad_reproduccion} min/frame"
+
+
+def _actualizar_status(t):
+    """Actualiza la barra de estado con el instante actual."""
+    estado_txt = "🔴 EN REPRODUCCIÓN" if st.session_state.is_playing else "⏸️ Pausado"
+    placeholder_status.markdown(
         f'<div style="padding:0.45rem 0.8rem; background:rgba(15,12,41,0.6); '
         f'border-radius:8px; color:#ccd6f6; font-size:0.85rem;">'
         f'{estado_txt} &nbsp;·&nbsp; Velocidad: {vel_txt} &nbsp;·&nbsp; '
-        f't = <b>{st.session_state.minuto_actual}</b> / {max_minuto}</div>',
+        f't = <b>{t}</b> / {max_minuto}</div>',
         unsafe_allow_html=True,
     )
+
+
+_actualizar_status(st.session_state.minuto_actual)
 
 
 def _on_slider_change():
@@ -951,8 +959,10 @@ placeholder_tabla = st.empty()
 
 def renderizar_frame(t):
     """
-    Renderiza mapa + tabla para un instante t.
+    Renderiza mapa + tabla + status para un instante t.
     """
+    _actualizar_status(t)
+
     mapa, df_d, n = construir_mapa(t)
 
     with placeholder_mapa:
@@ -1003,16 +1013,18 @@ if not vuelos:
 # ---------------------------------------------------------------------------
 
 if st.session_state.is_playing and vuelos:
-    if st.session_state.minuto_actual >= max_minuto:
-        st.session_state.is_playing = False
-        st.rerun()
+    paso = st.session_state.velocidad_reproduccion
+    t = st.session_state.minuto_actual
 
-    time.sleep(retardo / 1000.0)
+    while t < max_minuto:
+        renderizar_frame(t)
+        time.sleep(retardo / 1000.0)
 
-    siguiente_t = min(
-        st.session_state.minuto_actual + st.session_state.velocidad_reproduccion,
-        max_minuto,
-    )
+        t = min(t + paso, max_minuto)
+        st.session_state.minuto_actual = t
 
-    st.session_state.minuto_actual = siguiente_t
+    # Renderizar el último frame y auto-pausar
+    renderizar_frame(max_minuto)
+    st.session_state.minuto_actual = max_minuto
+    st.session_state.is_playing = False
     st.rerun()
