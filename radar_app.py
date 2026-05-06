@@ -20,6 +20,7 @@ import time
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
+import numpy as np
 
 # ---------------------------------------------------------------------------
 # Importaciones del proyecto
@@ -495,6 +496,28 @@ st.markdown("""
         margin: 0.2rem 0 0 0;
     }
 
+    .product-card {
+        background: linear-gradient(145deg, #1a1a2e, #0f2027);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 0.6rem 0.8rem;
+        text-align: center;
+        margin-bottom: 0.3rem;
+    }
+
+    .product-card h4 {
+        color: #90e0ef;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .product-card p {
+        color: #8892b0;
+        font-size: 0.72rem;
+        margin: 0.1rem 0 0 0;
+        text-transform: capitalize;
+    }
+
     .legend-box {
         background: rgba(15, 12, 41, 0.85);
         border: 1px solid rgba(255,255,255,0.1);
@@ -687,6 +710,7 @@ else:
 # ---------------------------------------------------------------------------
 
 if resultado:
+    # --- Fila 1: métricas principales ---
     cols = st.columns(6)
 
     metricas = [
@@ -695,7 +719,7 @@ if resultado:
         (resultado.get("pedidos_rechazados", 0), "Rechazados"),
         (resultado.get("pedidos_en_cola", 0), "En Cola"),
         (f"{resultado.get('tasa_servicio', 0) * 100:.1f}%", "Tasa de Servicio"),
-        (len(vuelos), "Tramos Radar"),
+        (f"{resultado.get('tasa_exito_organos', 0) * 100:.1f}%", "Éxito Órganos"),
     ]
 
     for i, (valor, label) in enumerate(metricas):
@@ -704,6 +728,47 @@ if resultado:
                 f'<div class="metric-card"><h3>{valor}</h3><p>{label}</p></div>',
                 unsafe_allow_html=True,
             )
+
+    # --- Fila 2: desglose por producto ---
+    conteo_completados = resultado.get("conteo_producto_completados", {})
+
+    PRODUCTOS_INVENTARIO = [
+        "sangre", "farmaco_uci", "antibiotico", "suero",
+        "plasma", "analgesico", "material_sanitario", "medicamento_general",
+    ]
+    PRODUCTOS_ORGANOS = ["corazon", "pulmon", "rinon", "pancreas"]
+
+    EMOJI_PRODUCTO = {
+        "sangre": "🩸", "farmaco_uci": "💊", "antibiotico": "💉", "suero": "🧪",
+        "plasma": "🟡", "analgesico": "💊", "material_sanitario": "🩹",
+        "medicamento_general": "💊",
+        "corazon": "❤️", "pulmon": "🫁", "rinon": "🫘", "pancreas": "🟣",
+    }
+
+    with st.expander("📦 Desglose por producto (completados)", expanded=False):
+        st.caption("**Inventario**")
+        cols_inv = st.columns(len(PRODUCTOS_INVENTARIO))
+        for i, prod in enumerate(PRODUCTOS_INVENTARIO):
+            n = conteo_completados.get(prod, 0)
+            emoji = EMOJI_PRODUCTO.get(prod, "📦")
+            nombre = prod.replace("_", " ")
+            with cols_inv[i]:
+                st.markdown(
+                    f'<div class="product-card"><h4>{emoji} {n}</h4><p>{nombre}</p></div>',
+                    unsafe_allow_html=True,
+                )
+
+        st.caption("**Órganos**")
+        cols_org = st.columns(len(PRODUCTOS_ORGANOS))
+        for i, prod in enumerate(PRODUCTOS_ORGANOS):
+            n = conteo_completados.get(prod, 0)
+            emoji = EMOJI_PRODUCTO.get(prod, "🫀")
+            nombre = prod.replace("_", " ")
+            with cols_org[i]:
+                st.markdown(
+                    f'<div class="product-card"><h4>{emoji} {n}</h4><p>{nombre}</p></div>',
+                    unsafe_allow_html=True,
+                )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1028,3 +1093,214 @@ if st.session_state.is_playing and vuelos:
     st.session_state.minuto_actual = max_minuto
     st.session_state.is_playing = False
     st.rerun()
+
+
+# ---------------------------------------------------------------------------
+# GRÁFICAS DE RESULTADOS (réplica de visualizaciones.py)
+# ---------------------------------------------------------------------------
+
+if resultado:
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align:center; margin:1.5rem 0 1rem 0;">
+        <h2 style="background: linear-gradient(90deg, #00b4d8, #90e0ef);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size:1.6rem; margin:0;">
+            📊 Análisis de la Simulación
+        </h2>
+        <p style="color:#8892b0; font-size:0.85rem; margin:0.2rem 0 0 0;">
+            Gráficas equivalentes al reporte de main.py
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Extraer datos internos
+    gestor_flota = resultado.get("_gestor_flota")
+    historial_cola = resultado.get("_historial_longitud_cola", [])
+    cola_pedidos_obj = resultado.get("_cola_pedidos")
+
+    pedidos_completados = getattr(gestor_flota, "pedidos_completados", []) if gestor_flota else []
+    pedidos_rechazados = getattr(gestor_flota, "pedidos_rechazados", []) if gestor_flota else []
+    pedidos_pendientes = (
+        getattr(cola_pedidos_obj, "pedidos_pendientes", [])
+        if cola_pedidos_obj else []
+    )
+    estadisticas = getattr(gestor_flota, "estadisticas", None) if gestor_flota else None
+
+    # =======================================================================
+    # GRÁFICA 1: Embudo Global de Pedidos
+    # =======================================================================
+
+    col_g1, col_g2 = st.columns(2)
+
+    with col_g1:
+        st.subheader("1️⃣ Embudo Global de Pedidos")
+
+        total_gen = resultado.get("pedidos_generados", 0)
+        total_comp = resultado.get("pedidos_completados", 0)
+        total_pend = resultado.get("pedidos_en_cola", 0)
+        total_rech = resultado.get("pedidos_rechazados", 0)
+
+        df_embudo = pd.DataFrame({
+            "Categoría": ["Generados", "Completados", "Pendientes", "Rechazados"],
+            "Cantidad": [total_gen, total_comp, total_pend, total_rech],
+        })
+
+        st.bar_chart(
+            df_embudo.set_index("Categoría"),
+            color="#00b4d8",
+            use_container_width=True,
+        )
+
+    # =======================================================================
+    # GRÁFICA 2: Inventario vs Órganos
+    # =======================================================================
+
+    with col_g2:
+        st.subheader("2️⃣ Inventario vs Órganos")
+
+        inv_comp = resultado.get("inventario_completado", 0)
+        inv_pend = resultado.get("inventario_pendiente", 0)
+        org_comp = resultado.get("organos_completados", 0)
+        org_pend = resultado.get("organos_pendientes", 0)
+        org_rech = resultado.get("organos_rechazados", 0)
+
+        # Rechazados de inventario = total rechazados - rechazados de órganos
+        inv_rech = total_rech - org_rech
+
+        df_tipo = pd.DataFrame({
+            "Estado": ["Completados", "Pendientes", "Rechazados"],
+            "Inventario": [inv_comp, inv_pend, max(inv_rech, 0)],
+            "Órganos": [org_comp, org_pend, org_rech],
+        }).set_index("Estado")
+
+        st.bar_chart(df_tipo, color=["#1abc9c", "#e74c3c"], use_container_width=True)
+
+    # =======================================================================
+    # GRÁFICA 3: Cumplimiento de Órganos
+    # =======================================================================
+
+    col_g3, col_g4 = st.columns(2)
+
+    with col_g3:
+        st.subheader("3️⃣ Cumplimiento de Órganos")
+
+        org_on_time = resultado.get("organos_on_time", 0)
+        org_late = resultado.get("organos_late", 0)
+
+        df_org = pd.DataFrame({
+            "Estado": ["A tiempo", "Tarde", "Pendientes", "Rechazados"],
+            "Cantidad": [org_on_time, org_late, org_pend, org_rech],
+        })
+
+        st.bar_chart(
+            df_org.set_index("Estado"),
+            color="#27ae60",
+            use_container_width=True,
+        )
+
+    # =======================================================================
+    # GRÁFICA 4: Demanda por hospital (Top 15)
+    # =======================================================================
+
+    with col_g4:
+        st.subheader("4️⃣ Top Hospitales Receptores")
+
+        if pedidos_completados:
+            conteo_hosp = {}
+            for p in pedidos_completados:
+                dest = p.destination_hospital
+                conteo_hosp[dest] = conteo_hosp.get(dest, 0) + 1
+
+            # Ordenar top 15
+            top15 = sorted(conteo_hosp.items(), key=lambda x: x[1], reverse=True)[:15]
+
+            df_hosp = pd.DataFrame(top15, columns=["Hospital", "Entregas"])
+
+            st.bar_chart(
+                df_hosp.set_index("Hospital"),
+                color="#2980b9",
+                use_container_width=True,
+                horizontal=True,
+            )
+        else:
+            st.info("Sin datos de entregas completadas.")
+
+    # =======================================================================
+    # GRÁFICA 5: Evolución de la Cola
+    # =======================================================================
+
+    if historial_cola:
+        st.subheader("5️⃣ Evolución de la Longitud de Cola")
+
+        df_cola = pd.DataFrame({
+            "Minuto": range(len(historial_cola)),
+            "Pedidos en Cola": historial_cola,
+        })
+
+        st.area_chart(
+            df_cola.set_index("Minuto"),
+            color="#8e44ad",
+            use_container_width=True,
+        )
+
+        # Métricas de cola
+        cola_c1, cola_c2 = st.columns(2)
+        with cola_c1:
+            st.metric(
+                "Longitud media de cola",
+                f"{resultado.get('longitud_media_cola', 0):.1f}",
+            )
+        with cola_c2:
+            st.metric(
+                "Longitud máxima de cola",
+                resultado.get("longitud_maxima_cola", 0),
+            )
+
+    # =======================================================================
+    # METEOROLOGÍA + FLOTA (resumen)
+    # =======================================================================
+
+    col_m1, col_m2 = st.columns(2)
+
+    conteo_clima = resultado.get("conteo_clima", {})
+    resumen_flota = resultado.get("resumen_flota", {})
+
+    with col_m1:
+        if conteo_clima:
+            st.subheader("🌦️ Meteorología")
+            min_sim = resultado.get("minutos_simulacion", 1)
+            filas_clima = []
+            for nombre_estado, mins in conteo_clima.items():
+                pct = (mins / min_sim) * 100 if min_sim > 0 else 0
+                filas_clima.append({
+                    "Estado": nombre_estado.replace("_", " ").title(),
+                    "Minutos": mins,
+                    "Porcentaje": f"{pct:.1f}%",
+                })
+            st.dataframe(
+                pd.DataFrame(filas_clima),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+    with col_m2:
+        if resumen_flota:
+            st.subheader("🚁 Estado final de la flota")
+
+            filas_flota = [
+                ("Total drones", resultado.get("total_drones", 0)),
+                ("Drones base", resumen_flota.get("base_total", 0)),
+                ("Drones hospital", resumen_flota.get("hospital_total", 0)),
+                ("Disponibles", resumen_flota.get("available", 0)),
+                ("En misión", resumen_flota.get("mission", 0)),
+                ("Recargando", resumen_flota.get("charging", 0)),
+                ("Utilización vuelo", f"{resultado.get('utilizacion_vuelo_pct', 0):.2f}%"),
+                ("Utilización operativa", f"{resultado.get('utilizacion_operativa_pct', 0):.2f}%"),
+            ]
+
+            st.dataframe(
+                pd.DataFrame(filas_flota, columns=["Métrica", "Valor"]),
+                use_container_width=True,
+                hide_index=True,
+            )

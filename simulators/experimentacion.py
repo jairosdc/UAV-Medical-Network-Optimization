@@ -35,6 +35,15 @@ def es_pedido_organo(pedido):
     return getattr(pedido, "tipo_pedido", "inventario") == "organo"
 
 
+def _contar_por_producto(lista_pedidos):
+    """Cuenta cuántos pedidos hay de cada producto en una lista."""
+    conteo = {}
+    for pedido in lista_pedidos:
+        producto = getattr(pedido, "producto", None) or "desconocido"
+        conteo[producto] = conteo.get(producto, 0) + 1
+    return conteo
+
+
 def descripcion_pedido(pedido):
     if es_pedido_organo(pedido):
         return (
@@ -626,6 +635,16 @@ def run_simulation(config=None):
 
         "resumen_flota": resumen_flota,
         "conteo_clima": conteo_clima,
+
+        # Conteo por producto (completados + pendientes + rechazados = generados)
+        "conteo_producto_completados": _contar_por_producto(pedidos_completados),
+        "conteo_producto_pendientes": _contar_por_producto(pedidos_pendientes),
+        "conteo_producto_rechazados": _contar_por_producto(pedidos_rechazados),
+
+        # Objetos internos para gráficas
+        "_gestor_flota": gestor_flota,
+        "_historial_longitud_cola": historial_longitud_cola,
+        "_cola_pedidos": cola_pedidos,
     }
 
     # -----------------------------------------------------------------------
