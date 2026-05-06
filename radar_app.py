@@ -2,12 +2,14 @@
 radar_app.py — FlyRadar: Visor Interactivo de Drones Médicos
 =============================================================
 
-Aplicación Streamlit + PyDeck conectada directamente al motor DES.
-El usuario configura la simulación desde la barra lateral, la ejecuta
-y luego navega por el timeline para ver los drones en movimiento.
+Aplicación Streamlit + PyDeck conectada al motor DES.
 
-Lanzar con:
-    streamlit run radar_app.py
+Este archivo NO decide lógica de simulación.
+Solo:
+- ejecuta run_simulation(config),
+- lee la telemetría generada por el motor,
+- interpola posiciones,
+- pinta el mapa.
 """
 
 import json
@@ -36,47 +38,94 @@ RUTA_TELEMETRIA = os.path.join(
     "telemetria_vuelos.json",
 )
 
-# Centro del mapa (Madrid)
 MADRID_LAT = 40.42
 MADRID_LON = -3.70
 
-# Colores (RGBA)
-COLOR_INVENTARIO = [46, 204, 113, 230]    # Verde
-COLOR_ORGANO = [231, 76, 60, 240]         # Rojo
-COLOR_VUELTA = [149, 165, 166, 180]       # Gris
-COLOR_BATERIA_BAJA = [255, 255, 0, 240]   # Amarillo
-COLOR_RECIEN_LLEGADO = [255, 255, 255, 160]  # Blanco semitransparente
-COLOR_HOSPITAL_NODO = [0, 250, 154, 220]  # Verde primavera (SpringGreen)
-COLOR_ARISTA = [150, 150, 150, 80]        # Gris semitransparente
+# Colores de misiones
+COLOR_INVENTARIO = [46, 204, 113, 230]
+COLOR_ORGANO = [231, 76, 60, 240]
+COLOR_VUELTA = [149, 165, 166, 180]
+COLOR_BATERIA_BAJA = [255, 255, 0, 240]
+COLOR_RECIEN_LLEGADO = [255, 255, 255, 160]
+
+# Colores de nodos
+COLOR_HOSPITAL_NODO = [0, 250, 154, 220]
 
 UMBRAL_BATERIA_BAJA = 25.0
 MARGEN_PERSISTENCIA_MIN = 3
 
-# Configuración visual por base (color RGB + radio de cobertura en metros)
+# Configuración visual por base.
+# Si en el proyecto aparecen nuevas bases, se les asigna un color por defecto.
 CONFIG_BASES = {
-    "BASE NOROESTE":       {"color_rgb": [0, 255, 136],  "radio": 6000},
-    "BASE NORTE CAPITAL":  {"color_rgb": [0, 207, 255],  "radio": 4504},
-    "BASE ESTE CORREDOR":  {"color_rgb": [180, 120, 255], "radio": 3500},
-    "BASE SUR FUENLABRADA":{"color_rgb": [255, 159, 0],  "radio": 4000},
+    "BASE NOROESTE": {"color_rgb": [0, 255, 136], "radio": 6000},
+    "BASE NORTE CAPITAL": {"color_rgb": [0, 207, 255], "radio": 4504},
+    "BASE ESTE CORREDOR": {"color_rgb": [180, 120, 255], "radio": 3500},
+    "BASE SUR FUENLABRADA": {"color_rgb": [255, 159, 0], "radio": 4000},
 }
+
+COLORES_BASE_FALLBACK = [
+    [0, 255, 136],
+    [0, 207, 255],
+    [180, 120, 255],
+    [255, 159, 0],
+    [255, 99, 132],
+    [120, 220, 120],
+    [240, 240, 120],
+]
 
 
 # ---------------------------------------------------------------------------
 # FUNCIONES AUXILIARES
 # ---------------------------------------------------------------------------
 
-@st.cache_data
+def limpiar_telemetria_previa():
+    """
+    Elimina la telemetría anterior antes de ejecutar una simulación nueva.
+
+    Esto evita el fallo típico:
+    - la simulación nueva falla o no genera vuelos,
+    - pero el radar sigue pintando un JSON viejo.
+    """
+    if os.path.exists(RUTA_TELEMETRIA):
+        os.remove(RUTA_TELEMETRIA)
+
+
+def obtener_config_base(nombre_base, indice):
+    """
+    Devuelve configuración visual de una base.
+
+    La lógica de qué base conecta con qué hospital sigue dependiendo de
+    ServicioRed. Esto solo da color y radio visual.
+    """
+    if nombre_base in CONFIG_BASES:
+        return CONFIG_BASES[nombre_base]
+
+    color = COLORES_BASE_FALLBACK[indice % len(COLORES_BASE_FALLBACK)]
+
+    return {
+        "color_rgb": color,
+        "radio": 3500,
+    }
+
+
+@st.cache_data(show_spinner=False)
 def preparar_datos_estaticos():
     """
-    Genera tres DataFrames estáticos para las capas de topología del mapa:
-    - df_hospitales: nodos de hospitales con color verde primavera
-    - df_bases: núcleos de bases con color y radio de cobertura
-    - df_aristas: líneas base → hospital según topología (base más cercana)
+    Genera DataFrames estáticos para las capas de topología del mapa:
+    - hospitales,
+    - bases,
+    - aristas base -> hospital según ServicioRed.
     """
     servicio_red = ServicioRed()
 
     filas_h = []
     filas_aristas = []
+    filas_b = []
+
+    indice_base = {
+        nombre_base: i
+        for i, nombre_base in enumerate(BASES.keys())
+    }
 
     for nombre, nodo in HOSPITALS.items():
         filas_h.append({
@@ -86,50 +135,165 @@ def preparar_datos_estaticos():
             "color_rgb": COLOR_HOSPITAL_NODO,
         })
 
-        # Topología: conectar a la base más cercana
-        nombre_base, distancia_km = servicio_red.base_mas_cercana_a(nombre)
-        base_nodo = BASES[nombre_base]
-        base_cfg = CONFIG_BASES.get(nombre_base, {"color_rgb": [255, 255, 255], "radio": 2000})
+        try:
+            nombre_base, distancia_km = servicio_red.base_mas_cercana_a(nombre)
+            base_nodo = BASES[nombre_base]
+            base_cfg = obtener_config_base(
+                nombre_base,
+                indice_base.get(nombre_base, 0),
+            )
 
-        filas_aristas.append({
-            "origen_lat": base_nodo.lat,
-            "origen_lon": base_nodo.lon,
-            "destino_lat": nodo.lat,
-            "destino_lon": nodo.lon,
-            "distancia_km": round(distancia_km, 2),
-            "nombre_base": nombre_base,
-            "nombre_hospital": nombre,
-            "color_arista": base_cfg["color_rgb"] + [80],  # RGBA tenue
-        })
+            filas_aristas.append({
+                "origen_lat": base_nodo.lat,
+                "origen_lon": base_nodo.lon,
+                "destino_lat": nodo.lat,
+                "destino_lon": nodo.lon,
+                "distancia_km": round(distancia_km, 2),
+                "nombre_base": nombre_base,
+                "nombre_hospital": nombre,
+                "color_arista": base_cfg["color_rgb"] + [80],
+            })
 
-    filas_b = []
-    for nombre, nodo in BASES.items():
-        cfg = CONFIG_BASES.get(nombre, {"color_rgb": [255, 255, 255], "radio": 2000})
+        except Exception:
+            # Si una base/hospital todavía no está bien conectado,
+            # no tumbamos el radar entero.
+            pass
+
+    for i, (nombre, nodo) in enumerate(BASES.items()):
+        cfg = obtener_config_base(nombre, i)
+
         filas_b.append({
             "nombre": nombre,
             "lat": nodo.lat,
             "lon": nodo.lon,
             "color_rgb": cfg["color_rgb"],
-            "color_rgba_cobertura": cfg["color_rgb"] + [15],  # Muy tenue
+            "color_rgba_cobertura": cfg["color_rgb"] + [15],
             "radio": cfg["radio"],
         })
 
-    return pd.DataFrame(filas_h), pd.DataFrame(filas_b), pd.DataFrame(filas_aristas)
+    return (
+        pd.DataFrame(filas_h),
+        pd.DataFrame(filas_b),
+        pd.DataFrame(filas_aristas),
+    )
 
 
-def cargar_telemetria():
-    """Lee el JSON de telemetría si existe."""
+def cargar_telemetria_json():
+    """
+    Lee el JSON de telemetría si existe.
+
+    Compatible con:
+    - {"vuelos": [...]}
+    - [...]
+    """
     if not os.path.exists(RUTA_TELEMETRIA):
         return []
-    with open(RUTA_TELEMETRIA, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("vuelos", [])
+
+    try:
+        with open(RUTA_TELEMETRIA, "r", encoding="utf-8") as archivo:
+            data = json.load(archivo)
+
+    except json.JSONDecodeError:
+        st.warning("El archivo de telemetría existe, pero no contiene JSON válido.")
+        return []
+
+    except OSError as error:
+        st.warning(f"No se pudo leer la telemetría: {error}")
+        return []
+
+    if isinstance(data, dict):
+        vuelos = data.get("vuelos", [])
+        return vuelos if isinstance(vuelos, list) else []
+
+    if isinstance(data, list):
+        return data
+
+    return []
+
+
+def validar_vuelos(vuelos):
+    """
+    Filtra vuelos inválidos para evitar errores de PyDeck.
+
+    El radar no debe romperse por un registro incompleto.
+    """
+    campos_obligatorios = {
+        "dron_id",
+        "origen",
+        "destino",
+        "lat_origen",
+        "lon_origen",
+        "lat_destino",
+        "lon_destino",
+        "t_salida",
+        "t_llegada",
+        "tipo_mision",
+        "bateria",
+    }
+
+    vuelos_validos = []
+
+    for vuelo in vuelos:
+        if not isinstance(vuelo, dict):
+            continue
+
+        if not campos_obligatorios.issubset(vuelo.keys()):
+            continue
+
+        try:
+            t_salida = float(vuelo["t_salida"])
+            t_llegada = float(vuelo["t_llegada"])
+
+            if t_llegada < t_salida:
+                continue
+
+            vuelo_limpio = dict(vuelo)
+            vuelo_limpio["t_salida"] = t_salida
+            vuelo_limpio["t_llegada"] = t_llegada
+            vuelo_limpio["lat_origen"] = float(vuelo["lat_origen"])
+            vuelo_limpio["lon_origen"] = float(vuelo["lon_origen"])
+            vuelo_limpio["lat_destino"] = float(vuelo["lat_destino"])
+            vuelo_limpio["lon_destino"] = float(vuelo["lon_destino"])
+            vuelo_limpio["bateria"] = float(vuelo["bateria"])
+
+            vuelos_validos.append(vuelo_limpio)
+
+        except (TypeError, ValueError):
+            continue
+
+    return vuelos_validos
+
+
+def obtener_vuelos_actuales(resultado):
+    """
+    Fuente de verdad visual.
+
+    Orden:
+    1. Si run_simulation devuelve resultado["telemetria"], se usa.
+    2. Si ya hay vuelos en session_state, se usan.
+    3. Si no, se carga telemetria_vuelos.json.
+
+    Con el repo actual, normalmente se usa el JSON.
+    """
+    if isinstance(resultado, dict):
+        telemetria_resultado = resultado.get("telemetria")
+        if isinstance(telemetria_resultado, list):
+            return validar_vuelos(telemetria_resultado)
+
+    vuelos_session = st.session_state.get("vuelos_telemetria")
+    if isinstance(vuelos_session, list):
+        return validar_vuelos(vuelos_session)
+
+    return validar_vuelos(cargar_telemetria_json())
 
 
 def interpolar_posicion(vuelo, t):
     """
     Interpola linealmente lat/lon del dron en el instante t.
-    Devuelve (lat, lon, progreso_0_a_1).
+
+    Importante:
+    Aquí no se decide ninguna ruta. Solo se interpola el tramo que ya viene
+    en la telemetría.
     """
     t0 = vuelo["t_salida"]
     t1 = vuelo["t_llegada"]
@@ -147,59 +311,73 @@ def interpolar_posicion(vuelo, t):
 
 
 def color_dron(vuelo):
-    """Elige color según tipo de misión y batería."""
+    """
+    Elige color según la telemetría recibida.
+    """
     if vuelo["bateria"] < UMBRAL_BATERIA_BAJA:
         return COLOR_BATERIA_BAJA
 
     tipo = vuelo["tipo_mision"]
+
     if tipo == "organo":
         return COLOR_ORGANO
-    elif tipo == "inventario":
+
+    if tipo == "inventario":
         return COLOR_INVENTARIO
-    else:
-        return COLOR_VUELTA
+
+    return COLOR_VUELTA
+
+
+def etiqueta_mision(tipo):
+    """
+    Nombre visual de la misión.
+    """
+    etiquetas = {
+        "inventario": "Inventario",
+        "organo": "Órgano",
+        "vuelta_base": "Vuelta a base",
+    }
+
+    return etiquetas.get(tipo, tipo)
 
 
 def drones_en_vuelo(vuelos, t):
     """
-    Filtra vuelos activos en el instante t y devuelve un DataFrame
-    con posiciones interpoladas listas para PyDeck.
+    Filtra vuelos activos en el instante t y devuelve posiciones para PyDeck.
 
-    Incluye una ventana de persistencia: los drones que acaban de
-    aterrizar (t_llegada < t <= t_llegada + MARGEN) se muestran en
-    su destino con color 'recién llegado'.
+    La persistencia tras aterrizaje es solo visual.
     """
     filas = []
 
-    for v in vuelos:
-        # Caso 1: vuelo activo (en curso)
-        if v["t_salida"] <= t <= v["t_llegada"]:
-            lat, lon, prog = interpolar_posicion(v, t)
-            c = color_dron(v)
+    for vuelo in vuelos:
+        t_salida = vuelo["t_salida"]
+        t_llegada = vuelo["t_llegada"]
+
+        if t_salida <= t <= t_llegada:
+            lat, lon, progreso = interpolar_posicion(vuelo, t)
 
             filas.append({
-                "dron_id": v["dron_id"],
+                "dron_id": vuelo["dron_id"],
                 "lat": lat,
                 "lon": lon,
-                "tipo_mision": v["tipo_mision"],
-                "bateria": v["bateria"],
-                "progreso": round(prog * 100, 1),
-                "origen": v["origen"],
-                "destino": v["destino"],
-                "color": c,
+                "tipo_mision": etiqueta_mision(vuelo["tipo_mision"]),
+                "bateria": round(vuelo["bateria"], 1),
+                "progreso": round(progreso * 100, 1),
+                "origen": vuelo["origen"],
+                "destino": vuelo["destino"],
+                "color": color_dron(vuelo),
             })
 
-        # Caso 2: recién aterrizado (persistencia visual)
-        elif v["t_llegada"] < t <= v["t_llegada"] + MARGEN_PERSISTENCIA_MIN:
+        elif t_llegada < t <= t_llegada + MARGEN_PERSISTENCIA_MIN:
             filas.append({
-                "dron_id": v["dron_id"],
-                "lat": v["lat_destino"],
-                "lon": v["lon_destino"],
-                "tipo_mision": "✓ " + v["tipo_mision"],
-                "bateria": v["bateria"],
+                "dron_id": vuelo["dron_id"],
+                "lat": vuelo["lat_destino"],
+                "lon": vuelo["lon_destino"],
+                "tipo_mision": "✓ " + etiqueta_mision(vuelo["tipo_mision"]),
+                "bateria": round(vuelo["bateria"], 1),
                 "progreso": 100.0,
-                "origen": v["origen"],
-                "destino": v["destino"],
+                "origen": vuelo["origen"],
+                "destino": vuelo["destino"],
                 "color": COLOR_RECIEN_LLEGADO,
             })
 
@@ -208,19 +386,21 @@ def drones_en_vuelo(vuelos, t):
 
 def rutas_activas(vuelos, t):
     """
-    Devuelve un DataFrame con los arcos de vuelos activos en el instante t.
+    Devuelve arcos de vuelos activos en el instante t.
     """
     filas = []
 
-    for v in vuelos:
-        if v["t_salida"] <= t <= v["t_llegada"]:
-            c = color_dron(v)
+    for vuelo in vuelos:
+        if vuelo["t_salida"] <= t <= vuelo["t_llegada"]:
             filas.append({
-                "lat_origen": v["lat_origen"],
-                "lon_origen": v["lon_origen"],
-                "lat_destino": v["lat_destino"],
-                "lon_destino": v["lon_destino"],
-                "color": c,
+                "lat_origen": vuelo["lat_origen"],
+                "lon_origen": vuelo["lon_origen"],
+                "lat_destino": vuelo["lat_destino"],
+                "lon_destino": vuelo["lon_destino"],
+                "color": color_dron(vuelo),
+                "origen": vuelo["origen"],
+                "destino": vuelo["destino"],
+                "tipo_mision": etiqueta_mision(vuelo["tipo_mision"]),
             })
 
     return pd.DataFrame(filas)
@@ -238,7 +418,7 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
-# INICIALIZACIÓN DEL ESTADO DE REPRODUCCIÓN
+# ESTADO
 # ---------------------------------------------------------------------------
 
 if "is_playing" not in st.session_state:
@@ -249,6 +429,16 @@ if "minuto_actual" not in st.session_state:
 
 if "velocidad_reproduccion" not in st.session_state:
     st.session_state.velocidad_reproduccion = 1
+
+if "vuelos_telemetria" not in st.session_state:
+    st.session_state.vuelos_telemetria = None
+
+if "resultado" not in st.session_state:
+    st.session_state.resultado = None
+
+if "_slider_minuto" not in st.session_state:
+    st.session_state._slider_minuto = 0
+
 
 # ---------------------------------------------------------------------------
 # CSS PERSONALIZADO
@@ -353,7 +543,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# SIDEBAR — CONFIGURACIÓN DE SIMULACIÓN
+# SIDEBAR
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
@@ -361,9 +551,14 @@ with st.sidebar:
 
     st.subheader("Simulación")
     minutos_sim = st.slider(
-        "Duración (minutos)", 60, 50000, 1440, step=60,
+        "Duración (minutos)",
+        60,
+        50000,
+        1440,
+        step=60,
         help="1440 = 1 día, 10080 = 1 semana",
     )
+
     drones_base = st.slider("Drones por base", 1, 10, 2)
     drones_hosp = st.slider("Drones por hospital", 1, 5, 1)
     semilla = st.number_input("Semilla aleatoria (0 = random)", 0, 999999, 42)
@@ -375,34 +570,47 @@ with st.sidebar:
     st.subheader("Meteorología")
     activar_meteo = st.checkbox("Activar meteorología", value=True)
     intervalo_clima = st.slider("Intervalo cambio clima (min)", 60, 1440, 300, 60)
+
     escenario_clima = st.selectbox(
-        "Escenario", ["normal", "severo", "despejado"], index=0,
+        "Escenario",
+        ["normal", "severo", "despejado"],
+        index=0,
     )
 
     st.subheader("Opciones")
     stock_umbral = st.checkbox("Stock inicial cerca del umbral", value=True)
 
     st.subheader("Reproducción")
-    _opciones_paso = [1, 2]
-    _paso_actual = st.session_state.velocidad_reproduccion
-    if _paso_actual not in _opciones_paso:
-        _paso_actual = 1
+    opciones_paso = [1, 2, 5, 10]
+
+    paso_actual = st.session_state.velocidad_reproduccion
+    if paso_actual not in opciones_paso:
+        paso_actual = 1
+
     paso_temporal = st.select_slider(
         "Paso temporal (min/frame)",
-        options=_opciones_paso,
-        value=_paso_actual,
-        help="1 = máxima precisión, 2 = doble velocidad",
+        options=opciones_paso,
+        value=paso_actual,
     )
+
     st.session_state.velocidad_reproduccion = paso_temporal
 
     retardo = st.slider(
-        "Retardo entre frames (ms)", 30, 500, 80, 10,
+        "Retardo entre frames (ms)",
+        30,
+        500,
+        80,
+        10,
         help="Menor valor = animación más rápida",
     )
 
     st.divider()
 
-    ejecutar = st.button("🚀 Ejecutar Simulación", type="primary", use_container_width=True)
+    ejecutar = st.button(
+        "🚀 Ejecutar Simulación",
+        type="primary",
+        use_container_width=True,
+    )
 
 # ---------------------------------------------------------------------------
 # EJECUCIÓN DE SIMULACIÓN
@@ -427,24 +635,56 @@ if ejecutar:
         "imprimir_eventos_clima": False,
     }
 
+    limpiar_telemetria_previa()
+
     with st.spinner("⏳ Ejecutando simulación DES..."):
         resultado = run_simulation(config)
 
-    st.session_state["resultado"] = resultado
-    st.session_state["minutos_sim"] = minutos_sim
+    vuelos_generados = obtener_vuelos_actuales(resultado)
+
+    st.session_state.resultado = resultado
+    st.session_state.vuelos_telemetria = vuelos_generados
+    st.session_state.minutos_sim = minutos_sim
     st.session_state.minuto_actual = 0
+    st.session_state._slider_minuto = 0
     st.session_state.is_playing = False
+
     st.success(
         f"✅ Simulación completada — "
-        f"{resultado['pedidos_generados']} pedidos generados, "
-        f"{resultado['pedidos_completados']} completados"
+        f"{resultado.get('pedidos_generados', 0)} pedidos generados, "
+        f"{resultado.get('pedidos_completados', 0)} completados, "
+        f"{len(vuelos_generados)} tramos de vuelo en radar"
+    )
+
+# ---------------------------------------------------------------------------
+# DATOS ACTUALES
+# ---------------------------------------------------------------------------
+
+resultado = st.session_state.get("resultado")
+vuelos = obtener_vuelos_actuales(resultado)
+
+df_hospitales, df_bases, df_aristas = preparar_datos_estaticos()
+
+max_minuto = st.session_state.get("minutos_sim", 1440)
+
+if vuelos:
+    max_t_vuelos = max(vuelo["t_llegada"] for vuelo in vuelos)
+    max_minuto = max(max_minuto, int(math.ceil(max_t_vuelos)))
+
+st.session_state.minuto_actual = int(
+    max(0, min(st.session_state.minuto_actual, max_minuto))
+)
+
+if st.session_state.is_playing:
+    st.session_state._slider_minuto = st.session_state.minuto_actual
+else:
+    st.session_state._slider_minuto = int(
+        max(0, min(st.session_state._slider_minuto, max_minuto))
     )
 
 # ---------------------------------------------------------------------------
 # MÉTRICAS RESUMEN
 # ---------------------------------------------------------------------------
-
-resultado = st.session_state.get("resultado")
 
 if resultado:
     cols = st.columns(6)
@@ -455,7 +695,7 @@ if resultado:
         (resultado.get("pedidos_rechazados", 0), "Rechazados"),
         (resultado.get("pedidos_en_cola", 0), "En Cola"),
         (f"{resultado.get('tasa_servicio', 0) * 100:.1f}%", "Tasa de Servicio"),
-        (f"{resultado.get('tasa_exito_organos', 0) * 100:.1f}%", "Éxito Órganos"),
+        (len(vuelos), "Tramos Radar"),
     ]
 
     for i, (valor, label) in enumerate(metricas):
@@ -468,38 +708,27 @@ if resultado:
     st.markdown("<br>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# MAPA RADAR
+# CONTROLES DE REPRODUCCIÓN
 # ---------------------------------------------------------------------------
 
-df_hospitales, df_bases, df_aristas = preparar_datos_estaticos()
-vuelos = cargar_telemetria()
-
-# Timeline slider
-max_minuto = st.session_state.get("minutos_sim", 1440)
-
-if vuelos:
-    max_t_vuelos = max(v["t_llegada"] for v in vuelos)
-    max_minuto = max(max_minuto, int(math.ceil(max_t_vuelos)))
-
-# Clampear el valor actual al rango válido
-st.session_state.minuto_actual = min(st.session_state.minuto_actual, max_minuto)
-
-# --- Controles de reproducción ---
 col_play, col_pause, col_status = st.columns([1, 1, 4])
 
 with col_play:
-    if st.button("▶ Iniciar", use_container_width=True):
+    if st.button("▶ Iniciar", use_container_width=True, disabled=not vuelos):
         st.session_state.is_playing = True
+        st.session_state.minuto_actual = st.session_state._slider_minuto
         st.rerun()
 
 with col_pause:
     if st.button("⏸ Pausar", use_container_width=True):
         st.session_state.is_playing = False
+        st.session_state.minuto_actual = st.session_state._slider_minuto
         st.rerun()
 
 with col_status:
     estado_txt = "🔴 EN REPRODUCCIÓN" if st.session_state.is_playing else "⏸️ Pausado"
     vel_txt = f"{st.session_state.velocidad_reproduccion} min/frame"
+
     st.markdown(
         f'<div style="padding:0.45rem 0.8rem; background:rgba(15,12,41,0.6); '
         f'border-radius:8px; color:#ccd6f6; font-size:0.85rem;">'
@@ -510,7 +739,9 @@ with col_status:
 
 
 def _on_slider_change():
-    """Callback: si el usuario mueve el slider a mano, pausar la reproducción."""
+    """
+    Si el usuario mueve el slider manualmente, se pausa la reproducción.
+    """
     st.session_state.is_playing = False
     st.session_state.minuto_actual = st.session_state._slider_minuto
 
@@ -519,57 +750,48 @@ minuto_actual = st.slider(
     "⏱️ Minuto de simulación",
     min_value=0,
     max_value=max_minuto,
-    value=st.session_state.minuto_actual,
     step=1,
-    help="Arrastra para ver los drones en movimiento (pausa auto-play)",
     key="_slider_minuto",
+    help="Arrastra para ver los drones en movimiento",
     on_change=_on_slider_change,
 )
 
-# Leyenda
+if not st.session_state.is_playing:
+    st.session_state.minuto_actual = minuto_actual
+
+# ---------------------------------------------------------------------------
+# LEYENDA
+# ---------------------------------------------------------------------------
+
 st.markdown("""
 <div class="legend-box">
     <span class="legend-item"><span class="legend-dot" style="background:#00fa9a;"></span> Hospitales</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#00ff88;"></span> Base Noroeste</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#00cfff;"></span> Base Norte Capital</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#b478ff;"></span> Base Este Corredor</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#ff9f00;"></span> Base Sur Fuenlabrada</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#00ff88;"></span> Bases</span>
     <span class="legend-item"><span class="legend-dot" style="background:rgba(150,150,150,0.5);"></span> Topología</span>
     <span class="legend-item" style="margin-left:0.5rem;">|</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#2ecc71;"></span> Inv.</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span> Órg.</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#2ecc71;"></span> Inventario</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span> Órgano</span>
     <span class="legend-item"><span class="legend-dot" style="background:#95a5a6;"></span> Vuelta</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#ffff00;"></span> Bat. Baja</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ffff00;"></span> Bat. baja</span>
     <span class="legend-item"><span class="legend-dot" style="background:rgba(255,255,255,0.6);"></span> Aterrizó</span>
 </div>
 """, unsafe_allow_html=True)
 
-
 # ---------------------------------------------------------------------------
-# FUNCIÓN DE CONSTRUCCIÓN DEL MAPA (reutilizable en el bucle)
+# CONSTRUCCIÓN DEL MAPA
 # ---------------------------------------------------------------------------
 
 def construir_mapa(t):
     """
-    Construye un pdk.Deck con capas apiladas que imitan la estética
-    de Grafo/generar_mapa.py (dark-matter + topología coloreada).
+    Construye el mapa PyDeck.
 
-    Orden de capas (de abajo a arriba):
-    1. Cobertura de bases (círculos translucidos grandes)
-    2. Aristas topológicas (líneas base → hospital)
-    3. Nodos de hospitales (puntos verdes pequeños)
-    4. Núcleos de bases (puntos medianos con su color)
-    5. Etiquetas de bases
-    6. Arcos de vuelos activos
-    7. Drones en movimiento
-    8. Etiquetas de drones
-
-    Devuelve (mapa, df_drones, n_activos).
+    El mapa usa:
+    - topología del proyecto,
+    - vuelos de la telemetría,
+    - interpolación visual.
     """
-
     capas = []
 
-    # --- 1. Cobertura de bases (zonas de influencia) ---
     capa_cobertura = pdk.Layer(
         "ScatterplotLayer",
         data=df_bases,
@@ -584,19 +806,18 @@ def construir_mapa(t):
     )
     capas.append(capa_cobertura)
 
-    # --- 2. Aristas topológicas (base → hospital) ---
-    capa_aristas = pdk.Layer(
-        "LineLayer",
-        data=df_aristas,
-        get_source_position=["origen_lon", "origen_lat"],
-        get_target_position=["destino_lon", "destino_lat"],
-        get_color="color_arista",
-        get_width=2,
-        pickable=True,
-    )
-    capas.append(capa_aristas)
+    if not df_aristas.empty:
+        capa_aristas = pdk.Layer(
+            "LineLayer",
+            data=df_aristas,
+            get_source_position=["origen_lon", "origen_lat"],
+            get_target_position=["destino_lon", "destino_lat"],
+            get_color="color_arista",
+            get_width=2,
+            pickable=True,
+        )
+        capas.append(capa_aristas)
 
-    # --- 3. Nodos de hospitales ---
     capa_hospitales = pdk.Layer(
         "ScatterplotLayer",
         data=df_hospitales,
@@ -611,7 +832,6 @@ def construir_mapa(t):
     )
     capas.append(capa_hospitales)
 
-    # --- 4. Núcleos de bases ---
     capa_bases = pdk.Layer(
         "ScatterplotLayer",
         data=df_bases,
@@ -626,7 +846,6 @@ def construir_mapa(t):
     )
     capas.append(capa_bases)
 
-    # --- 5. Etiquetas de bases ---
     capa_label_bases = pdk.Layer(
         "TextLayer",
         data=df_bases,
@@ -642,58 +861,55 @@ def construir_mapa(t):
     )
     capas.append(capa_label_bases)
 
-    # --- 6–8. Drones dinámicos ---
     df_drones = pd.DataFrame()
+    df_rutas = pd.DataFrame()
 
     if vuelos:
         df_drones = drones_en_vuelo(vuelos, t)
         df_rutas = rutas_activas(vuelos, t)
 
-        if not df_drones.empty:
-            # 6. Arcos de vuelo activo
-            if not df_rutas.empty:
-                capa_arcos = pdk.Layer(
-                    "ArcLayer",
-                    data=df_rutas,
-                    get_source_position=["lon_origen", "lat_origen"],
-                    get_target_position=["lon_destino", "lat_destino"],
-                    get_source_color="color",
-                    get_target_color="color",
-                    get_width=3,
-                    opacity=0.5,
-                )
-                capas.append(capa_arcos)
+    if not df_rutas.empty:
+        capa_arcos = pdk.Layer(
+            "ArcLayer",
+            data=df_rutas,
+            get_source_position=["lon_origen", "lat_origen"],
+            get_target_position=["lon_destino", "lat_destino"],
+            get_source_color="color",
+            get_target_color="color",
+            get_width=3,
+            opacity=0.5,
+        )
+        capas.append(capa_arcos)
 
-            # 7. Drones como puntos
-            capa_drones = pdk.Layer(
-                "ScatterplotLayer",
-                data=df_drones,
-                get_position=["lon", "lat"],
-                get_fill_color="color",
-                get_radius=300,
-                pickable=True,
-                opacity=0.95,
-                radiusMinPixels=6,
-                stroked=True,
-                get_line_color=[255, 255, 255, 120],
-                line_width_min_pixels=1,
-            )
-            capas.append(capa_drones)
+    if not df_drones.empty:
+        capa_drones = pdk.Layer(
+            "ScatterplotLayer",
+            data=df_drones,
+            get_position=["lon", "lat"],
+            get_fill_color="color",
+            get_radius=300,
+            pickable=True,
+            opacity=0.95,
+            radiusMinPixels=6,
+            stroked=True,
+            get_line_color=[255, 255, 255, 120],
+            line_width_min_pixels=1,
+        )
+        capas.append(capa_drones)
 
-            # 8. Etiquetas de drones
-            capa_texto = pdk.Layer(
-                "TextLayer",
-                data=df_drones,
-                get_position=["lon", "lat"],
-                get_text="dron_id",
-                get_size=11,
-                get_color=[255, 255, 255, 230],
-                get_angle=0,
-                get_text_anchor="'middle'",
-                get_alignment_baseline="'top'",
-                get_pixel_offset=[0, -20],
-            )
-            capas.append(capa_texto)
+        capa_texto = pdk.Layer(
+            "TextLayer",
+            data=df_drones,
+            get_position=["lon", "lat"],
+            get_text="dron_id",
+            get_size=11,
+            get_color=[255, 255, 255, 230],
+            get_angle=0,
+            get_text_anchor="'middle'",
+            get_alignment_baseline="'top'",
+            get_pixel_offset=[0, -20],
+        )
+        capas.append(capa_texto)
 
     vista = pdk.ViewState(
         latitude=MADRID_LAT,
@@ -708,7 +924,16 @@ def construir_mapa(t):
         initial_view_state=vista,
         map_style=pdk.map_styles.DARK,
         tooltip={
-            "text": "{nombre}\n{nombre_hospital}\n{dron_id}\nMisión: {tipo_mision}\nBatería: {bateria}%\nProgreso: {progreso}%\n{origen} → {destino}\n{distancia_km} km"
+            "text": (
+                "{nombre}\n"
+                "{nombre_hospital}\n"
+                "{dron_id}\n"
+                "Misión: {tipo_mision}\n"
+                "Batería: {bateria}%\n"
+                "Progreso: {progreso}%\n"
+                "{origen} → {destino}\n"
+                "{distancia_km} km"
+            )
         },
     )
 
@@ -716,7 +941,7 @@ def construir_mapa(t):
 
 
 # ---------------------------------------------------------------------------
-# PLACEHOLDERS para renderizado en sitio (sin st.rerun)
+# RENDERIZADO
 # ---------------------------------------------------------------------------
 
 placeholder_mapa = st.empty()
@@ -725,7 +950,9 @@ placeholder_tabla = st.empty()
 
 
 def renderizar_frame(t):
-    """Renderiza mapa + tabla para un instante t dentro de los placeholders."""
+    """
+    Renderiza mapa + tabla para un instante t.
+    """
     mapa, df_d, n = construir_mapa(t)
 
     with placeholder_mapa:
@@ -737,10 +964,19 @@ def renderizar_frame(t):
         else:
             st.caption(f"⏱️ t = {t} — Sin drones visibles")
 
-    with placeholder_tabla:
-        if not df_d.empty:
+    if not df_d.empty:
+        with placeholder_tabla:
             st.dataframe(
-                df_d[["dron_id", "tipo_mision", "origen", "destino", "bateria", "progreso"]].rename(
+                df_d[
+                    [
+                        "dron_id",
+                        "tipo_mision",
+                        "origen",
+                        "destino",
+                        "bateria",
+                        "progreso",
+                    ]
+                ].rename(
                     columns={
                         "dron_id": "Dron",
                         "tipo_mision": "Misión",
@@ -753,35 +989,30 @@ def renderizar_frame(t):
                 use_container_width=True,
                 hide_index=True,
             )
+    else:
+        placeholder_tabla.empty()
 
 
-# ---------------------------------------------------------------------------
-# RENDERIZADO INICIAL (modo manual / pausado)
-# ---------------------------------------------------------------------------
+renderizar_frame(st.session_state.minuto_actual)
 
-if not st.session_state.is_playing:
-    renderizar_frame(minuto_actual)
-
-    if not vuelos:
-        st.info("📡 Ejecuta una simulación desde la barra lateral para ver los drones en el radar.")
+if not vuelos:
+    st.info("📡 Ejecuta una simulación desde la barra lateral para ver los drones en el radar.")
 
 # ---------------------------------------------------------------------------
-# MOTOR DE AUTO-REPRODUCCIÓN (bucle in-place, sin st.rerun)
+# AUTO-REPRODUCCIÓN
 # ---------------------------------------------------------------------------
 
-if st.session_state.is_playing:
-    paso = st.session_state.velocidad_reproduccion
-    t = st.session_state.minuto_actual
+if st.session_state.is_playing and vuelos:
+    if st.session_state.minuto_actual >= max_minuto:
+        st.session_state.is_playing = False
+        st.rerun()
 
-    while t < max_minuto:
-        renderizar_frame(t)
-        time.sleep(retardo / 1000.0)
+    time.sleep(retardo / 1000.0)
 
-        t = min(t + paso, max_minuto)
-        st.session_state.minuto_actual = t
+    siguiente_t = min(
+        st.session_state.minuto_actual + st.session_state.velocidad_reproduccion,
+        max_minuto,
+    )
 
-    # Renderizar el último frame y auto-pausar
-    renderizar_frame(max_minuto)
-    st.session_state.minuto_actual = max_minuto
-    st.session_state.is_playing = False
+    st.session_state.minuto_actual = siguiente_t
     st.rerun()
