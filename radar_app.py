@@ -2,24 +2,24 @@
 radar_app.py — FlyRadar: Visor Interactivo de Drones Médicos
 =============================================================
 
-Aplicación Streamlit + PyDeck conectada directamente al motor DES.
+Aplicación Streamlit + PyDeck conectada al motor DES.
 
-Principio:
-- Los escenarios salen exclusivamente de simulators/escenarios.py.
-- El motor DES ejecuta la simulación.
-- El radar solo consume la telemetría generada por el motor.
-- Este archivo NO debe duplicar lógica de simulación.
+Este archivo NO decide lógica de simulación.
+Solo:
+- ejecuta run_simulation(config),
+- lee la telemetría generada por el motor,
+- interpola posiciones,
+- pinta el mapa.
 """
 
-import copy
 import json
-import math
 import os
+import math
 import time
 
+import streamlit as st
 import pandas as pd
 import pydeck as pdk
-import streamlit as st
 
 # ---------------------------------------------------------------------------
 # Importaciones del proyecto
@@ -28,7 +28,6 @@ import streamlit as st
 from hospitales_almacenes_data import HOSPITALS, BASES
 from services.grafo_distancias_service import ServicioRed
 from simulators.experimentacion import run_simulation
-from simulators.escenarios import ESCENARIOS
 
 # ---------------------------------------------------------------------------
 # CONSTANTES
@@ -42,19 +41,21 @@ RUTA_TELEMETRIA = os.path.join(
 MADRID_LAT = 40.42
 MADRID_LON = -3.70
 
-# Colores misiones
+# Colores de misiones
 COLOR_INVENTARIO = [46, 204, 113, 230]
 COLOR_ORGANO = [231, 76, 60, 240]
 COLOR_VUELTA = [149, 165, 166, 180]
 COLOR_BATERIA_BAJA = [255, 255, 0, 240]
 COLOR_RECIEN_LLEGADO = [255, 255, 255, 160]
 
-# Colores nodos
+# Colores de nodos
 COLOR_HOSPITAL_NODO = [0, 250, 154, 220]
 
 UMBRAL_BATERIA_BAJA = 25.0
 MARGEN_PERSISTENCIA_MIN = 3
 
+# Configuración visual por base.
+# Si en el proyecto aparecen nuevas bases, se les asigna un color por defecto.
 CONFIG_BASES = {
     "BASE NOROESTE": {"color_rgb": [0, 255, 136], "radio": 6000},
     "BASE NORTE CAPITAL": {"color_rgb": [0, 207, 255], "radio": 4504},
@@ -72,94 +73,30 @@ COLORES_BASE_FALLBACK = [
     [240, 240, 120],
 ]
 
-NOMBRES_ESCENARIOS = {
-    "normal": "Normal",
-    "alta_demanda": "Alta demanda",
-    "lluvia_alta_demanda": "Lluvia + alta demanda",
-    "baja_demanda_clima_adverso": "Baja demanda + clima adverso",
-    "estres_extremo": "Estrés extremo",
-}
-
 
 # ---------------------------------------------------------------------------
-# UTILIDADES GENERALES
+# FUNCIONES AUXILIARES
 # ---------------------------------------------------------------------------
-
-def nombre_escenario_visible(clave):
-    return NOMBRES_ESCENARIOS.get(clave, clave.replace("_", " ").title())
-
 
 def limpiar_telemetria_previa():
     """
-    Evita pintar una simulación antigua si la nueva no genera telemetría.
+    Elimina la telemetría anterior antes de ejecutar una simulación nueva.
+
+    Esto evita el fallo típico:
+    - la simulación nueva falla o no genera vuelos,
+    - pero el radar sigue pintando un JSON viejo.
     """
     if os.path.exists(RUTA_TELEMETRIA):
         os.remove(RUTA_TELEMETRIA)
 
 
-def preparar_config_para_streamlit(config_escenario):
-    """
-    Copia un escenario real y solo desactiva salidas que no tienen sentido
-    dentro de Streamlit.
-
-    No se cambia la lógica de simulación:
-    - demanda,
-    - duración,
-    - drones,
-    - clima,
-    - semilla,
-    - stock,
-    salen del escenario.
-    """
-    config = copy.deepcopy(config_escenario)
-
-    config["generar_graficas"] = False
-    config["verbose"] = False
-    config["imprimir_eventos_drones"] = False
-    config["imprimir_eventos_hospital"] = False
-    config["imprimir_eventos_clima"] = False
-
-    return config
-
-
-def formato_duracion(minutos):
-    dias = minutos / 1440
-
-    if minutos % 1440 == 0:
-        return f"{minutos:,} min · {dias:.0f} días".replace(",", ".")
-
-    return f"{minutos:,} min · {dias:.1f} días".replace(",", ".")
-
-
-def porcentaje(valor):
-    try:
-        return f"{float(valor) * 100:.1f}%"
-    except Exception:
-        return "0.0%"
-
-
-def firma_topologia():
-    """
-    Firma ligera para invalidar caché si cambian hospitales o bases.
-    """
-    hospitales = tuple(
-        sorted(
-            (nombre, nodo.lat, nodo.lon, nodo.tipo)
-            for nombre, nodo in HOSPITALS.items()
-        )
-    )
-
-    bases = tuple(
-        sorted(
-            (nombre, nodo.lat, nodo.lon, nodo.tipo)
-            for nombre, nodo in BASES.items()
-        )
-    )
-
-    return hospitales, bases
-
-
 def obtener_config_base(nombre_base, indice):
+    """
+    Devuelve configuración visual de una base.
+
+    La lógica de qué base conecta con qué hospital sigue dependiendo de
+    ServicioRed. Esto solo da color y radio visual.
+    """
     if nombre_base in CONFIG_BASES:
         return CONFIG_BASES[nombre_base]
 
@@ -171,14 +108,10 @@ def obtener_config_base(nombre_base, indice):
     }
 
 
-# ---------------------------------------------------------------------------
-# DATOS ESTÁTICOS DEL MAPA
-# ---------------------------------------------------------------------------
-
 @st.cache_data(show_spinner=False)
-def preparar_datos_estaticos(_firma):
+def preparar_datos_estaticos():
     """
-    Genera DataFrames estáticos para:
+    Genera DataFrames estáticos para las capas de topología del mapa:
     - hospitales,
     - bases,
     - aristas base -> hospital según ServicioRed.
@@ -186,8 +119,8 @@ def preparar_datos_estaticos(_firma):
     servicio_red = ServicioRed()
 
     filas_h = []
-    filas_b = []
     filas_aristas = []
+    filas_b = []
 
     indice_base = {
         nombre_base: i
@@ -222,7 +155,8 @@ def preparar_datos_estaticos(_firma):
             })
 
         except Exception:
-            # Si una conexión concreta falla, no se tumba todo el radar.
+            # Si una base/hospital todavía no está bien conectado,
+            # no tumbamos el radar entero.
             pass
 
     for i, (nombre, nodo) in enumerate(BASES.items()):
@@ -244,13 +178,9 @@ def preparar_datos_estaticos(_firma):
     )
 
 
-# ---------------------------------------------------------------------------
-# TELEMETRÍA
-# ---------------------------------------------------------------------------
-
 def cargar_telemetria_json():
     """
-    Lee telemetria_vuelos.json.
+    Lee el JSON de telemetría si existe.
 
     Compatible con:
     - {"vuelos": [...]}
@@ -283,7 +213,9 @@ def cargar_telemetria_json():
 
 def validar_vuelos(vuelos):
     """
-    Filtra vuelos incompletos o mal tipados.
+    Filtra vuelos inválidos para evitar errores de PyDeck.
+
+    El radar no debe romperse por un registro incompleto.
     """
     campos_obligatorios = {
         "dron_id",
@@ -309,14 +241,15 @@ def validar_vuelos(vuelos):
             continue
 
         try:
-            vuelo_limpio = dict(vuelo)
+            t_salida = float(vuelo["t_salida"])
+            t_llegada = float(vuelo["t_llegada"])
 
-            vuelo_limpio["t_salida"] = float(vuelo["t_salida"])
-            vuelo_limpio["t_llegada"] = float(vuelo["t_llegada"])
-
-            if vuelo_limpio["t_llegada"] < vuelo_limpio["t_salida"]:
+            if t_llegada < t_salida:
                 continue
 
+            vuelo_limpio = dict(vuelo)
+            vuelo_limpio["t_salida"] = t_salida
+            vuelo_limpio["t_llegada"] = t_llegada
             vuelo_limpio["lat_origen"] = float(vuelo["lat_origen"])
             vuelo_limpio["lon_origen"] = float(vuelo["lon_origen"])
             vuelo_limpio["lat_destino"] = float(vuelo["lat_destino"])
@@ -333,12 +266,14 @@ def validar_vuelos(vuelos):
 
 def obtener_vuelos_actuales(resultado):
     """
-    Fuente visual.
+    Fuente de verdad visual.
 
     Orden:
-    1. resultado["telemetria"], si algún día el motor lo devuelve.
-    2. session_state.
-    3. telemetria_vuelos.json, que es lo que usa ahora el motor.
+    1. Si run_simulation devuelve resultado["telemetria"], se usa.
+    2. Si ya hay vuelos en session_state, se usan.
+    3. Si no, se carga telemetria_vuelos.json.
+
+    Con el repo actual, normalmente se usa el JSON.
     """
     if isinstance(resultado, dict):
         telemetria_resultado = resultado.get("telemetria")
@@ -354,7 +289,11 @@ def obtener_vuelos_actuales(resultado):
 
 def interpolar_posicion(vuelo, t):
     """
-    Interpola un tramo ya generado por el motor.
+    Interpola linealmente lat/lon del dron en el instante t.
+
+    Importante:
+    Aquí no se decide ninguna ruta. Solo se interpola el tramo que ya viene
+    en la telemetría.
     """
     t0 = vuelo["t_salida"]
     t1 = vuelo["t_llegada"]
@@ -372,6 +311,9 @@ def interpolar_posicion(vuelo, t):
 
 
 def color_dron(vuelo):
+    """
+    Elige color según la telemetría recibida.
+    """
     if vuelo["bateria"] < UMBRAL_BATERIA_BAJA:
         return COLOR_BATERIA_BAJA
 
@@ -387,6 +329,9 @@ def color_dron(vuelo):
 
 
 def etiqueta_mision(tipo):
+    """
+    Nombre visual de la misión.
+    """
     etiquetas = {
         "inventario": "Inventario",
         "organo": "Órgano",
@@ -397,6 +342,11 @@ def etiqueta_mision(tipo):
 
 
 def drones_en_vuelo(vuelos, t):
+    """
+    Filtra vuelos activos en el instante t y devuelve posiciones para PyDeck.
+
+    La persistencia tras aterrizaje es solo visual.
+    """
     filas = []
 
     for vuelo in vuelos:
@@ -435,6 +385,9 @@ def drones_en_vuelo(vuelos, t):
 
 
 def rutas_activas(vuelos, t):
+    """
+    Devuelve arcos de vuelos activos en el instante t.
+    """
     filas = []
 
     for vuelo in vuelos:
@@ -454,7 +407,7 @@ def rutas_activas(vuelos, t):
 
 
 # ---------------------------------------------------------------------------
-# CONFIGURACIÓN STREAMLIT
+# CONFIGURACIÓN DE PÁGINA
 # ---------------------------------------------------------------------------
 
 st.set_page_config(
@@ -483,15 +436,12 @@ if "vuelos_telemetria" not in st.session_state:
 if "resultado" not in st.session_state:
     st.session_state.resultado = None
 
-if "escenario_actual" not in st.session_state:
-    st.session_state.escenario_actual = list(ESCENARIOS.keys())[0]
-
 if "_slider_minuto" not in st.session_state:
     st.session_state._slider_minuto = 0
 
 
 # ---------------------------------------------------------------------------
-# CSS
+# CSS PERSONALIZADO
 # ---------------------------------------------------------------------------
 
 st.markdown("""
@@ -508,62 +458,41 @@ st.markdown("""
         border-radius: 16px;
         margin-bottom: 1.2rem;
         text-align: center;
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.06);
     }
 
     .main-title h1 {
         background: linear-gradient(90deg, #00b4d8, #90e0ef);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 2.3rem;
+        font-size: 2.2rem;
         margin: 0;
     }
 
     .main-title p {
-        color: #a8b2d1;
+        color: #8892b0;
         font-size: 0.95rem;
-        margin: 0.35rem 0 0 0;
+        margin: 0.3rem 0 0 0;
     }
 
     .metric-card {
         background: linear-gradient(145deg, #1a1a2e, #16213e);
         border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 13px;
+        border-radius: 12px;
         padding: 1rem 1.2rem;
         text-align: center;
-        min-height: 92px;
     }
 
     .metric-card h3 {
         color: #00b4d8;
-        font-size: 1.45rem;
+        font-size: 1.6rem;
         margin: 0;
     }
 
     .metric-card p {
         color: #8892b0;
-        font-size: 0.78rem;
-        margin: 0.25rem 0 0 0;
-    }
-
-    .scenario-card {
-        background: rgba(15, 12, 41, 0.85);
-        border: 1px solid rgba(255,255,255,0.10);
-        border-radius: 14px;
-        padding: 1rem 1.2rem;
-        margin-bottom: 1rem;
-    }
-
-    .scenario-card h3 {
-        color: #90e0ef;
-        margin-top: 0;
-        margin-bottom: 0.4rem;
-    }
-
-    .scenario-card p {
-        color: #ccd6f6;
-        margin: 0.15rem 0;
-        font-size: 0.87rem;
+        font-size: 0.8rem;
+        margin: 0.2rem 0 0 0;
     }
 
     .legend-box {
@@ -572,7 +501,6 @@ st.markdown("""
         border-radius: 10px;
         padding: 0.8rem 1rem;
         margin-top: 0.8rem;
-        margin-bottom: 0.8rem;
     }
 
     .legend-item {
@@ -610,71 +538,65 @@ st.markdown("""
 st.markdown("""
 <div class="main-title">
     <h1>🛩️ FlyRadar — UAV Medical Network</h1>
-    <p>Visor interactivo de simulaciones por escenarios definidos en <b>simulators/escenarios.py</b></p>
+    <p>Visor interactivo de drones médicos sobre la Comunidad de Madrid</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# SIDEBAR — ESCENARIOS
+# SIDEBAR
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.header("⚙️ Escenario")
+    st.header("⚙️ Configuración")
 
-    claves_escenarios = list(ESCENARIOS.keys())
-
-    escenario_seleccionado = st.selectbox(
-        "Selecciona un escenario",
-        options=claves_escenarios,
-        index=claves_escenarios.index(st.session_state.escenario_actual)
-        if st.session_state.escenario_actual in claves_escenarios
-        else 0,
-        format_func=nombre_escenario_visible,
+    st.subheader("Simulación")
+    minutos_sim = st.slider(
+        "Duración (minutos)",
+        60,
+        50000,
+        1440,
+        step=60,
+        help="1440 = 1 día, 10080 = 1 semana",
     )
 
-    st.session_state.escenario_actual = escenario_seleccionado
+    drones_base = st.slider("Drones por base", 1, 10, 2)
+    drones_hosp = st.slider("Drones por hospital", 1, 5, 1)
+    semilla = st.number_input("Semilla aleatoria (0 = random)", 0, 999999, 42)
 
-    config_escenario = ESCENARIOS[escenario_seleccionado]
+    st.subheader("Demanda")
+    factor_inv = st.slider("Factor demanda inventario", 0.1, 3.0, 1.0, 0.1)
+    factor_org = st.slider("Factor demanda órganos", 0.1, 3.0, 1.0, 0.1)
 
-    st.markdown(
-        f"""
-        <div class="scenario-card">
-            <h3>{nombre_escenario_visible(escenario_seleccionado)}</h3>
-            <p><b>Duración:</b> {formato_duracion(config_escenario.get("minutos_simulacion", 0))}</p>
-            <p><b>Drones/base:</b> {config_escenario.get("drones_por_base", "-")}</p>
-            <p><b>Drones/hospital:</b> {config_escenario.get("drones_por_hospital", "-")}</p>
-            <p><b>Demanda inventario:</b> x{config_escenario.get("factor_demanda_inventario", "-")}</p>
-            <p><b>Demanda órganos:</b> x{config_escenario.get("factor_demanda_organos", "-")}</p>
-            <p><b>Clima:</b> {config_escenario.get("escenario_clima", "-")}</p>
-            <p><b>Meteorología:</b> {"activa" if config_escenario.get("activar_meteorologia", False) else "desactivada"}</p>
-            <p><b>Semilla:</b> {config_escenario.get("semilla", None)}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    st.subheader("Meteorología")
+    activar_meteo = st.checkbox("Activar meteorología", value=True)
+    intervalo_clima = st.slider("Intervalo cambio clima (min)", 60, 1440, 300, 60)
+
+    escenario_clima = st.selectbox(
+        "Escenario",
+        ["normal", "severo", "despejado"],
+        index=0,
     )
 
-    with st.expander("Ver configuración exacta"):
-        st.json(config_escenario)
+    st.subheader("Opciones")
+    stock_umbral = st.checkbox("Stock inicial cerca del umbral", value=True)
 
     st.subheader("Reproducción")
+    opciones_paso = [1, 2, 5, 10]
 
-    opciones_paso = [1, 2, 5, 10, 30, 60]
     paso_actual = st.session_state.velocidad_reproduccion
-
     if paso_actual not in opciones_paso:
         paso_actual = 1
 
     paso_temporal = st.select_slider(
-        "Paso temporal",
+        "Paso temporal (min/frame)",
         options=opciones_paso,
         value=paso_actual,
-        format_func=lambda x: f"{x} min/frame",
     )
 
     st.session_state.velocidad_reproduccion = paso_temporal
 
     retardo = st.slider(
-        "Retardo entre frames",
+        "Retardo entre frames (ms)",
         30,
         500,
         80,
@@ -685,39 +607,53 @@ with st.sidebar:
     st.divider()
 
     ejecutar = st.button(
-        "🚀 Ejecutar escenario",
+        "🚀 Ejecutar Simulación",
         type="primary",
         use_container_width=True,
     )
 
-
 # ---------------------------------------------------------------------------
-# EJECUCIÓN
+# EJECUCIÓN DE SIMULACIÓN
 # ---------------------------------------------------------------------------
 
 if ejecutar:
-    config = preparar_config_para_streamlit(ESCENARIOS[escenario_seleccionado])
+    config = {
+        "minutos_simulacion": minutos_sim,
+        "drones_por_base": drones_base,
+        "drones_por_hospital": drones_hosp,
+        "semilla": semilla if semilla > 0 else None,
+        "factor_demanda_inventario": factor_inv,
+        "factor_demanda_organos": factor_org,
+        "activar_meteorologia": activar_meteo,
+        "intervalo_cambio_clima_min": intervalo_clima,
+        "escenario_clima": escenario_clima,
+        "stock_inicial_cerca_umbral": stock_umbral,
+        "generar_graficas": False,
+        "verbose": False,
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_clima": False,
+    }
 
     limpiar_telemetria_previa()
 
-    with st.spinner(f"⏳ Ejecutando escenario: {nombre_escenario_visible(escenario_seleccionado)}..."):
+    with st.spinner("⏳ Ejecutando simulación DES..."):
         resultado = run_simulation(config)
 
     vuelos_generados = obtener_vuelos_actuales(resultado)
 
     st.session_state.resultado = resultado
     st.session_state.vuelos_telemetria = vuelos_generados
-    st.session_state.minutos_sim = config.get("minutos_simulacion", 1440)
+    st.session_state.minutos_sim = minutos_sim
     st.session_state.minuto_actual = 0
     st.session_state._slider_minuto = 0
     st.session_state.is_playing = False
-    st.session_state.escenario_ejecutado = escenario_seleccionado
 
     st.success(
-        f"✅ Escenario ejecutado — "
+        f"✅ Simulación completada — "
         f"{resultado.get('pedidos_generados', 0)} pedidos generados, "
         f"{resultado.get('pedidos_completados', 0)} completados, "
-        f"{len(vuelos_generados)} tramos de vuelo"
+        f"{len(vuelos_generados)} tramos de vuelo en radar"
     )
 
 # ---------------------------------------------------------------------------
@@ -727,7 +663,7 @@ if ejecutar:
 resultado = st.session_state.get("resultado")
 vuelos = obtener_vuelos_actuales(resultado)
 
-df_hospitales, df_bases, df_aristas = preparar_datos_estaticos(firma_topologia())
+df_hospitales, df_bases, df_aristas = preparar_datos_estaticos()
 
 max_minuto = st.session_state.get("minutos_sim", 1440)
 
@@ -739,36 +675,27 @@ st.session_state.minuto_actual = int(
     max(0, min(st.session_state.minuto_actual, max_minuto))
 )
 
-st.session_state._slider_minuto = int(
-    max(0, min(st.session_state._slider_minuto, max_minuto))
-)
+if st.session_state.is_playing:
+    st.session_state._slider_minuto = st.session_state.minuto_actual
+else:
+    st.session_state._slider_minuto = int(
+        max(0, min(st.session_state._slider_minuto, max_minuto))
+    )
 
 # ---------------------------------------------------------------------------
-# PANEL DE RESULTADOS
+# MÉTRICAS RESUMEN
 # ---------------------------------------------------------------------------
 
 if resultado:
-    escenario_ejecutado = st.session_state.get("escenario_ejecutado", escenario_seleccionado)
-
-    st.markdown(
-        f"""
-        <div class="scenario-card">
-            <h3>Escenario ejecutado: {nombre_escenario_visible(escenario_ejecutado)}</h3>
-            <p>El radar está mostrando la telemetría generada por el motor DES para este escenario.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
     cols = st.columns(6)
 
     metricas = [
-        (resultado.get("pedidos_generados", 0), "Pedidos generados"),
+        (resultado.get("pedidos_generados", 0), "Pedidos Generados"),
         (resultado.get("pedidos_completados", 0), "Completados"),
-        (resultado.get("pedidos_en_cola", 0), "En cola"),
-        (porcentaje(resultado.get("tasa_servicio", 0)), "Tasa servicio"),
-        (porcentaje(resultado.get("tasa_exito_organos", 0)), "Éxito órganos"),
-        (len(vuelos), "Tramos radar"),
+        (resultado.get("pedidos_rechazados", 0), "Rechazados"),
+        (resultado.get("pedidos_en_cola", 0), "En Cola"),
+        (f"{resultado.get('tasa_servicio', 0) * 100:.1f}%", "Tasa de Servicio"),
+        (len(vuelos), "Tramos Radar"),
     ]
 
     for i, (valor, label) in enumerate(metricas):
@@ -777,44 +704,6 @@ if resultado:
                 f'<div class="metric-card"><h3>{valor}</h3><p>{label}</p></div>',
                 unsafe_allow_html=True,
             )
-
-    cols2 = st.columns(6)
-
-    metricas2 = [
-        (resultado.get("total_drones", 0), "Total drones"),
-        (resultado.get("organos_totales", 0), "Órganos totales"),
-        (resultado.get("organos_late", 0), "Órganos tarde"),
-        (f'{resultado.get("utilizacion_vuelo_pct", 0):.1f}%', "Utilización vuelo"),
-        (f'{resultado.get("utilizacion_operativa_pct", 0):.1f}%', "Utilización operativa"),
-        (resultado.get("longitud_maxima_cola", 0), "Cola máxima"),
-    ]
-
-    for i, (valor, label) in enumerate(metricas2):
-        with cols2[i]:
-            st.markdown(
-                f'<div class="metric-card"><h3>{valor}</h3><p>{label}</p></div>',
-                unsafe_allow_html=True,
-            )
-
-    with st.expander("Detalles del resultado"):
-        col_a, col_b, col_c = st.columns(3)
-
-        with col_a:
-            st.subheader("Flota")
-            st.json(resultado.get("resumen_flota", {}))
-
-        with col_b:
-            st.subheader("Meteorología")
-            st.json(resultado.get("conteo_clima", {}))
-
-        with col_c:
-            st.subheader("Cola y uso")
-            st.json({
-                "longitud_media_cola": resultado.get("longitud_media_cola", 0),
-                "longitud_maxima_cola": resultado.get("longitud_maxima_cola", 0),
-                "tiempo_total_vuelo": resultado.get("tiempo_total_vuelo", 0),
-                "tiempo_total_recarga": resultado.get("tiempo_total_recarga", 0),
-            })
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -841,8 +730,8 @@ with col_status:
     vel_txt = f"{st.session_state.velocidad_reproduccion} min/frame"
 
     st.markdown(
-        f'<div style="padding:0.55rem 0.9rem; background:rgba(15,12,41,0.75); '
-        f'border-radius:10px; color:#ccd6f6; font-size:0.88rem;">'
+        f'<div style="padding:0.45rem 0.8rem; background:rgba(15,12,41,0.6); '
+        f'border-radius:8px; color:#ccd6f6; font-size:0.85rem;">'
         f'{estado_txt} &nbsp;·&nbsp; Velocidad: {vel_txt} &nbsp;·&nbsp; '
         f't = <b>{st.session_state.minuto_actual}</b> / {max_minuto}</div>',
         unsafe_allow_html=True,
@@ -850,6 +739,9 @@ with col_status:
 
 
 def _on_slider_change():
+    """
+    Si el usuario mueve el slider manualmente, se pausa la reproducción.
+    """
     st.session_state.is_playing = False
     st.session_state.minuto_actual = st.session_state._slider_minuto
 
@@ -860,7 +752,7 @@ minuto_actual = st.slider(
     max_value=max_minuto,
     step=1,
     key="_slider_minuto",
-    help="Arrastra para navegar por la telemetría",
+    help="Arrastra para ver los drones en movimiento",
     on_change=_on_slider_change,
 )
 
@@ -886,10 +778,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# MAPA
+# CONSTRUCCIÓN DEL MAPA
 # ---------------------------------------------------------------------------
 
 def construir_mapa(t):
+    """
+    Construye el mapa PyDeck.
+
+    El mapa usa:
+    - topología del proyecto,
+    - vuelos de la telemetría,
+    - interpolación visual.
+    """
     capas = []
 
     capa_cobertura = pdk.Layer(
@@ -1050,6 +950,9 @@ placeholder_tabla = st.empty()
 
 
 def renderizar_frame(t):
+    """
+    Renderiza mapa + tabla para un instante t.
+    """
     mapa, df_d, n = construir_mapa(t)
 
     with placeholder_mapa:
@@ -1093,7 +996,7 @@ def renderizar_frame(t):
 renderizar_frame(st.session_state.minuto_actual)
 
 if not vuelos:
-    st.info("📡 Ejecuta un escenario desde la barra lateral para ver vuelos en el radar.")
+    st.info("📡 Ejecuta una simulación desde la barra lateral para ver los drones en el radar.")
 
 # ---------------------------------------------------------------------------
 # AUTO-REPRODUCCIÓN
