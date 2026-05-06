@@ -77,19 +77,49 @@ class GestorFlotaController:
 
         self.drones[dron.drone_id] = dron
 
-    def inicializar_flota(self, drones_por_base: int = 2, drones_por_hospital: int = 1):
+    def inicializar_flota(
+        self,
+        drones_por_base: int = 2,
+        drones_por_hospital: int = 1,
+        drones_por_base_config=None,
+        drones_por_hospital_config=None,
+    ):
         """
-        Crea la flota inicial:
+        Crea la flota inicial.
 
-        - Drones de base para reposición de inventario.
-        - Drones hospitalarios para transporte de órganos.
+        Si no se pasa configuración concreta, funciona como siempre.
+
+        Ejemplo:
+            drones_por_base = 2
+
+            drones_por_base_config = {
+                "BASE NORTE CAPITAL": 4,
+                "BASE SUR FUENLABRADA": 3,
+            }
+
+        En ese caso:
+        - las bases indicadas usan su número concreto,
+        - las demás usan drones_por_base.
+
+        Igual para hospitales con drones_por_hospital_config.
         """
+        if drones_por_base_config is None:
+            drones_por_base_config = {}
+
+        if drones_por_hospital_config is None:
+            drones_por_hospital_config = {}
+
         contador_base = 1
         contador_hospital = 1
 
         # Drones de reposición: viven en bases.
         for nombre_base in self.grafo.listar_bases():
-            for _ in range(drones_por_base):
+            cantidad_drones = drones_por_base_config.get(
+                nombre_base,
+                drones_por_base,
+            )
+
+            for _ in range(cantidad_drones):
                 id_dron = f"B{contador_base:03d}"
 
                 dron = Drone(
@@ -106,7 +136,12 @@ class GestorFlotaController:
 
         # Drones hospitalarios: viven inicialmente en hospitales.
         for nombre_hospital in self.grafo.listar_hospitales():
-            for _ in range(drones_por_hospital):
+            cantidad_drones = drones_por_hospital_config.get(
+                nombre_hospital,
+                drones_por_hospital,
+            )
+
+            for _ in range(cantidad_drones):
                 id_dron = f"H{contador_hospital:03d}"
 
                 dron = Drone(

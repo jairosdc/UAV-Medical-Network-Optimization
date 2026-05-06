@@ -20,7 +20,7 @@ def main():
     # "estres_extremo"
     #   Mucha demanda, clima adverso y flota ajustada. Escenario duro.
 
-    nombre_escenario = "normal"
+    nombre_escenario = "personalizado"
 
     config = ESCENARIOS[nombre_escenario].copy()
 

@@ -84,6 +84,9 @@ def run_simulation(config=None):
     DRONES_POR_BASE = config.get("drones_por_base", 2)
     DRONES_POR_HOSPITAL = config.get("drones_por_hospital", 1)
 
+    DRONES_POR_BASE_CONFIG = config.get("drones_por_base_config", {})
+    DRONES_POR_HOSPITAL_CONFIG = config.get("drones_por_hospital_config", {})
+
     SEMILLA_ALEATORIA = config.get("semilla", None)
 
     FACTOR_DEMANDA_INVENTARIO = config.get("factor_demanda_inventario", 1.0)
@@ -112,6 +115,8 @@ def run_simulation(config=None):
     gestor_flota.inicializar_flota(
         drones_por_base=DRONES_POR_BASE,
         drones_por_hospital=DRONES_POR_HOSPITAL,
+        drones_por_base_config=DRONES_POR_BASE_CONFIG,
+        drones_por_hospital_config=DRONES_POR_HOSPITAL_CONFIG,
     )
 
     inventarios = {}
@@ -172,8 +177,6 @@ def run_simulation(config=None):
         dias = MINUTOS_SIMULACION / 1440
 
         print(f"  Duracion:          {MINUTOS_SIMULACION} min  ({dias:.1f} dias)")
-        print(f"  Drones/base:       {DRONES_POR_BASE}")
-        print(f"  Drones/hospital:   {DRONES_POR_HOSPITAL}")
         print(f"  Hospitales:        {len(HOSPITALS)}")
         print(f"  Bases:             {len(BASES)}")
 
