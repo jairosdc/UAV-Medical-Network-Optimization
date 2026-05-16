@@ -42,36 +42,36 @@ RUTA_TELEMETRIA = os.path.join(
 MADRID_LAT = 40.42
 MADRID_LON = -3.70
 
-# Colores de misiones
-COLOR_INVENTARIO = [46, 204, 113, 230]
-COLOR_ORGANO = [231, 76, 60, 240]
-COLOR_VUELTA = [149, 165, 166, 180]
-COLOR_BATERIA_BAJA = [255, 255, 0, 240]
-COLOR_RECIEN_LLEGADO = [255, 255, 255, 160]
+# Colores de misiones (Functional high-contrast palette)
+COLOR_INVENTARIO = [0, 200, 83, 240]    # Green for standard inventory
+COLOR_ORGANO = [255, 40, 40, 250]       # Bright red for urgent organ missions
+COLOR_VUELTA = [60, 60, 60, 220]        # Dark gray for return flights
+COLOR_BATERIA_BAJA = [255, 214, 0, 250] # Vibrant yellow for low battery
+COLOR_RECIEN_LLEGADO = [255, 255, 255, 180]
 
-# Colores de nodos
-COLOR_HOSPITAL_NODO = [0, 250, 154, 220]
+# Colores de nodos — V2 design: white/cyan hospitals, red bases
+COLOR_HOSPITAL_NODO = [200, 230, 255, 240]   # White-blue (crosshair markers)
 
 UMBRAL_BATERIA_BAJA = 25.0
 MARGEN_PERSISTENCIA_MIN = 3
 
 # Configuración visual por base.
-# Si en el proyecto aparecen nuevas bases, se les asigna un color por defecto.
+# V2 design: all bases use red tones to match the Command Center theme.
 CONFIG_BASES = {
-    "BASE NOROESTE": {"color_rgb": [0, 255, 136], "radio": 6000},
-    "BASE NORTE CAPITAL": {"color_rgb": [0, 207, 255], "radio": 4504},
-    "BASE ESTE CORREDOR": {"color_rgb": [180, 120, 255], "radio": 3500},
-    "BASE SUR FUENLABRADA": {"color_rgb": [255, 159, 0], "radio": 4000},
+    "BASE NOROESTE": {"color_rgb": [230, 59, 46], "radio": 6000},
+    "BASE NORTE CAPITAL": {"color_rgb": [200, 40, 40], "radio": 4504},
+    "BASE ESTE CORREDOR": {"color_rgb": [255, 80, 60], "radio": 3500},
+    "BASE SUR FUENLABRADA": {"color_rgb": [180, 30, 30], "radio": 4000},
 }
 
 COLORES_BASE_FALLBACK = [
-    [0, 255, 136],
-    [0, 207, 255],
-    [180, 120, 255],
-    [255, 159, 0],
-    [255, 99, 132],
-    [120, 220, 120],
-    [240, 240, 120],
+    [230, 59, 46],
+    [200, 40, 40],
+    [255, 80, 60],
+    [180, 30, 30],
+    [240, 50, 50],
+    [210, 45, 40],
+    [190, 35, 35],
 ]
 
 
@@ -412,8 +412,7 @@ def rutas_activas(vuelos, t):
 # ---------------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="FlyRadar — UAV Medical Network",
-    page_icon="🛩️",
+    page_title="Centro de Comando de Drones Médicos",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -446,111 +445,225 @@ if "_slider_minuto" not in st.session_state:
 # ---------------------------------------------------------------------------
 
 st.markdown("""
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap');
 
+    /* Global Overrides */
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
+        background-color: #f2f2f2 !important;
+        color: #000000;
+    }
+
+    .stApp {
+        background-color: #f2f2f2;
+    }
+
+    /* Headlines */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Space Grotesk', sans-serif !important;
+        text-transform: uppercase;
+        letter-spacing: -0.05em;
+    }
+
+    /* Neo-Brutalist Components */
+    .brutal-container {
+        background-color: #ffffff;
+        border: 3px solid #e63b2e;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 6px 6px 0px 0px #000000;
+        position: relative;
     }
 
     .main-title {
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        padding: 1.8rem 2rem;
-        border-radius: 16px;
-        margin-bottom: 1.2rem;
-        text-align: center;
-        border: 1px solid rgba(255,255,255,0.06);
+        background-color: #e63b2e;
+        border: 4px solid #000000;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: left;
+        box-shadow: 10px 10px 0px 0px #1a1a1a;
+        transform: rotate(-0.5deg);
     }
 
     .main-title h1 {
-        background: linear-gradient(90deg, #00b4d8, #90e0ef);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.2rem;
+        color: #ffffff !important;
+        font-size: 3.5rem !important;
+        font-weight: 800 !important;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        line-height: 1;
     }
 
     .main-title p {
-        color: #8892b0;
-        font-size: 0.95rem;
-        margin: 0.3rem 0 0 0;
+        color: #000000;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.2rem;
+        margin: 0.5rem 0 0 0;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 
     .metric-card {
-        background: linear-gradient(145deg, #1a1a2e, #16213e);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 12px;
-        padding: 1rem 1.2rem;
-        text-align: center;
+        background-color: #ffffff;
+        border: 3px solid #e63b2e;
+        padding: 1.5rem;
+        text-align: left;
+        box-shadow: 6px 6px 0px 0px #000000;
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .metric-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px 0px #000000;
     }
 
     .metric-card h3 {
-        color: #00b4d8;
-        font-size: 1.6rem;
+        color: #e63b2e;
+        font-size: 2.2rem;
+        font-weight: 800;
         margin: 0;
+        line-height: 1;
     }
 
     .metric-card p {
-        color: #8892b0;
-        font-size: 0.8rem;
-        margin: 0.2rem 0 0 0;
+        color: #000000;
+        font-size: 0.9rem;
+        margin: 0.3rem 0 0 0;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .product-card {
-        background: linear-gradient(145deg, #1a1a2e, #0f2027);
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 10px;
-        padding: 0.6rem 0.8rem;
-        text-align: center;
-        margin-bottom: 0.3rem;
+        background-color: #ffffff;
+        border: 2px solid #e63b2e;
+        padding: 1rem;
+        text-align: left;
+        margin-bottom: 0.8rem;
+        box-shadow: 4px 4px 0px 0px #000000;
     }
 
     .product-card h4 {
-        color: #90e0ef;
+        color: #e63b2e;
         font-size: 1.1rem;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .product-card p {
-        color: #8892b0;
-        font-size: 0.72rem;
+        color: #333333;
+        font-size: 0.8rem;
         margin: 0.1rem 0 0 0;
-        text-transform: capitalize;
+        font-weight: 600;
     }
 
     .legend-box {
-        background: rgba(15, 12, 41, 0.85);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 10px;
-        padding: 0.8rem 1rem;
-        margin-top: 0.8rem;
+        background-color: #ffffff;
+        border: 2px solid #000000;
+        padding: 1rem;
+        margin-top: 1rem;
+        box-shadow: 4px 4px 0px 0px #e63b2e;
     }
 
     .legend-item {
         display: inline-flex;
         align-items: center;
-        margin-right: 1.2rem;
-        font-size: 0.82rem;
-        color: #ccd6f6;
+        margin-right: 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #000000;
+        text-transform: uppercase;
     }
 
     .legend-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #000;
         display: inline-block;
-        margin-right: 6px;
+        margin-right: 10px;
     }
 
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f0c29, #1a1a2e);
+        background-color: #ffffff !important;
+        border-right: 4px solid #e63b2e;
     }
 
     section[data-testid="stSidebar"] h1,
     section[data-testid="stSidebar"] h2,
     section[data-testid="stSidebar"] h3 {
-        color: #00b4d8;
+        color: #e63b2e !important;
     }
+    
+    .sidebar-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1rem;
+        font-weight: 800;
+        color: #e63b2e;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        margin-top: 1.5rem;
+        border-bottom: 2px solid #e63b2e;
+        padding-bottom: 0.2rem;
+    }
+    
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.8rem;
+        color: #ffffff;
+        font-weight: 900;
+        margin-bottom: 2rem;
+        background-color: #e63b2e;
+        padding: 0.5rem 1rem;
+        border: 3px solid #000000;
+        box-shadow: 4px 4px 0px 0px #000000;
+    }
+
+    /* Override Streamlit Widgets */
+    .stSlider > div > div > div > div {
+        background-color: #e63b2e !important;
+    }
+    
+    .stButton > button {
+        background-color: #e63b2e !important;
+        color: white !important;
+        border: 3px solid #000 !important;
+        border-radius: 0 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        box-shadow: 4px 4px 0px 0px #000 !important;
+        transition: all 0.1s !important;
+    }
+
+    .stButton > button:hover {
+        transform: translate(-2px, -2px) !important;
+        box-shadow: 6px 6px 0px 0px #000 !important;
+    }
+
+    .stButton > button:active {
+        transform: translate(2px, 2px) !important;
+        box-shadow: 0px 0px 0px 0px #000 !important;
+    }
+
+    /* Metrics Container */
+    [data-testid="column"] {
+        padding: 0.5rem !important;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -560,19 +673,20 @@ st.markdown("""
 
 st.markdown("""
 <div class="main-title">
-    <h1>🛩️ FlyRadar — UAV Medical Network</h1>
-    <p>Visor interactivo de drones médicos sobre la Comunidad de Madrid</p>
+    <h1><i class="ph ph-radar"></i> DRON COMMAND CENTER</h1>
+    <p>COMUNIDAD DE MADRID • TACTICAL CONTROL & TELEMETRY HUB</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ---------------------------------------------------------------------------
 # SIDEBAR
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.header("⚙️ Configuración")
+    st.markdown('<div class="sidebar-header"><i class="ph ph-sliders"></i> Configuración</div>', unsafe_allow_html=True)
 
-    st.subheader("Simulación")
+    st.markdown('<div class="sidebar-title"><i class="ph ph-cpu"></i> Simulación</div>', unsafe_allow_html=True)
     minutos_sim = st.slider(
         "Duración (minutos)",
         60,
@@ -586,11 +700,11 @@ with st.sidebar:
     drones_hosp = st.slider("Drones por hospital", 1, 5, 1)
     semilla = st.number_input("Semilla aleatoria (0 = random)", 0, 999999, 42)
 
-    st.subheader("Demanda")
+    st.markdown('<div class="sidebar-title"><i class="ph ph-trend-up"></i> Demanda</div>', unsafe_allow_html=True)
     factor_inv = st.slider("Factor demanda inventario", 0.1, 3.0, 1.0, 0.1)
     factor_org = st.slider("Factor demanda órganos", 0.1, 3.0, 1.0, 0.1)
 
-    st.subheader("Meteorología")
+    st.markdown('<div class="sidebar-title"><i class="ph ph-cloud-sun"></i> Meteorología</div>', unsafe_allow_html=True)
     activar_meteo = st.checkbox("Activar meteorología", value=True)
     intervalo_clima = st.slider("Intervalo cambio clima (min)", 60, 1440, 300, 60)
 
@@ -600,10 +714,10 @@ with st.sidebar:
         index=0,
     )
 
-    st.subheader("Opciones")
+    st.markdown('<div class="sidebar-title"><i class="ph ph-toggle-left"></i> Opciones</div>', unsafe_allow_html=True)
     stock_umbral = st.checkbox("Stock inicial cerca del umbral", value=True)
 
-    st.subheader("Reproducción")
+    st.markdown('<div class="sidebar-title"><i class="ph ph-play-circle"></i> Reproducción</div>', unsafe_allow_html=True)
     opciones_paso = [1, 2, 5, 10]
 
     paso_actual = st.session_state.velocidad_reproduccion
@@ -630,7 +744,7 @@ with st.sidebar:
     st.divider()
 
     ejecutar = st.button(
-        "🚀 Ejecutar Simulación",
+        "Ejecutar Simulación",
         type="primary",
         use_container_width=True,
     )
@@ -660,7 +774,7 @@ if ejecutar:
 
     limpiar_telemetria_previa()
 
-    with st.spinner("⏳ Ejecutando simulación DES..."):
+    with st.spinner("Ejecutando simulación DES..."):
         resultado = run_simulation(config)
 
     vuelos_generados = obtener_vuelos_actuales(resultado)
@@ -673,7 +787,7 @@ if ejecutar:
     st.session_state.is_playing = False
 
     st.success(
-        f"✅ Simulación completada — "
+        f"Simulación completada — "
         f"{resultado.get('pedidos_generados', 0)} pedidos generados, "
         f"{resultado.get('pedidos_completados', 0)} completados, "
         f"{len(vuelos_generados)} tramos de vuelo en radar"
@@ -714,18 +828,18 @@ if resultado:
     cols = st.columns(6)
 
     metricas = [
-        (resultado.get("pedidos_generados", 0), "Pedidos Generados"),
-        (resultado.get("pedidos_completados", 0), "Completados"),
-        (resultado.get("pedidos_rechazados", 0), "Rechazados"),
-        (resultado.get("pedidos_en_cola", 0), "En Cola"),
-        (f"{resultado.get('tasa_servicio', 0) * 100:.1f}%", "Tasa de Servicio"),
-        (f"{resultado.get('tasa_exito_organos', 0) * 100:.1f}%", "Éxito Órganos"),
+        (resultado.get("pedidos_generados", 0), "Pedidos Generados", "ph-package"),
+        (resultado.get("pedidos_completados", 0), "Completados", "ph-check-circle"),
+        (resultado.get("pedidos_rechazados", 0), "Rechazados", "ph-x-circle"),
+        (resultado.get("pedidos_en_cola", 0), "En Cola", "ph-clock"),
+        (f"{resultado.get('tasa_servicio', 0) * 100:.1f}%", "Tasa de Servicio", "ph-chart-bar"),
+        (f"{resultado.get('tasa_exito_organos', 0) * 100:.1f}%", "Éxito Órganos", "ph-heartbeat"),
     ]
 
-    for i, (valor, label) in enumerate(metricas):
+    for i, (valor, label, icon) in enumerate(metricas):
         with cols[i]:
             st.markdown(
-                f'<div class="metric-card"><h3>{valor}</h3><p>{label}</p></div>',
+                f'<div class="metric-card"><i class="ph {icon}" style="font-size: 28px; color: #e63b2e; margin-bottom: 8px;"></i><h3>{valor}</h3><p>{label}</p></div>',
                 unsafe_allow_html=True,
             )
 
@@ -738,35 +852,50 @@ if resultado:
     ]
     PRODUCTOS_ORGANOS = ["corazon", "pulmon", "rinon", "pancreas"]
 
-    EMOJI_PRODUCTO = {
-        "sangre": "🩸", "farmaco_uci": "💊", "antibiotico": "💉", "suero": "🧪",
-        "plasma": "🟡", "analgesico": "💊", "material_sanitario": "🩹",
-        "medicamento_general": "💊",
-        "corazon": "❤️", "pulmon": "🫁", "rinon": "🫘", "pancreas": "🟣",
+    ICONO_PRODUCTO = {
+        "sangre": "ph-drop", 
+        "farmaco_uci": "ph-shield-plus", 
+        "antibiotico": "ph-pill", 
+        "suero": "ph-flask", 
+        "plasma": "ph-vignette", 
+        "analgesico": "ph-first-aid", 
+        "material_sanitario": "ph-briefcase-metal",
+        "medicamento_general": "ph-pills",
+        "corazon": "ph-heartbeat", 
+        "pulmon": "ph-lungs", 
+        "rinon": "ph-microscope", 
+        "pancreas": "ph-dna",
     }
 
-    with st.expander("📦 Desglose por producto (completados)", expanded=False):
-        st.caption("**Inventario**")
+    ICONOS_FA_ORGANOS = {
+        "corazon": '<i class="fa-solid fa-heart-pulse"></i>', 
+        "pulmon": '<i class="fa-solid fa-lungs"></i>', 
+        "rinon": '<i class="fa-solid fa-filter"></i>', # El riñón actúa como filtro del cuerpo
+        "pancreas": '<i class="fa-solid fa-capsules"></i>', # El páncreas genera insulina
+    }
+
+    with st.expander("Desglose por producto (completados)", expanded=False):
+        st.markdown('<div class="brutalist-label" style="font-size:0.8rem; padding:0.2rem 0.5rem; margin-bottom:0.5rem;">Inventario</div>', unsafe_allow_html=True)
         cols_inv = st.columns(len(PRODUCTOS_INVENTARIO))
         for i, prod in enumerate(PRODUCTOS_INVENTARIO):
             n = conteo_completados.get(prod, 0)
-            emoji = EMOJI_PRODUCTO.get(prod, "📦")
+            icon = ICONO_PRODUCTO.get(prod, "ph-package")
             nombre = prod.replace("_", " ")
             with cols_inv[i]:
                 st.markdown(
-                    f'<div class="product-card"><h4>{emoji} {n}</h4><p>{nombre}</p></div>',
+                    f'<div class="product-card"><h4><i class="ph {icon}"></i> {n}</h4><p>{nombre}</p></div>',
                     unsafe_allow_html=True,
                 )
 
-        st.caption("**Órganos**")
+        st.markdown('<div class="brutalist-label" style="font-size:0.8rem; padding:0.2rem 0.5rem; margin-top:1rem; margin-bottom:0.5rem;">Órganos</div>', unsafe_allow_html=True)
         cols_org = st.columns(len(PRODUCTOS_ORGANOS))
         for i, prod in enumerate(PRODUCTOS_ORGANOS):
             n = conteo_completados.get(prod, 0)
-            emoji = EMOJI_PRODUCTO.get(prod, "🫀")
+            icon_html = ICONOS_FA_ORGANOS.get(prod, '<i class="fa-solid fa-box"></i>')
             nombre = prod.replace("_", " ")
             with cols_org[i]:
                 st.markdown(
-                    f'<div class="product-card"><h4>{emoji} {n}</h4><p>{nombre}</p></div>',
+                    f'<div class="product-card"><h4>{icon_html} {n}</h4><p>{nombre}</p></div>',
                     unsafe_allow_html=True,
                 )
 
@@ -779,13 +908,13 @@ if resultado:
 col_play, col_pause, col_status = st.columns([1, 1, 4])
 
 with col_play:
-    if st.button("▶ Iniciar", use_container_width=True, disabled=not vuelos):
+    if st.button("Iniciar", use_container_width=True, disabled=not vuelos):
         st.session_state.is_playing = True
         st.session_state.minuto_actual = st.session_state._slider_minuto
         st.rerun()
 
 with col_pause:
-    if st.button("⏸ Pausar", use_container_width=True):
+    if st.button("Pausar", use_container_width=True):
         st.session_state.is_playing = False
         st.session_state.minuto_actual = st.session_state._slider_minuto
         st.rerun()
@@ -798,12 +927,13 @@ vel_txt = f"{st.session_state.velocidad_reproduccion} min/frame"
 
 def _actualizar_status(t):
     """Actualiza la barra de estado con el instante actual."""
-    estado_txt = "🔴 EN REPRODUCCIÓN" if st.session_state.is_playing else "⏸️ Pausado"
+    estado_txt = '<i class="ph ph-play-circle" style="color:#e63b2e;"></i> <span style="color:#e63b2e; font-weight:800;">EN REPRODUCCIÓN</span>' if st.session_state.is_playing else '<i class="ph ph-pause-circle" style="color:#888;"></i> Pausado'
     placeholder_status.markdown(
-        f'<div style="padding:0.45rem 0.8rem; background:rgba(15,12,41,0.6); '
-        f'border-radius:8px; color:#ccd6f6; font-size:0.85rem;">'
-        f'{estado_txt} &nbsp;·&nbsp; Velocidad: {vel_txt} &nbsp;·&nbsp; '
-        f't = <b>{t}</b> / {max_minuto}</div>',
+        f'<div style="padding:0.6rem 1rem; background:#ffffff; border:2px solid #e63b2e; '
+        f'box-shadow: 4px 4px 0px 0px #000; color:#000000; font-family:\'Space Grotesk\', sans-serif; '
+        f'font-size:0.9rem; display:flex; align-items:center; gap:0.8rem; text-transform:uppercase; font-weight:700;">'
+        f'{estado_txt} &nbsp;·&nbsp; <i class="ph ph-gauge"></i> {vel_txt} &nbsp;·&nbsp; '
+        f'<i class="ph ph-clock"></i> t = <span style="color:#e63b2e; font-size:1.1rem;">{t}</span> / {max_minuto}</div>',
         unsafe_allow_html=True,
     )
 
@@ -820,7 +950,7 @@ def _on_slider_change():
 
 
 minuto_actual = st.slider(
-    "⏱️ Minuto de simulación",
+    "Minuto de simulación",
     min_value=0,
     max_value=max_minuto,
     step=1,
@@ -838,15 +968,15 @@ if not st.session_state.is_playing:
 
 st.markdown("""
 <div class="legend-box">
-    <span class="legend-item"><span class="legend-dot" style="background:#00fa9a;"></span> Hospitales</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#00ff88;"></span> Bases</span>
-    <span class="legend-item"><span class="legend-dot" style="background:rgba(150,150,150,0.5);"></span> Topología</span>
-    <span class="legend-item" style="margin-left:0.5rem;">|</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#2ecc71;"></span> Inventario</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span> Órgano</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#95a5a6;"></span> Vuelta</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#ffff00;"></span> Bat. baja</span>
-    <span class="legend-item"><span class="legend-dot" style="background:rgba(255,255,255,0.6);"></span> Aterrizó</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#c8e6ff; border-color:#c8e6ff;"></span> Hospitales</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#e63b2e; border-color:#000;"></span> Bases</span>
+    <span class="legend-item"><span class="legend-dot" style="background:rgba(230,59,46,0.35);"></span> Topología</span>
+    <span class="legend-item" style="color:#e63b2e; font-weight:900;">|</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#00c853;"></span> Inventario</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ff2828;"></span> Órgano</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#3c3c3c;"></span> Vuelta</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#ffd600;"></span> Bat. baja</span>
+    <span class="legend-item"><span class="legend-dot" style="background:rgba(255,255,255,0.7);"></span> Aterrizó</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -865,72 +995,107 @@ def construir_mapa(t):
     """
     capas = []
 
+    # --- Coverage rings: dark red glow around bases ---
     capa_cobertura = pdk.Layer(
         "ScatterplotLayer",
         data=df_bases,
         get_position=["lon", "lat"],
-        get_fill_color="color_rgba_cobertura",
+        get_fill_color=[230, 59, 46, 12],
         get_radius="radio",
         pickable=False,
-        opacity=0.08,
+        opacity=0.12,
         stroked=True,
-        get_line_color="color_rgb",
+        get_line_color=[230, 59, 46, 60],
         line_width_min_pixels=1,
     )
     capas.append(capa_cobertura)
 
+    # --- Topology edges: thin red lines connecting bases to hospitals ---
     if not df_aristas.empty:
         capa_aristas = pdk.Layer(
             "LineLayer",
             data=df_aristas,
             get_source_position=["origen_lon", "origen_lat"],
             get_target_position=["destino_lon", "destino_lat"],
-            get_color="color_arista",
-            get_width=2,
+            get_color=[230, 59, 46, 90],
+            get_width=1.5,
             pickable=True,
         )
         capas.append(capa_aristas)
+
+    # --- Hospitals: Simple point markers ---
+    capa_hospital_halo = pdk.Layer(
+        "ScatterplotLayer",
+        data=df_hospitales,
+        get_position=["lon", "lat"],
+        get_fill_color=[200, 230, 255, 30],
+        get_radius=300,
+        pickable=False,
+        opacity=0.3,
+        stroked=True,
+        get_line_color=[200, 230, 255, 80],
+        line_width_min_pixels=1,
+    )
+    capas.append(capa_hospital_halo)
 
     capa_hospitales = pdk.Layer(
         "ScatterplotLayer",
         data=df_hospitales,
         get_position=["lon", "lat"],
         get_fill_color="color_rgb",
-        get_radius=120,
+        get_radius=140,
         pickable=True,
-        opacity=0.9,
+        opacity=0.95,
+        radiusMinPixels=4,
         stroked=True,
-        get_line_color=[255, 255, 255, 60],
-        line_width_min_pixels=1,
+        get_line_color=[255, 255, 255, 200],
+        line_width_min_pixels=2,
     )
     capas.append(capa_hospitales)
+
+    # --- Bases: Simple point markers ---
+    capa_base_halo = pdk.Layer(
+        "ScatterplotLayer",
+        data=df_bases,
+        get_position=["lon", "lat"],
+        get_fill_color=[230, 59, 46, 25],
+        get_radius=500,
+        pickable=False,
+        opacity=0.25,
+        stroked=True,
+        get_line_color=[230, 59, 46, 100],
+        line_width_min_pixels=1,
+    )
+    capas.append(capa_base_halo)
 
     capa_bases = pdk.Layer(
         "ScatterplotLayer",
         data=df_bases,
         get_position=["lon", "lat"],
         get_fill_color="color_rgb",
-        get_radius=220,
+        get_radius=250,
         pickable=True,
-        opacity=0.95,
+        opacity=0.98,
+        radiusMinPixels=6,
         stroked=True,
-        get_line_color=[255, 255, 255, 150],
-        line_width_min_pixels=2,
+        get_line_color=[0, 0, 0, 200],
+        line_width_min_pixels=3,
     )
     capas.append(capa_bases)
 
+    # Base labels
     capa_label_bases = pdk.Layer(
         "TextLayer",
         data=df_bases,
         get_position=["lon", "lat"],
         get_text="nombre",
-        get_size=12,
-        get_color=[255, 255, 255, 200],
+        get_size=13,
+        get_color=[30, 30, 30, 240],
         get_angle=0,
         get_text_anchor="'middle'",
         get_alignment_baseline="'top'",
-        get_pixel_offset=[0, -20],
-        font_family="'Inter', sans-serif",
+        get_pixel_offset=[0, -22],
+        font_family="'Space Grotesk', 'Inter', sans-serif",
     )
     capas.append(capa_label_bases)
 
@@ -941,32 +1106,44 @@ def construir_mapa(t):
         df_drones = drones_en_vuelo(vuelos, t)
         df_rutas = rutas_activas(vuelos, t)
 
+    # --- Flight arcs ---
     if not df_rutas.empty:
-        capa_arcos = pdk.Layer(
+        capas.append(pdk.Layer(
             "ArcLayer",
             data=df_rutas,
             get_source_position=["lon_origen", "lat_origen"],
             get_target_position=["lon_destino", "lat_destino"],
             get_source_color="color",
             get_target_color="color",
-            get_width=3,
-            opacity=0.5,
-        )
-        capas.append(capa_arcos)
+            get_width=4,
+            opacity=0.7,
+        ))
 
+    # --- Drones: Simple point markers ---
     if not df_drones.empty:
+        capa_drone_halo = pdk.Layer(
+            "ScatterplotLayer",
+            data=df_drones,
+            get_position=["lon", "lat"],
+            get_fill_color=[230, 59, 46, 40],
+            get_radius=600,
+            pickable=False,
+            opacity=0.3,
+        )
+        capas.append(capa_drone_halo)
+
         capa_drones = pdk.Layer(
             "ScatterplotLayer",
             data=df_drones,
             get_position=["lon", "lat"],
             get_fill_color="color",
-            get_radius=300,
+            get_radius=350,
             pickable=True,
-            opacity=0.95,
-            radiusMinPixels=6,
+            opacity=0.98,
+            radiusMinPixels=7,
             stroked=True,
-            get_line_color=[255, 255, 255, 120],
-            line_width_min_pixels=1,
+            get_line_color=[255, 255, 255, 200],
+            line_width_min_pixels=2,
         )
         capas.append(capa_drones)
 
@@ -975,12 +1152,13 @@ def construir_mapa(t):
             data=df_drones,
             get_position=["lon", "lat"],
             get_text="dron_id",
-            get_size=11,
-            get_color=[255, 255, 255, 230],
+            get_size=12,
+            get_color=[30, 30, 30, 250],
             get_angle=0,
             get_text_anchor="'middle'",
             get_alignment_baseline="'top'",
-            get_pixel_offset=[0, -20],
+            get_pixel_offset=[0, -22],
+            font_family="'Space Grotesk', sans-serif",
         )
         capas.append(capa_texto)
 
@@ -995,7 +1173,7 @@ def construir_mapa(t):
     mapa = pdk.Deck(
         layers=capas,
         initial_view_state=vista,
-        map_style=pdk.map_styles.DARK,
+        map_style=pdk.map_styles.LIGHT,
         tooltip={
             "text": (
                 "{nombre}\n"
@@ -1035,9 +1213,9 @@ def renderizar_frame(t):
 
     with placeholder_info:
         if n > 0:
-            st.caption(f"🛫 **{n} dron(es) visibles** en t = {t}")
+            st.markdown(f'<p style="color:#e63b2e; font-size:0.95rem; font-family:\'Space Grotesk\', sans-serif; font-weight:700; text-transform:uppercase;"><i class="ph ph-airplane-tilt"></i> {n} DRON(ES) VISIBLES en t = {t}</p>', unsafe_allow_html=True)
         else:
-            st.caption(f"⏱️ t = {t} — Sin drones visibles")
+            st.markdown(f'<p style="color:#888; font-size:0.95rem; font-family:\'Space Grotesk\', sans-serif; font-weight:700; text-transform:uppercase;"><i class="ph ph-clock"></i> t = {t} — SIN DRONES VISIBLES</p>', unsafe_allow_html=True)
 
     if not df_d.empty:
         with placeholder_tabla:
@@ -1071,7 +1249,7 @@ def renderizar_frame(t):
 renderizar_frame(st.session_state.minuto_actual)
 
 if not vuelos:
-    st.info("📡 Ejecuta una simulación desde la barra lateral para ver los drones en el radar.")
+    st.info("Ejecuta una simulación desde la barra lateral para ver los drones en el radar.")
 
 # ---------------------------------------------------------------------------
 # AUTO-REPRODUCCIÓN
@@ -1102,14 +1280,12 @@ if st.session_state.is_playing and vuelos:
 if resultado:
     st.markdown("---")
     st.markdown("""
-    <div style="text-align:center; margin:1.5rem 0 1rem 0;">
-        <h2 style="background: linear-gradient(90deg, #00b4d8, #90e0ef);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            font-size:1.6rem; margin:0;">
-            📊 Análisis de la Simulación
+    <div style="margin:2rem 0 1.5rem 0; padding:1.5rem; background:#ffffff; border:4px solid #e63b2e; box-shadow: 8px 8px 0px 0px #000; text-align:center;">
+        <h2 style="font-family:'Space Grotesk', sans-serif; color:#000000; font-size:2.2rem; margin:0; text-transform:uppercase; letter-spacing:2px; font-weight:900;">
+            <i class="ph ph-chart-pie-slice" style="color:#e63b2e;"></i> ANÁLISIS DE SIMULACIÓN
         </h2>
-        <p style="color:#8892b0; font-size:0.85rem; margin:0.2rem 0 0 0;">
-            Gráficas equivalentes al reporte de main.py
+        <p style="color:#333; font-family:'Inter', sans-serif; font-size:1rem; margin:0.5rem 0 0 0; font-weight:600; text-transform:uppercase; letter-spacing:1px;">
+            Métricas de Rendimiento y Telemetría Industrial
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1134,7 +1310,7 @@ if resultado:
     col_g1, col_g2 = st.columns(2)
 
     with col_g1:
-        st.subheader("1️⃣ Embudo Global de Pedidos")
+        st.markdown('<h4 class="brutalist-label"><i class="ph ph-funnel"></i> Embudo Global de Pedidos</h4>', unsafe_allow_html=True)
 
         total_gen = resultado.get("pedidos_generados", 0)
         total_comp = resultado.get("pedidos_completados", 0)
@@ -1148,7 +1324,7 @@ if resultado:
 
         st.bar_chart(
             df_embudo.set_index("Categoría"),
-            color="#00b4d8",
+            color="#e63b2e",
             use_container_width=True,
         )
 
@@ -1157,7 +1333,7 @@ if resultado:
     # =======================================================================
 
     with col_g2:
-        st.subheader("2️⃣ Inventario vs Órganos")
+        st.markdown('<h4 class="brutalist-label"><i class="ph ph-scales"></i> Inventario vs Órganos</h4>', unsafe_allow_html=True)
 
         inv_comp = resultado.get("inventario_completado", 0)
         inv_pend = resultado.get("inventario_pendiente", 0)
@@ -1174,7 +1350,7 @@ if resultado:
             "Órganos": [org_comp, org_pend, org_rech],
         }).set_index("Estado")
 
-        st.bar_chart(df_tipo, color=["#1abc9c", "#e74c3c"], use_container_width=True)
+        st.bar_chart(df_tipo, color=["#2ecc71", "#e63b2e"], use_container_width=True)
 
     # =======================================================================
     # GRÁFICA 3: Cumplimiento de Órganos
@@ -1183,7 +1359,7 @@ if resultado:
     col_g3, col_g4 = st.columns(2)
 
     with col_g3:
-        st.subheader("3️⃣ Cumplimiento de Órganos")
+        st.markdown('<h4 class="brutalist-label"><i class="ph ph-heartbeat"></i> Cumplimiento de Órganos</h4>', unsafe_allow_html=True)
 
         org_on_time = resultado.get("organos_on_time", 0)
         org_late = resultado.get("organos_late", 0)
@@ -1195,7 +1371,7 @@ if resultado:
 
         st.bar_chart(
             df_org.set_index("Estado"),
-            color="#27ae60",
+            color="#e63b2e",
             use_container_width=True,
         )
 
@@ -1204,7 +1380,7 @@ if resultado:
     # =======================================================================
 
     with col_g4:
-        st.subheader("4️⃣ Top Hospitales Receptores")
+        st.markdown('<h4 class="brutalist-label"><i class="ph ph-buildings"></i> Top Hospitales Receptores</h4>', unsafe_allow_html=True)
 
         if pedidos_completados:
             conteo_hosp = {}
@@ -1219,7 +1395,7 @@ if resultado:
 
             st.bar_chart(
                 df_hosp.set_index("Hospital"),
-                color="#2980b9",
+                color="#e63b2e",
                 use_container_width=True,
                 horizontal=True,
             )
@@ -1231,7 +1407,7 @@ if resultado:
     # =======================================================================
 
     if historial_cola:
-        st.subheader("5️⃣ Evolución de la Longitud de Cola")
+        st.markdown('<h4 class="brutalist-label"><i class="ph ph-trend-up"></i> Evolución de la Longitud de Cola</h4>', unsafe_allow_html=True)
 
         df_cola = pd.DataFrame({
             "Minuto": range(len(historial_cola)),
@@ -1240,7 +1416,7 @@ if resultado:
 
         st.area_chart(
             df_cola.set_index("Minuto"),
-            color="#8e44ad",
+            color="#e63b2e",
             use_container_width=True,
         )
 
@@ -1268,7 +1444,7 @@ if resultado:
 
     with col_m1:
         if conteo_clima:
-            st.subheader("🌦️ Meteorología")
+            st.markdown('<h4 class="brutalist-label"><i class="ph ph-cloud-rain"></i> Meteorología</h4>', unsafe_allow_html=True)
             min_sim = resultado.get("minutos_simulacion", 1)
             filas_clima = []
             for nombre_estado, mins in conteo_clima.items():
@@ -1286,7 +1462,7 @@ if resultado:
 
     with col_m2:
         if resumen_flota:
-            st.subheader("🚁 Estado final de la flota")
+            st.markdown('<h4 class="brutalist-label"><i class="ph ph-airplane"></i> Estado final de la flota</h4>', unsafe_allow_html=True)
 
             filas_flota = [
                 ("Total drones", resultado.get("total_drones", 0)),
