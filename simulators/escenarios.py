@@ -146,15 +146,37 @@ ESCENARIOS = {
         # Los drones hospitalarios se ponen manualmente en drones_por_hospital_config.
         # Por defecto, ningún hospital recibe drones propios.
         # Los drones hospitalarios se concentran en nodos estratégicos.
+        # Por defecto, ningún hospital recibe drones propios.
+# Los drones hospitalarios se concentran en nodos estratégicos,
+# reforzando corredor este y zona sur.
+        # Por defecto, ningún hospital recibe drones propios.
+# Distribución equilibrada por zonas sanitarias.
+# Por defecto, ningún hospital recibe drones propios.
+# Distribución equilibrada por zonas sanitarias, reforzando sierra/noroeste.
         "drones_por_hospital": 0,
         "drones_por_hospital_config": {
+            # Norte / norte capital
             "Hospital Universitario La Paz": 2,
+            "Hospital Universitario Ramón y Cajal": 2,
+
+            # Centro / centro-este
             "Hospital General Universitario Gregorio Marañón": 2,
+
+            # Sur / suroeste
             "Hospital Universitario 12 de Octubre": 2,
-            "Hospital Universitario Ramón y Cajal": 1,
-            "Hospital Universitario Puerta de Hierro Majadahonda": 1,
+            "Hospital Universitario de Fuenlabrada": 1,
             "Hospital Universitario Fundación Alcorcón": 1,
+
+            # Oeste / noroeste
+            "Hospital Universitario Puerta de Hierro Majadahonda": 2,
+
+            # Este / corredor del Henares
             "Hospital Universitario de Torrejón": 1,
+            "Hospital Universitario Príncipe de Asturias": 1,
+
+            # Sierra / hospitales periféricos críticos
+            "Hospital Asociado Universitario Guadarrama": 2,
+            "Hospital La Fuenfría": 2,
         },
 
         "semilla": None,

@@ -21,7 +21,8 @@ class GestorFlotaController:
        - Salen desde el hospital donde estén.
        - Van al hospital origen del órgano.
        - Transportan el órgano al hospital destino.
-       - Se quedan disponibles en el hospital destino.
+       - Se quedan en el hospital destino.
+       - Si tienen batería baja, recargan en ese hospital.
        - No vuelven automáticamente a base.
 
     Importante:
@@ -253,8 +254,9 @@ class GestorFlotaController:
 
         Si el pedido es de órgano:
         - el pedido se completa,
-        - el dron queda disponible en el hospital destino,
-        - no se programa vuelta a base.
+        - el dron queda en el hospital destino,
+        - si tiene batería suficiente, queda disponible,
+        - si tiene batería baja, entra en recarga en ese hospital.
 
         Si el pedido es de inventario:
         - el pedido se completa,
@@ -299,6 +301,7 @@ class GestorFlotaController:
         # Caso 1: órgano
         # -------------------------------------------------------------------
         # El dron se queda en el hospital destino.
+        # Si tiene batería baja, recarga en ese hospital.
         # No se programa vuelta a base.
         # -------------------------------------------------------------------
 
@@ -306,8 +309,22 @@ class GestorFlotaController:
             pedido_completado is not None
             and self._es_pedido_organo(pedido_completado)
         ):
-            dron.status = "available"
             dron.current_node = pedido_completado.destination_hospital
+
+            if dron.battery_percent < (BATERIA_MINIMA_VUELO + 15.0):
+                dron.status = "charging"
+
+                minutos_recarga = calcular_tiempo_recarga_completa(
+                    dron.battery_percent
+                )
+
+                dron.charging_minutes += int(minutos_recarga)
+
+                tiempo_fin_recarga = tiempo_actual + minutos_recarga
+
+                return ("fin_recarga", tiempo_fin_recarga), pedido_completado
+
+            dron.status = "available"
 
             return None, pedido_completado
 

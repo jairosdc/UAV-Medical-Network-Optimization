@@ -268,7 +268,7 @@ def run_simulation(config=None):
                 _, _, tipo_evento, id_dron, decision = evento
 
             if tipo_evento == "llegada_hospital":
-                eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
+                siguiente_evento, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
                     id_dron,
                     minuto,
                     decision,
@@ -284,7 +284,42 @@ def run_simulation(config=None):
                         pedido_ok.unidades,
                     )
 
-                if eta_base is not None:
+                # -----------------------------------------------------------
+                # Si el gestor devuelve una tupla, es una recarga hospitalaria.
+                # Ejemplo: ("fin_recarga", tiempo_fin_recarga)
+                # -----------------------------------------------------------
+
+                if isinstance(siguiente_evento, tuple):
+                    tipo_siguiente_evento, tiempo_siguiente_evento = siguiente_evento
+
+                    secuencia_evento += 1
+                    heapq.heappush(
+                        cola_eventos_des,
+                        (
+                            tiempo_siguiente_evento,
+                            secuencia_evento,
+                            tipo_siguiente_evento,
+                            id_dron,
+                            None,
+                        ),
+                    )
+
+                    if IMPRIMIR_EVENTOS_DRONES:
+                        dron_recarga = gestor_flota.drones[id_dron]
+                        print(
+                            f"  [t={minuto:05d}] RECARGA HOSP {id_dron} "
+                            f"en {dron_recarga.current_node} "
+                            f"bat={dron_recarga.battery_percent:.1f}% "
+                            f"-> ETA={tiempo_siguiente_evento:.0f}"
+                        )
+
+                # -----------------------------------------------------------
+                # Si devuelve un número, es la vuelta a base de inventario.
+                # -----------------------------------------------------------
+
+                elif siguiente_evento is not None:
+                    eta_base = siguiente_evento
+
                     secuencia_evento += 1
                     heapq.heappush(
                         cola_eventos_des,
@@ -322,7 +357,7 @@ def run_simulation(config=None):
                             f"  [t={minuto:05d}] DESCARGA    {id_dron} "
                             f"en {pedido_ok.destination_hospital} "
                             f"| {pedido_ok.producto} x{pedido_ok.unidades} "
-                            f"-> regreso ETA={eta_base:.0f}"
+                            f"-> regreso ETA={siguiente_evento:.0f}"
                         )
 
             elif tipo_evento == "aterrizaje_base":
@@ -497,7 +532,7 @@ def run_simulation(config=None):
             tiempo_evento, _, tipo_evento, id_dron, decision = evento
 
         if tipo_evento == "llegada_hospital":
-            eta_base, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
+            siguiente_evento, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
                 id_dron,
                 tiempo_evento,
                 decision,
@@ -513,7 +548,15 @@ def run_simulation(config=None):
                     pedido_ok.unidades,
                 )
 
-            if eta_base is not None:
+            if isinstance(siguiente_evento, tuple):
+                tipo_siguiente_evento, _ = siguiente_evento
+
+                if tipo_siguiente_evento == "fin_recarga":
+                    gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+            elif siguiente_evento is not None:
+                eta_base = siguiente_evento
+
                 tiempo_fin_recarga = gestor_flota.procesar_evento_aterrizaje_base(
                     id_dron,
                     eta_base,
