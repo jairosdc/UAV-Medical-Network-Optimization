@@ -44,6 +44,25 @@ def _contar_por_producto(lista_pedidos):
     return conteo
 
 
+def calcular_percentil(valores, percentil):
+    """Calcula un percentil sin depender de numpy."""
+    if not valores:
+        return None
+
+    valores_ordenados = sorted(valores)
+    k = (len(valores_ordenados) - 1) * percentil / 100
+    f = int(k)
+    c = min(f + 1, len(valores_ordenados) - 1)
+
+    if f == c:
+        return valores_ordenados[f]
+
+    return (
+        valores_ordenados[f] * (c - k)
+        + valores_ordenados[c] * (k - f)
+    )
+
+
 def descripcion_pedido(pedido):
     if es_pedido_organo(pedido):
         return (
@@ -555,6 +574,43 @@ def run_simulation(config=None):
         if es_pedido_inventario(pedido)
     ]
 
+    tiempos_inventario = [
+        pedido.completed_time_min - pedido.timestamp_min
+        for pedido in inventario_completado
+        if pedido.completed_time_min is not None
+    ]
+
+    tiempos_organos = [
+        pedido.completed_time_min - pedido.timestamp_min
+        for pedido in organos_completados
+        if pedido.completed_time_min is not None
+    ]
+
+    p95_inventario = calcular_percentil(tiempos_inventario, 95)
+    p95_organos = calcular_percentil(tiempos_organos, 95)
+
+    detalle_organos_pendientes = []
+
+    for pedido in organos_pendientes:
+        timestamp = getattr(pedido, "timestamp_min", None)
+        tiempo_restante = (
+            MINUTOS_SIMULACION - timestamp
+            if timestamp is not None
+            else None
+        )
+
+        detalle_organos_pendientes.append(
+            {
+                "call_id": getattr(pedido, "call_id", None),
+                "producto": getattr(pedido, "producto", None),
+                "origen": getattr(pedido, "origin_hospital", None),
+                "destino": getattr(pedido, "destination_hospital", None),
+                "timestamp_min": timestamp,
+                "tiempo_restante_simulacion_min": tiempo_restante,
+                "deadline_min": getattr(pedido, "deadline_min", None),
+            }
+        )
+
     organos_totales = estadisticas.organ_calls
 
     total_vuelo = sum(dron.flight_minutes for dron in gestor_flota.drones.values())
@@ -619,6 +675,7 @@ def run_simulation(config=None):
 
         "inventario_completado": len(inventario_completado),
         "inventario_pendiente": len(inventario_pendiente),
+        "p95_inventario_min": p95_inventario,
 
         "organos_totales": organos_totales,
         "organos_completados": len(organos_completados),
@@ -627,6 +684,8 @@ def run_simulation(config=None):
         "organos_on_time": estadisticas.organ_on_time,
         "organos_late": estadisticas.organ_late,
         "tasa_exito_organos": tasa_exito_organos,
+        "p95_organos_min": p95_organos,
+        "detalle_organos_pendientes": detalle_organos_pendientes,
 
         "utilizacion_vuelo_pct": utilizacion_vuelo * 100,
         "utilizacion_operativa_pct": utilizacion_operativa * 100,
@@ -672,6 +731,11 @@ def run_simulation(config=None):
         print(f"  Inventario completado:       {len(inventario_completado)}")
         print(f"  Inventario pendiente:        {len(inventario_pendiente)}")
 
+        if p95_inventario is not None:
+            print(f"  P95 inventario:              {p95_inventario:.2f} min")
+        else:
+            print("  P95 inventario:              sin datos")
+
         print("\n--- ORGANOS ---")
         print(f"  Organos totales:             {organos_totales}")
         print(f"  Organos completados:         {len(organos_completados)}")
@@ -680,6 +744,38 @@ def run_simulation(config=None):
         print(f"  Organos a tiempo:            {estadisticas.organ_on_time}")
         print(f"  Organos tarde:               {estadisticas.organ_late}")
         print(f"  Tasa exito organos:          {tasa_exito_organos * 100:.1f}%")
+
+        if p95_organos is not None:
+            print(f"  P95 organos:                 {p95_organos:.2f} min")
+        else:
+            print("  P95 organos:                 sin datos")
+
+        if detalle_organos_pendientes:
+            print("\n  --- DETALLE ORGANOS PENDIENTES ---")
+
+            for detalle in detalle_organos_pendientes:
+                tiempo_restante = detalle["tiempo_restante_simulacion_min"]
+                tiempo_restante_txt = (
+                    f"{tiempo_restante:.0f}"
+                    if tiempo_restante is not None
+                    else "desconocido"
+                )
+
+                deadline = detalle["deadline_min"]
+                deadline_txt = (
+                    f"{deadline:.0f}"
+                    if deadline is not None
+                    else "sin deadline"
+                )
+
+                print(
+                    f"  Pedido #{detalle['call_id']} | "
+                    f"{str(detalle['producto']).upper()} | "
+                    f"{detalle['origen']} -> {detalle['destino']} | "
+                    f"aparecio t={detalle['timestamp_min']} | "
+                    f"faltaban {tiempo_restante_txt} min para acabar | "
+                    f"deadline={deadline_txt}"
+                )
 
         print("\n--- COLA ---")
         print(f"  Longitud media de cola:      {longitud_media_cola:.2f}")

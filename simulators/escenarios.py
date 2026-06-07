@@ -130,7 +130,7 @@ ESCENARIOS = {
     },
 
     "personalizado": {
-        "minutos_simulacion": 50000,
+        "minutos_simulacion": 20160,
 
         # Por defecto, ninguna base recibe drones.
         # Los drones de base se ponen manualmente en drones_por_base_config.
@@ -144,22 +144,23 @@ ESCENARIOS = {
 
         # Por defecto, ningún hospital recibe drones propios.
         # Los drones hospitalarios se ponen manualmente en drones_por_hospital_config.
+        # Por defecto, ningún hospital recibe drones propios.
+        # Los drones hospitalarios se concentran en nodos estratégicos.
         "drones_por_hospital": 0,
         "drones_por_hospital_config": {
-            "Hospital Universitario La Paz": 3,
+            "Hospital Universitario La Paz": 2,
             "Hospital General Universitario Gregorio Marañón": 2,
-            "Hospital Clínico San Carlos": 2,
             "Hospital Universitario 12 de Octubre": 2,
-            "Hospital Universitario Ramón y Cajal": 2,
+            "Hospital Universitario Ramón y Cajal": 1,
             "Hospital Universitario Puerta de Hierro Majadahonda": 1,
-            "Hospital Universitario Fundación Jiménez Díaz": 1,
             "Hospital Universitario Fundación Alcorcón": 1,
+            "Hospital Universitario de Torrejón": 1,
         },
 
         "semilla": None,
 
-        "factor_demanda_inventario": 3.0,
-        "factor_demanda_organos": 2.0,
+        "factor_demanda_inventario": 1.0,
+        "factor_demanda_organos": 1.0,
         "escenario_clima": "normal",
 
         "activar_meteorologia": True,
@@ -170,7 +171,7 @@ ESCENARIOS = {
         "verbose": True,
 
         "imprimir_eventos_drones": False,
-        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_hospital": True,
         "imprimir_eventos_clima": False,
     },
 }
