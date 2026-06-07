@@ -181,8 +181,8 @@ ESCENARIOS = {
 
         "semilla": None,
 
-        "factor_demanda_inventario": 1.0,
-        "factor_demanda_organos": 1.0,
+        "factor_demanda_inventario": 1.5,
+        "factor_demanda_organos": 1.2,
         "escenario_clima": "normal",
 
         "activar_meteorologia": True,
