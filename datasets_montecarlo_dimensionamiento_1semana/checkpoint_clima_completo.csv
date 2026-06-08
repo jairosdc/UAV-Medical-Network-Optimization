@@ -1,0 +1,437 @@
+escenario,escenario_clima,escenario_etiqueta,estado_clima,factor_demanda_inventario,factor_demanda_organos,minutos_estado,porcentaje_estado,semilla,simulacion
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,4500,22.321428571428573,68,1
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2400,11.904761904761903,68,1
+estres_1_base,normal,Base,dia_normal,1.0,1.0,12300,61.011904761904766,68,1
+estres_1_base,normal,Base,calor,1.0,1.0,660,3.273809523809524,68,1
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,300,1.488095238095238,68,1
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2100,10.416666666666668,69,2
+estres_1_base,normal,Base,dia_normal,1.0,1.0,14460,71.72619047619048,69,2
+estres_1_base,normal,Base,viento_normal,1.0,1.0,1500,7.440476190476191,69,2
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,69,2
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,1500,7.440476190476191,69,2
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3600,17.857142857142858,70,3
+estres_1_base,normal,Base,dia_normal,1.0,1.0,11760,58.333333333333336,70,3
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,70,3
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2400,11.904761904761903,70,3
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,1500,7.440476190476191,70,3
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,70,3
+estres_1_base,normal,Base,dia_normal,1.0,1.0,15060,74.70238095238095,71,4
+estres_1_base,normal,Base,viento_normal,1.0,1.0,1800,8.928571428571429,71,4
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,71,4
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,71,4
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1800,8.928571428571429,71,4
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,71,4
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13800,68.45238095238095,72,5
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3060,15.178571428571427,72,5
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1800,8.928571428571429,72,5
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,72,5
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,72,5
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,72,5
+estres_1_base,normal,Base,dia_normal,1.0,1.0,14400,71.42857142857143,73,6
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1860,9.226190476190476,73,6
+estres_1_base,normal,Base,calor,1.0,1.0,900,4.464285714285714,73,6
+estres_1_base,normal,Base,viento_normal,1.0,1.0,1800,8.928571428571429,73,6
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,1200,5.952380952380952,73,6
+estres_1_base,normal,Base,calor,1.0,1.0,900,4.464285714285714,74,7
+estres_1_base,normal,Base,dia_normal,1.0,1.0,12660,62.797619047619044,74,7
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2700,13.392857142857142,74,7
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,300,1.488095238095238,74,7
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,600,2.976190476190476,74,7
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,3000,14.880952380952381,74,7
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13260,65.77380952380952,75,8
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,3000,14.880952380952381,75,8
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3000,14.880952380952381,75,8
+estres_1_base,normal,Base,calor,1.0,1.0,300,1.488095238095238,75,8
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,75,8
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13860,68.75,76,9
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2400,11.904761904761903,76,9
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,76,9
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,3000,14.880952380952381,76,9
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,300,1.488095238095238,76,9
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,900,4.464285714285714,77,10
+estres_1_base,normal,Base,dia_normal,1.0,1.0,12300,61.011904761904766,77,10
+estres_1_base,normal,Base,calor,1.0,1.0,1500,7.440476190476191,77,10
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2700,13.392857142857142,77,10
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2760,13.690476190476192,77,10
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,78,11
+estres_1_base,normal,Base,dia_normal,1.0,1.0,12660,62.797619047619044,78,11
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3000,14.880952380952381,78,11
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2700,13.392857142857142,78,11
+estres_1_base,normal,Base,calor,1.0,1.0,1200,5.952380952380952,78,11
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13560,67.26190476190477,79,12
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2700,13.392857142857142,79,12
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2700,13.392857142857142,79,12
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,79,12
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,79,12
+estres_1_base,normal,Base,calor,1.0,1.0,300,1.488095238095238,79,12
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13560,67.26190476190477,80,13
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2100,10.416666666666668,80,13
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3000,14.880952380952381,80,13
+estres_1_base,normal,Base,calor,1.0,1.0,1200,5.952380952380952,80,13
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,80,13
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13560,67.26190476190477,81,14
+estres_1_base,normal,Base,calor,1.0,1.0,1200,5.952380952380952,81,14
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1500,7.440476190476191,81,14
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3000,14.880952380952381,81,14
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,81,14
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,81,14
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13860,68.75,82,15
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3000,14.880952380952381,82,15
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,900,4.464285714285714,82,15
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1500,7.440476190476191,82,15
+estres_1_base,normal,Base,calor,1.0,1.0,900,4.464285714285714,82,15
+estres_1_base,normal,Base,dia_normal,1.0,1.0,15060,74.70238095238095,83,16
+estres_1_base,normal,Base,calor,1.0,1.0,300,1.488095238095238,83,16
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,1200,5.952380952380952,83,16
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2400,11.904761904761903,83,16
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1200,5.952380952380952,83,16
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2700,13.392857142857142,84,17
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2700,13.392857142857142,84,17
+estres_1_base,normal,Base,dia_normal,1.0,1.0,13260,65.77380952380952,84,17
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,84,17
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,600,2.976190476190476,84,17
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,84,17
+estres_1_base,normal,Base,dia_normal,1.0,1.0,12660,62.797619047619044,85,18
+estres_1_base,normal,Base,viento_normal,1.0,1.0,3000,14.880952380952381,85,18
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2700,13.392857142857142,85,18
+estres_1_base,normal,Base,calor,1.0,1.0,600,2.976190476190476,85,18
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,900,4.464285714285714,85,18
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,85,18
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,3000,14.880952380952381,86,19
+estres_1_base,normal,Base,dia_normal,1.0,1.0,12000,59.523809523809526,86,19
+estres_1_base,normal,Base,calor,1.0,1.0,900,4.464285714285714,86,19
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,2460,12.202380952380953,86,19
+estres_1_base,normal,Base,viento_normal,1.0,1.0,1800,8.928571428571429,86,19
+estres_1_base,normal,Base,dia_normal,1.0,1.0,14160,70.23809523809523,87,20
+estres_1_base,normal,Base,calor,1.0,1.0,900,4.464285714285714,87,20
+estres_1_base,normal,Base,lluvia_normal,1.0,1.0,1800,8.928571428571429,87,20
+estres_1_base,normal,Base,viento_normal,1.0,1.0,2700,13.392857142857142,87,20
+estres_1_base,normal,Base,lluvia_fuerte,1.0,1.0,300,1.488095238095238,87,20
+estres_1_base,normal,Base,viento_fuerte,1.0,1.0,300,1.488095238095238,87,20
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,4500,22.321428571428573,68,1
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2400,11.904761904761903,68,1
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,12300,61.011904761904766,68,1
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,660,3.273809523809524,68,1
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,300,1.488095238095238,68,1
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2100,10.416666666666668,69,2
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,14460,71.72619047619048,69,2
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,1500,7.440476190476191,69,2
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,69,2
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,1500,7.440476190476191,69,2
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3600,17.857142857142858,70,3
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,11760,58.333333333333336,70,3
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,70,3
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2400,11.904761904761903,70,3
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,1500,7.440476190476191,70,3
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,70,3
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,15060,74.70238095238095,71,4
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,1800,8.928571428571429,71,4
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,71,4
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,71,4
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1800,8.928571428571429,71,4
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,71,4
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13800,68.45238095238095,72,5
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3060,15.178571428571427,72,5
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1800,8.928571428571429,72,5
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,72,5
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,72,5
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,72,5
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,14400,71.42857142857143,73,6
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1860,9.226190476190476,73,6
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,900,4.464285714285714,73,6
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,1800,8.928571428571429,73,6
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,1200,5.952380952380952,73,6
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,900,4.464285714285714,74,7
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,12660,62.797619047619044,74,7
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2700,13.392857142857142,74,7
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,300,1.488095238095238,74,7
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,600,2.976190476190476,74,7
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,3000,14.880952380952381,74,7
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13260,65.77380952380952,75,8
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,3000,14.880952380952381,75,8
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3000,14.880952380952381,75,8
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,300,1.488095238095238,75,8
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,75,8
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13860,68.75,76,9
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2400,11.904761904761903,76,9
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,76,9
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,3000,14.880952380952381,76,9
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,300,1.488095238095238,76,9
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,900,4.464285714285714,77,10
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,12300,61.011904761904766,77,10
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,1500,7.440476190476191,77,10
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2700,13.392857142857142,77,10
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2760,13.690476190476192,77,10
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,78,11
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,12660,62.797619047619044,78,11
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3000,14.880952380952381,78,11
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2700,13.392857142857142,78,11
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,1200,5.952380952380952,78,11
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13560,67.26190476190477,79,12
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2700,13.392857142857142,79,12
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2700,13.392857142857142,79,12
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,79,12
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,79,12
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,300,1.488095238095238,79,12
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13560,67.26190476190477,80,13
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2100,10.416666666666668,80,13
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3000,14.880952380952381,80,13
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,1200,5.952380952380952,80,13
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,80,13
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13560,67.26190476190477,81,14
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,1200,5.952380952380952,81,14
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1500,7.440476190476191,81,14
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3000,14.880952380952381,81,14
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,81,14
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,81,14
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13860,68.75,82,15
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3000,14.880952380952381,82,15
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,900,4.464285714285714,82,15
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1500,7.440476190476191,82,15
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,900,4.464285714285714,82,15
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,15060,74.70238095238095,83,16
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,300,1.488095238095238,83,16
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,1200,5.952380952380952,83,16
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2400,11.904761904761903,83,16
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1200,5.952380952380952,83,16
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2700,13.392857142857142,84,17
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2700,13.392857142857142,84,17
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,13260,65.77380952380952,84,17
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,84,17
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,600,2.976190476190476,84,17
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,84,17
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,12660,62.797619047619044,85,18
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,3000,14.880952380952381,85,18
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2700,13.392857142857142,85,18
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,600,2.976190476190476,85,18
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,900,4.464285714285714,85,18
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,85,18
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,3000,14.880952380952381,86,19
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,12000,59.523809523809526,86,19
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,900,4.464285714285714,86,19
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,2460,12.202380952380953,86,19
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,1800,8.928571428571429,86,19
+estres_2_moderado,normal,Moderado,dia_normal,1.5,1.25,14160,70.23809523809523,87,20
+estres_2_moderado,normal,Moderado,calor,1.5,1.25,900,4.464285714285714,87,20
+estres_2_moderado,normal,Moderado,lluvia_normal,1.5,1.25,1800,8.928571428571429,87,20
+estres_2_moderado,normal,Moderado,viento_normal,1.5,1.25,2700,13.392857142857142,87,20
+estres_2_moderado,normal,Moderado,lluvia_fuerte,1.5,1.25,300,1.488095238095238,87,20
+estres_2_moderado,normal,Moderado,viento_fuerte,1.5,1.25,300,1.488095238095238,87,20
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,4500,22.321428571428573,68,1
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2400,11.904761904761903,68,1
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,12300,61.011904761904766,68,1
+estres_3_alto,normal,Alto,calor,2.0,1.5,660,3.273809523809524,68,1
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,300,1.488095238095238,68,1
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2100,10.416666666666668,69,2
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,14460,71.72619047619048,69,2
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,1500,7.440476190476191,69,2
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,69,2
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,1500,7.440476190476191,69,2
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3600,17.857142857142858,70,3
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,11760,58.333333333333336,70,3
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,70,3
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2400,11.904761904761903,70,3
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,1500,7.440476190476191,70,3
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,70,3
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,15060,74.70238095238095,71,4
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,1800,8.928571428571429,71,4
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,71,4
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,71,4
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1800,8.928571428571429,71,4
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,71,4
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13800,68.45238095238095,72,5
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3060,15.178571428571427,72,5
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1800,8.928571428571429,72,5
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,72,5
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,72,5
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,72,5
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,14400,71.42857142857143,73,6
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1860,9.226190476190476,73,6
+estres_3_alto,normal,Alto,calor,2.0,1.5,900,4.464285714285714,73,6
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,1800,8.928571428571429,73,6
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,1200,5.952380952380952,73,6
+estres_3_alto,normal,Alto,calor,2.0,1.5,900,4.464285714285714,74,7
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,12660,62.797619047619044,74,7
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2700,13.392857142857142,74,7
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,300,1.488095238095238,74,7
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,600,2.976190476190476,74,7
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,3000,14.880952380952381,74,7
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13260,65.77380952380952,75,8
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,3000,14.880952380952381,75,8
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3000,14.880952380952381,75,8
+estres_3_alto,normal,Alto,calor,2.0,1.5,300,1.488095238095238,75,8
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,75,8
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13860,68.75,76,9
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2400,11.904761904761903,76,9
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,76,9
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,3000,14.880952380952381,76,9
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,300,1.488095238095238,76,9
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,900,4.464285714285714,77,10
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,12300,61.011904761904766,77,10
+estres_3_alto,normal,Alto,calor,2.0,1.5,1500,7.440476190476191,77,10
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2700,13.392857142857142,77,10
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2760,13.690476190476192,77,10
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,78,11
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,12660,62.797619047619044,78,11
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3000,14.880952380952381,78,11
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2700,13.392857142857142,78,11
+estres_3_alto,normal,Alto,calor,2.0,1.5,1200,5.952380952380952,78,11
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13560,67.26190476190477,79,12
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2700,13.392857142857142,79,12
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2700,13.392857142857142,79,12
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,79,12
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,79,12
+estres_3_alto,normal,Alto,calor,2.0,1.5,300,1.488095238095238,79,12
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13560,67.26190476190477,80,13
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2100,10.416666666666668,80,13
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3000,14.880952380952381,80,13
+estres_3_alto,normal,Alto,calor,2.0,1.5,1200,5.952380952380952,80,13
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,80,13
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13560,67.26190476190477,81,14
+estres_3_alto,normal,Alto,calor,2.0,1.5,1200,5.952380952380952,81,14
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1500,7.440476190476191,81,14
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3000,14.880952380952381,81,14
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,81,14
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,81,14
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13860,68.75,82,15
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3000,14.880952380952381,82,15
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,900,4.464285714285714,82,15
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1500,7.440476190476191,82,15
+estres_3_alto,normal,Alto,calor,2.0,1.5,900,4.464285714285714,82,15
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,15060,74.70238095238095,83,16
+estres_3_alto,normal,Alto,calor,2.0,1.5,300,1.488095238095238,83,16
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,1200,5.952380952380952,83,16
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2400,11.904761904761903,83,16
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1200,5.952380952380952,83,16
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2700,13.392857142857142,84,17
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2700,13.392857142857142,84,17
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,13260,65.77380952380952,84,17
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,84,17
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,600,2.976190476190476,84,17
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,84,17
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,12660,62.797619047619044,85,18
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,3000,14.880952380952381,85,18
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2700,13.392857142857142,85,18
+estres_3_alto,normal,Alto,calor,2.0,1.5,600,2.976190476190476,85,18
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,900,4.464285714285714,85,18
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,85,18
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,3000,14.880952380952381,86,19
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,12000,59.523809523809526,86,19
+estres_3_alto,normal,Alto,calor,2.0,1.5,900,4.464285714285714,86,19
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,2460,12.202380952380953,86,19
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,1800,8.928571428571429,86,19
+estres_3_alto,normal,Alto,dia_normal,2.0,1.5,14160,70.23809523809523,87,20
+estres_3_alto,normal,Alto,calor,2.0,1.5,900,4.464285714285714,87,20
+estres_3_alto,normal,Alto,lluvia_normal,2.0,1.5,1800,8.928571428571429,87,20
+estres_3_alto,normal,Alto,viento_normal,2.0,1.5,2700,13.392857142857142,87,20
+estres_3_alto,normal,Alto,lluvia_fuerte,2.0,1.5,300,1.488095238095238,87,20
+estres_3_alto,normal,Alto,viento_fuerte,2.0,1.5,300,1.488095238095238,87,20
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,4500,22.321428571428573,68,1
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2400,11.904761904761903,68,1
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,12300,61.011904761904766,68,1
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,660,3.273809523809524,68,1
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,300,1.488095238095238,68,1
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2100,10.416666666666668,69,2
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,14460,71.72619047619048,69,2
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,1500,7.440476190476191,69,2
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,69,2
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,1500,7.440476190476191,69,2
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3600,17.857142857142858,70,3
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,11760,58.333333333333336,70,3
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,70,3
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2400,11.904761904761903,70,3
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,1500,7.440476190476191,70,3
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,70,3
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,15060,74.70238095238095,71,4
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,1800,8.928571428571429,71,4
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,71,4
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,71,4
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1800,8.928571428571429,71,4
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,71,4
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13800,68.45238095238095,72,5
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3060,15.178571428571427,72,5
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1800,8.928571428571429,72,5
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,72,5
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,72,5
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,72,5
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,14400,71.42857142857143,73,6
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1860,9.226190476190476,73,6
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,900,4.464285714285714,73,6
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,1800,8.928571428571429,73,6
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,1200,5.952380952380952,73,6
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,900,4.464285714285714,74,7
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,12660,62.797619047619044,74,7
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2700,13.392857142857142,74,7
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,300,1.488095238095238,74,7
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,600,2.976190476190476,74,7
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,3000,14.880952380952381,74,7
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13260,65.77380952380952,75,8
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,3000,14.880952380952381,75,8
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3000,14.880952380952381,75,8
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,300,1.488095238095238,75,8
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,75,8
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13860,68.75,76,9
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2400,11.904761904761903,76,9
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,76,9
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,3000,14.880952380952381,76,9
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,300,1.488095238095238,76,9
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,900,4.464285714285714,77,10
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,12300,61.011904761904766,77,10
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,1500,7.440476190476191,77,10
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2700,13.392857142857142,77,10
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2760,13.690476190476192,77,10
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,78,11
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,12660,62.797619047619044,78,11
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3000,14.880952380952381,78,11
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2700,13.392857142857142,78,11
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,1200,5.952380952380952,78,11
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13560,67.26190476190477,79,12
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2700,13.392857142857142,79,12
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2700,13.392857142857142,79,12
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,79,12
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,79,12
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,300,1.488095238095238,79,12
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13560,67.26190476190477,80,13
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2100,10.416666666666668,80,13
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3000,14.880952380952381,80,13
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,1200,5.952380952380952,80,13
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,80,13
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13560,67.26190476190477,81,14
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,1200,5.952380952380952,81,14
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1500,7.440476190476191,81,14
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3000,14.880952380952381,81,14
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,81,14
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,81,14
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13860,68.75,82,15
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3000,14.880952380952381,82,15
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,900,4.464285714285714,82,15
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1500,7.440476190476191,82,15
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,900,4.464285714285714,82,15
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,15060,74.70238095238095,83,16
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,300,1.488095238095238,83,16
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,1200,5.952380952380952,83,16
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2400,11.904761904761903,83,16
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1200,5.952380952380952,83,16
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2700,13.392857142857142,84,17
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2700,13.392857142857142,84,17
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,13260,65.77380952380952,84,17
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,84,17
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,600,2.976190476190476,84,17
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,84,17
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,12660,62.797619047619044,85,18
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,3000,14.880952380952381,85,18
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2700,13.392857142857142,85,18
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,600,2.976190476190476,85,18
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,900,4.464285714285714,85,18
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,85,18
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,3000,14.880952380952381,86,19
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,12000,59.523809523809526,86,19
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,900,4.464285714285714,86,19
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,2460,12.202380952380953,86,19
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,1800,8.928571428571429,86,19
+estres_4_muy_alto,normal,Muy alto,dia_normal,2.5,2.0,14160,70.23809523809523,87,20
+estres_4_muy_alto,normal,Muy alto,calor,2.5,2.0,900,4.464285714285714,87,20
+estres_4_muy_alto,normal,Muy alto,lluvia_normal,2.5,2.0,1800,8.928571428571429,87,20
+estres_4_muy_alto,normal,Muy alto,viento_normal,2.5,2.0,2700,13.392857142857142,87,20
+estres_4_muy_alto,normal,Muy alto,lluvia_fuerte,2.5,2.0,300,1.488095238095238,87,20
+estres_4_muy_alto,normal,Muy alto,viento_fuerte,2.5,2.0,300,1.488095238095238,87,20

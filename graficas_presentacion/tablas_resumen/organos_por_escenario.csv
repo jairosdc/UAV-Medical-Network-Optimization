@@ -1,0 +1,5 @@
+﻿escenario_pretty,organos_totales,organos_a_tiempo,organos_fuera_isquemia,organos_pendientes_por_corte,incidencias_clinicas,tasa_exito_organos_pct,p95_tiempo_organos_min,media_tiempo_organos_min
+Base,359,359,0,0,0,100.0,40.19999999999993,18.431754874651812
+Moderado,425,425,0,0,0,100.0,42.0,18.790588235294116
+Alto,549,549,0,0,0,100.0,40.0,18.304189435336976
+Muy alto,737,737,0,0,0,100.0,43.0,19.070556309362278

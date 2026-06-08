@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent
 # --- Dron / misión ---
 CARGA_MAXIMA_KG = 4.7 # (kg)
 AUTONOMIA_MAX_EN_VACIO = 94.0 # (km)
-BATERIA_MINIMA_VUELO = 20.0 # (%)
+BATERIA_MINIMA_VUELO = 5 # (%)
 VELOCIDAD_DRON_M_S = 25.0 # (m/s)
 
 # --- Clima operativo ---
