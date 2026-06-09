@@ -29,6 +29,7 @@ import numpy as np
 from hospitales_almacenes_data import HOSPITALS, BASES
 from services.grafo_distancias_service import ServicioRed
 from simulators.experimentacion import run_simulation
+from simulators.escenarios import ESCENARIOS
 
 # ---------------------------------------------------------------------------
 # CONSTANTES
@@ -41,6 +42,9 @@ RUTA_TELEMETRIA = os.path.join(
 
 MADRID_LAT = 40.42
 MADRID_LON = -3.70
+
+ESCENARIO_RADAR = "personalizado"
+CONFIG_ESCENARIO_RADAR = ESCENARIOS[ESCENARIO_RADAR]
 
 # Colores de misiones (Functional high-contrast palette)
 COLOR_INVENTARIO = [0, 200, 83, 240]    # Green for standard inventory
@@ -659,6 +663,51 @@ st.markdown("""
         box-shadow: 0px 0px 0px 0px #000 !important;
     }
 
+    /* Contrast hardening: keep the same brutalist UI, but prevent
+       Streamlit widget text from disappearing on white/light panels. */
+    .stMarkdown,
+    .stMarkdown p,
+    .stCaption,
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] *,
+    [data-testid="stExpander"] *,
+    [data-testid="stNotification"] *,
+    [data-testid="stDataFrame"] *,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] span {
+        color: #000000 !important;
+    }
+
+    section[data-testid="stSidebar"] .sidebar-header,
+    section[data-testid="stSidebar"] .sidebar-header *,
+    .main-title h1,
+    .stButton > button,
+    .stButton > button * {
+        color: #ffffff !important;
+    }
+
+    section[data-testid="stSidebar"] .sidebar-title,
+    section[data-testid="stSidebar"] .sidebar-title *,
+    .brutalist-label,
+    .brutalist-label * {
+        color: #e63b2e !important;
+    }
+
+    div[data-baseweb="select"],
+    div[data-baseweb="select"] *,
+    div[data-baseweb="input"],
+    div[data-baseweb="input"] *,
+    div[data-baseweb="popover"] * {
+        color: #000000 !important;
+    }
+
+    input,
+    textarea {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+    }
+
     /* Metrics Container */
     [data-testid="column"] {
         padding: 0.5rem !important;
@@ -691,31 +740,64 @@ with st.sidebar:
         "Duración (minutos)",
         60,
         50000,
-        1440,
+        int(CONFIG_ESCENARIO_RADAR.get("minutos_simulacion", 1440)),
         step=60,
         help="1440 = 1 día, 10080 = 1 semana",
     )
 
-    drones_base = st.slider("Drones por base", 1, 10, 2)
-    drones_hosp = st.slider("Drones por hospital", 1, 5, 1)
-    semilla = st.number_input("Semilla aleatoria (0 = random)", 0, 999999, 42)
+    semilla_escenario = CONFIG_ESCENARIO_RADAR.get("semilla")
+    semilla_default = semilla_escenario if semilla_escenario is not None else 0
+    semilla = st.number_input(
+        "Semilla aleatoria (0 = random)",
+        0,
+        999999,
+        int(semilla_default),
+    )
 
     st.markdown('<div class="sidebar-title"><i class="ph ph-trend-up"></i> Demanda</div>', unsafe_allow_html=True)
-    factor_inv = st.slider("Factor demanda inventario", 0.1, 3.0, 1.0, 0.1)
-    factor_org = st.slider("Factor demanda órganos", 0.1, 3.0, 1.0, 0.1)
+    factor_inv = st.slider(
+        "Factor demanda inventario",
+        0.1,
+        3.0,
+        float(CONFIG_ESCENARIO_RADAR.get("factor_demanda_inventario", 1.0)),
+        0.1,
+    )
+    factor_org = st.slider(
+        "Factor demanda órganos",
+        0.1,
+        3.0,
+        float(CONFIG_ESCENARIO_RADAR.get("factor_demanda_organos", 1.0)),
+        0.1,
+    )
 
     st.markdown('<div class="sidebar-title"><i class="ph ph-cloud-sun"></i> Meteorología</div>', unsafe_allow_html=True)
-    activar_meteo = st.checkbox("Activar meteorología", value=True)
-    intervalo_clima = st.slider("Intervalo cambio clima (min)", 60, 1440, 300, 60)
+    activar_meteo = st.checkbox(
+        "Activar meteorología",
+        value=bool(CONFIG_ESCENARIO_RADAR.get("activar_meteorologia", True)),
+    )
+    intervalo_clima = st.slider(
+        "Intervalo cambio clima (min)",
+        60,
+        1440,
+        int(CONFIG_ESCENARIO_RADAR.get("intervalo_cambio_clima_min", 300)),
+        60,
+    )
+
+    opciones_clima = ["normal", "severo", "despejado"]
+    clima_default = CONFIG_ESCENARIO_RADAR.get("escenario_clima", "normal")
+    indice_clima = opciones_clima.index(clima_default) if clima_default in opciones_clima else 0
 
     escenario_clima = st.selectbox(
         "Escenario",
-        ["normal", "severo", "despejado"],
-        index=0,
+        opciones_clima,
+        index=indice_clima,
     )
 
     st.markdown('<div class="sidebar-title"><i class="ph ph-toggle-left"></i> Opciones</div>', unsafe_allow_html=True)
-    stock_umbral = st.checkbox("Stock inicial cerca del umbral", value=True)
+    stock_umbral = st.checkbox(
+        "Stock inicial cerca del umbral",
+        value=bool(CONFIG_ESCENARIO_RADAR.get("stock_inicial_cerca_umbral", True)),
+    )
 
     st.markdown('<div class="sidebar-title"><i class="ph ph-play-circle"></i> Reproducción</div>', unsafe_allow_html=True)
     opciones_paso = [1, 2, 5, 10]
@@ -754,10 +836,12 @@ with st.sidebar:
 # ---------------------------------------------------------------------------
 
 if ejecutar:
-    config = {
+    # El radar siempre parte del escenario personalizado.
+    # Ahí está fijada la distribución óptima de drones por base/hospital.
+    # No se sobrescriben drones_por_base_config ni drones_por_hospital_config.
+    config = CONFIG_ESCENARIO_RADAR.copy()
+    config.update({
         "minutos_simulacion": minutos_sim,
-        "drones_por_base": drones_base,
-        "drones_por_hospital": drones_hosp,
         "semilla": semilla if semilla > 0 else None,
         "factor_demanda_inventario": factor_inv,
         "factor_demanda_organos": factor_org,
@@ -770,7 +854,7 @@ if ejecutar:
         "imprimir_eventos_drones": False,
         "imprimir_eventos_hospital": False,
         "imprimir_eventos_clima": False,
-    }
+    })
 
     limpiar_telemetria_previa()
 
@@ -1096,6 +1180,9 @@ def construir_mapa(t):
         get_alignment_baseline="'top'",
         get_pixel_offset=[0, -22],
         font_family="'Space Grotesk', 'Inter', sans-serif",
+        background=True,
+        get_background_color=[255, 255, 255, 230],
+        background_padding=[4, 2],
     )
     capas.append(capa_label_bases)
 
@@ -1159,6 +1246,9 @@ def construir_mapa(t):
             get_alignment_baseline="'top'",
             get_pixel_offset=[0, -22],
             font_family="'Space Grotesk', sans-serif",
+            background=True,
+            get_background_color=[255, 255, 255, 230],
+            background_padding=[4, 2],
         )
         capas.append(capa_texto)
 
@@ -1184,7 +1274,15 @@ def construir_mapa(t):
                 "Progreso: {progreso}%\n"
                 "{origen} → {destino}\n"
                 "{distancia_km} km"
-            )
+            ),
+            "style": {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+                "border": "3px solid #e63b2e",
+                "boxShadow": "4px 4px 0px #000000",
+                "fontFamily": "Inter, sans-serif",
+                "fontWeight": "700",
+            },
         },
     )
 
