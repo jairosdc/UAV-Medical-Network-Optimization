@@ -128,7 +128,7 @@ NIVELES_ESTRES = [
 
 DRONES_BASE_CONFIG = {
     "BASE NOROESTE": 2,
-    "BASE NORTE CAPITAL": 4,
+    "BASE NORTE CAPITAL": 5,
     "BASE ESTE CORREDOR": 4,
     "BASE SUR FUENLABRADA": 3,
 }
@@ -153,12 +153,12 @@ DRONES_HOSPITALARIOS_CONFIG = {
     "Hospital Universitario 12 de Octubre": 1,
     "Hospital Universitario de Fuenlabrada": 1,
     "Hospital Universitario Infanta Cristina": 1,
-    "Hospital Universitario Infanta Elena": 1,
+    "Hospital Universitario Infanta Elena": 3,  # antes 2
     "Hospital Universitario José Germain": 1,
 
     # Oeste / noroeste / sierra
-    "Hospital Universitario Puerta de Hierro Majadahonda": 2,
-    "Hospital Asociado Universitario Guadarrama": 2,
+    "Hospital Universitario Puerta de Hierro Majadahonda": 3,  # antes 2
+    "Hospital Asociado Universitario Guadarrama": 3,           # antes 2
     "Hospital La Fuenfría": 2,
     "Hospital El Escorial": 1,
 

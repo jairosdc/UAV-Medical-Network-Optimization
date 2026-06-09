@@ -601,11 +601,11 @@ def grafica_p95_inventario(summary: pd.DataFrame, out: Path):
     )
 
     ax.axhline(
-        UMBRAL_P95_INVENTARIO,
+        300,
         color=COLOR_FALLO,
         linestyle="--",
         linewidth=2,
-        label="Umbral 720 min",
+        label="Umbral 300 min",
     )
 
     ax.set_title("P95 de entrega de inventario", fontweight="bold", pad=15)

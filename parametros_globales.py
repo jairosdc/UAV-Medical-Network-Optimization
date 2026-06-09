@@ -21,7 +21,7 @@ DEFAULT_SIMULATION_MINUTES = 7200
 DEFAULT_CALL_PROBABILITY_PER_MIN = 0.15
 
 # Carga: de 20% a 100% en 50 min => 80/50 = 1.6 %/min
-CHARGE_RATE_PERCENT_PER_MIN = 1.6
+CHARGE_RATE_PERCENT_PER_MIN = 2
 
 # Cuando termina misión, si no está al 100%, entra a cargar
 CHARGE_TO_FULL = True

@@ -1,6 +1,5 @@
 ﻿ruta,organos_totales,organos_fuera_isquemia,organos_a_tiempo,tiempo_medio_min,espera_media_min,incidencias
-Hospital Universitario Infanta Elena → Hospital Asociado Universitario Guadarrama,2,1,1,4663.5,4609.0,1
-Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Dr. Rodríguez Lafora,7,0,7,8.0,0.0,0
+Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Dr. Rodríguez Lafora,7,0,7,8.142857142857142,0.0,0
 Hospital Enfermera Isabel Zendal → Hospital Carlos III,7,0,7,10.285714285714286,0.0,0
 Hospital Universitario Fundación Alcorcón → Hospital Universitario Infanta Cristina,7,0,7,15.571428571428571,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario José Germain,7,0,7,14.571428571428571,0.0,0
@@ -8,7 +7,7 @@ Hospital Universitario de Getafe → Hospital Universitario Fundación Jiménez 
 Hospital Universitario de Getafe → Hospital Universitario de Fuenlabrada,7,0,7,7.428571428571429,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario General de Villalba,6,0,6,5.833333333333333,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Clínico San Carlos,6,0,6,2.8333333333333335,0.0,0
-Hospital Universitario Infanta Leonor → Hospital Universitario Príncipe de Asturias,6,0,6,21.833333333333332,0.0,0
+Hospital Universitario Infanta Leonor → Hospital Universitario Príncipe de Asturias,6,0,6,22.5,0.0,0
 Hospital Universitario Infanta Leonor → Hospital Universitario de Getafe,6,0,6,13.0,0.0,0
 Hospital Universitario Infanta Sofía → Hospital Universitario Dr. Rodríguez Lafora,6,0,6,5.5,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital General Universitario Gregorio Marañón,6,0,6,12.666666666666666,0.0,0
@@ -33,12 +32,12 @@ Hospital Universitario General de Villalba → Hospital Asociado Universitario G
 Hospital Universitario General de Villalba → Hospital Virgen de la Torre,5,0,5,35.6,0.0,0
 Hospital Universitario Infanta Cristina → Hospital La Fuenfría,5,0,5,45.6,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario de Móstoles,5,0,5,11.6,0.0,0
-Hospital Universitario Infanta Leonor → Hospital Carlos III,5,0,5,10.8,0.0,0
+Hospital Universitario Infanta Leonor → Hospital Carlos III,5,0,5,11.0,0.0,0
 Hospital Universitario Infanta Sofía → Hospital Central de la Cruz Roja San José y Santa Adela,5,0,5,10.2,0.0,0
 Hospital Universitario Infanta Sofía → Hospital Central de la Defensa Gómez Ulla,5,0,5,17.8,0.0,0
 Hospital Universitario La Paz → Hospital Universitario Rey Juan Carlos,5,0,5,18.4,0.0,0
-Hospital Universitario La Paz → Hospital Universitario del Sureste,5,0,5,22.4,0.0,0
-Hospital Universitario Príncipe de Asturias → Hospital Universitario Fundación Alcorcón,5,0,5,38.0,0.0,0
+Hospital Universitario La Paz → Hospital Universitario del Sureste,5,0,5,21.6,0.0,0
+Hospital Universitario Príncipe de Asturias → Hospital Universitario Fundación Alcorcón,5,0,5,36.6,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Rey Juan Carlos,5,0,5,9.6,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Carlos III,5,0,5,1.8,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital General Universitario Gregorio Marañón,5,0,5,16.6,0.0,0
@@ -68,7 +67,7 @@ Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universita
 Hospital Clínico San Carlos → Hospital Universitario General de Villalba,4,0,4,25.75,0.0,0
 Hospital El Escorial → Hospital Clínico San Carlos,4,0,4,27.75,0.0,0
 Hospital El Escorial → Hospital Universitario del Sureste,4,0,4,47.75,0.0,0
-Hospital Enfermera Isabel Zendal → Hospital Central de la Cruz Roja San José y Santa Adela,4,0,4,11.25,0.0,0
+Hospital Enfermera Isabel Zendal → Hospital Central de la Cruz Roja San José y Santa Adela,4,0,4,9.75,0.0,0
 Hospital Enfermera Isabel Zendal → Hospital Central de la Defensa Gómez Ulla,4,0,4,16.75,0.0,0
 Hospital Enfermera Isabel Zendal → Hospital Universitario Infanta Sofía,4,0,4,10.5,0.0,0
 Hospital Enfermera Isabel Zendal → Hospital Universitario Rey Juan Carlos,4,0,4,23.5,0.0,0
@@ -79,13 +78,13 @@ Hospital General Universitario Gregorio Marañón → Hospital El Escorial,4,0,4
 Hospital La Fuenfría → Hospital Infantil Universitario Niño Jesús,4,0,4,38.0,0.0,0
 Hospital La Fuenfría → Hospital Universitario General de Villalba,4,0,4,9.0,0.0,0
 Hospital La Fuenfría → Hospital Universitario Infanta Leonor,4,0,4,44.5,0.0,0
-Hospital La Fuenfría → Hospital Universitario Puerta de Hierro Majadahonda,4,0,4,30.5,0.0,0
+Hospital La Fuenfría → Hospital Universitario Puerta de Hierro Majadahonda,4,0,4,29.0,0.0,0
 Hospital La Fuenfría → Hospital Universitario Severo Ochoa,4,0,4,39.0,0.0,0
 Hospital La Fuenfría → Hospital Universitario de Torrejón,4,0,4,45.0,0.0,0
 Hospital Universitario 12 de Octubre → Hospital General Universitario Gregorio Marañón,4,0,4,5.25,0.0,0
-Hospital Universitario Fundación Alcorcón → Hospital Cantoblanco,4,0,4,21.25,0.0,0
+Hospital Universitario Fundación Alcorcón → Hospital Cantoblanco,4,0,4,20.5,0.0,0
 Hospital Universitario Fundación Alcorcón → Hospital Carlos III,4,0,4,17.25,0.0,0
-Hospital Universitario Fundación Alcorcón → Hospital Universitario La Paz,4,0,4,17.75,0.0,0
+Hospital Universitario Fundación Alcorcón → Hospital Universitario La Paz,4,0,4,17.0,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Asociado Universitario Guadarrama,4,0,4,29.25,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario Infanta Elena,4,0,4,20.5,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Virgen de la Torre,4,0,4,10.25,0.0,0
@@ -108,9 +107,9 @@ Hospital Universitario Príncipe de Asturias → Hospital Universitario General 
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Central de la Cruz Roja San José y Santa Adela,4,0,4,10.25,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Enfermera Isabel Zendal,4,0,4,15.75,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario de Getafe,4,0,4,14.75,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario del Sureste,4,0,4,36.75,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario del Sureste,4,0,4,30.25,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Central de la Cruz Roja San José y Santa Adela,4,0,4,3.5,0.0,0
-Hospital Universitario Ramón y Cajal → Hospital Clínico San Carlos,4,0,4,7.0,0.0,0
+Hospital Universitario Ramón y Cajal → Hospital Clínico San Carlos,4,0,4,6.75,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario Fundación Alcorcón,4,0,4,19.25,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario Infanta Leonor,4,0,4,11.0,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario de Torrejón,4,0,4,18.25,0.0,0
@@ -138,7 +137,7 @@ Hospital Virgen de la Torre → Hospital Universitario Fundación Jiménez Díaz
 Hospital Virgen de la Torre → Hospital Universitario Infanta Cristina,4,0,4,18.75,0.0,0
 Hospital Virgen de la Torre → Hospital Universitario Ramón y Cajal,4,0,4,13.5,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital El Escorial,3,0,3,6.333333333333333,0.0,0
-Hospital Asociado Universitario Guadarrama → Hospital Universitario 12 de Octubre,3,0,3,33.333333333333336,0.0,0
+Hospital Asociado Universitario Guadarrama → Hospital Universitario 12 de Octubre,3,0,3,32.666666666666664,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario de La Princesa,3,0,3,30.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario de Torrejón,3,0,3,43.666666666666664,0.0,0
 Hospital Cantoblanco → Hospital Asociado Universitario Guadarrama,3,0,3,34.333333333333336,0.0,0
@@ -156,7 +155,7 @@ Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Central de
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital General Universitario Gregorio Marañón,3,0,3,4.666666666666667,0.0,0
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario José Germain,3,0,3,14.666666666666666,0.0,0
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario del Sureste,3,0,3,27.0,0.0,0
-Hospital Central de la Defensa Gómez Ulla → Hospital Asociado Universitario Guadarrama,3,0,3,34.333333333333336,0.0,0
+Hospital Central de la Defensa Gómez Ulla → Hospital Asociado Universitario Guadarrama,3,0,3,32.666666666666664,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario Fundación Jiménez Díaz,3,0,3,7.666666666666667,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario de Getafe,3,0,3,8.0,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario de Móstoles,3,0,3,12.666666666666666,0.0,0
@@ -181,7 +180,7 @@ Hospital Infantil Universitario Niño Jesús → Hospital Cantoblanco,3,0,3,11.0
 Hospital Infantil Universitario Niño Jesús → Hospital Central de la Cruz Roja San José y Santa Adela,3,0,3,7.0,0.0,0
 Hospital Infantil Universitario Niño Jesús → Hospital Virgen de la Torre,3,0,3,6.666666666666667,0.0,0
 Hospital La Fuenfría → Hospital Asociado Universitario Guadarrama,3,0,3,8.333333333333334,0.0,0
-Hospital La Fuenfría → Hospital Central de la Cruz Roja San José y Santa Adela,3,0,3,37.0,0.0,0
+Hospital La Fuenfría → Hospital Central de la Cruz Roja San José y Santa Adela,3,0,3,35.333333333333336,0.0,0
 Hospital La Fuenfría → Hospital Universitario Infanta Cristina,3,0,3,53.666666666666664,0.0,0
 Hospital La Fuenfría → Hospital Universitario Infanta Elena,3,0,3,48.666666666666664,0.0,0
 Hospital La Fuenfría → Hospital Universitario Infanta Sofía,3,0,3,31.0,0.0,0
@@ -190,7 +189,7 @@ Hospital La Fuenfría → Hospital Universitario de Getafe,3,0,3,39.333333333333
 Hospital La Fuenfría → Hospital Universitario del Sureste,3,0,3,49.0,0.0,0
 Hospital La Fuenfría → Hospital Virgen de la Torre,3,0,3,38.0,0.0,0
 Hospital Universitario 12 de Octubre → Hospital Universitario de Getafe,3,0,3,7.0,0.0,0
-Hospital Universitario 12 de Octubre → Hospital Universitario de Móstoles,3,0,3,14.333333333333334,0.0,0
+Hospital Universitario 12 de Octubre → Hospital Universitario de Móstoles,3,0,3,13.333333333333334,0.0,0
 Hospital Universitario Dr. Rodríguez Lafora → Hospital Asociado Universitario Guadarrama,3,0,3,31.666666666666668,0.0,0
 Hospital Universitario Dr. Rodríguez Lafora → Hospital General Universitario Gregorio Marañón,3,0,3,15.333333333333334,0.0,0
 Hospital Universitario Dr. Rodríguez Lafora → Hospital Universitario Fundación Alcorcón,3,0,3,27.666666666666668,0.0,0
@@ -200,12 +199,12 @@ Hospital Universitario Fundación Alcorcón → Hospital Central de la Cruz Roja
 Hospital Universitario Fundación Alcorcón → Hospital Universitario Rey Juan Carlos,3,0,3,4.0,0.0,0
 Hospital Universitario Fundación Alcorcón → Hospital Universitario de La Princesa,3,0,3,16.0,0.0,0
 Hospital Universitario Fundación Alcorcón → Hospital Universitario de Móstoles,3,0,3,5.333333333333333,0.0,0
-Hospital Universitario Fundación Jiménez Díaz → Hospital Central de la Cruz Roja San José y Santa Adela,3,0,3,5.333333333333333,0.0,0
+Hospital Universitario Fundación Jiménez Díaz → Hospital Central de la Cruz Roja San José y Santa Adela,3,0,3,4.333333333333333,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Enfermera Isabel Zendal,3,0,3,8.666666666666666,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario Príncipe de Asturias,3,0,3,25.0,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario Puerta de Hierro Majadahonda,3,0,3,12.0,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario de La Princesa,3,0,3,4.666666666666667,0.0,0
-Hospital Universitario General de Villalba → Hospital Universitario 12 de Octubre,3,0,3,33.0,0.0,0
+Hospital Universitario General de Villalba → Hospital Universitario 12 de Octubre,3,0,3,32.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Universitario Severo Ochoa,3,0,3,39.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Universitario del Henares,3,0,3,37.333333333333336,0.0,0
 Hospital Universitario General de Villalba → Hospital Universitario del Sureste,3,0,3,50.0,0.0,0
@@ -214,9 +213,9 @@ Hospital Universitario Infanta Cristina → Hospital Universitario 12 de Octubre
 Hospital Universitario Infanta Cristina → Hospital Universitario Dr. Rodríguez Lafora,3,0,3,29.0,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario del Sureste,3,0,3,22.333333333333332,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Virgen de la Torre,3,0,3,16.333333333333332,0.0,0
-Hospital Universitario Infanta Elena → Hospital Carlos III,3,0,3,21.666666666666668,0.0,0
-Hospital Universitario Infanta Elena → Hospital General Universitario Gregorio Marañón,3,0,3,21.333333333333332,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario Severo Ochoa,3,0,3,14.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Carlos III,3,0,3,20.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital General Universitario Gregorio Marañón,3,0,3,17.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario Severo Ochoa,3,0,3,10.666666666666666,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario de Fuenlabrada,3,0,3,9.666666666666666,0.0,0
 Hospital Universitario Infanta Leonor → Hospital Infantil Universitario Niño Jesús,3,0,3,6.333333333333333,0.0,0
 Hospital Universitario Infanta Leonor → Hospital La Fuenfría,3,0,3,47.0,0.0,0
@@ -237,10 +236,10 @@ Hospital Universitario Príncipe de Asturias → Hospital Central de la Defensa 
 Hospital Universitario Príncipe de Asturias → Hospital Universitario Infanta Sofía,3,0,3,16.666666666666668,0.0,0
 Hospital Universitario Príncipe de Asturias → Hospital Universitario de Fuenlabrada,3,0,3,33.0,0.0,0
 Hospital Universitario Príncipe de Asturias → Hospital Universitario de Torrejón,3,0,3,10.333333333333334,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Asociado Universitario Guadarrama,3,0,3,27.333333333333332,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Fundación Alcorcón,3,0,3,14.666666666666666,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Asociado Universitario Guadarrama,3,0,3,24.333333333333332,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Fundación Alcorcón,3,0,3,11.333333333333334,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario General de Villalba,3,0,3,17.666666666666668,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Ramón y Cajal,3,0,3,13.333333333333334,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Ramón y Cajal,3,0,3,10.666666666666666,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Santa Cristina,3,0,3,14.0,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario de Torrejón,3,0,3,29.333333333333332,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Central de la Defensa Gómez Ulla,3,0,3,9.333333333333334,0.0,0
@@ -283,7 +282,7 @@ Hospital Universitario de La Princesa → Hospital Universitario de Fuenlabrada,
 Hospital Universitario de Móstoles → Hospital Carlos III,3,0,3,19.333333333333332,0.0,0
 Hospital Universitario de Móstoles → Hospital General Universitario Gregorio Marañón,3,0,3,15.333333333333334,0.0,0
 Hospital Universitario de Móstoles → Hospital Universitario 12 de Octubre,3,0,3,19.666666666666668,0.0,0
-Hospital Universitario de Móstoles → Hospital Universitario Infanta Sofía,3,0,3,33.0,0.0,0
+Hospital Universitario de Móstoles → Hospital Universitario Infanta Sofía,3,0,3,32.0,0.0,0
 Hospital Universitario de Torrejón → Hospital Universitario Infanta Elena,3,0,3,26.333333333333332,0.0,0
 Hospital Universitario de Torrejón → Hospital Universitario de Getafe,3,0,3,27.0,0.0,0
 Hospital Universitario del Henares → Hospital Central de la Cruz Roja San José y Santa Adela,3,0,3,17.0,0.0,0
@@ -291,13 +290,13 @@ Hospital Universitario del Henares → Hospital Infantil Universitario Niño Jes
 Hospital Universitario del Henares → Hospital La Fuenfría,3,0,3,50.333333333333336,0.0,0
 Hospital Universitario del Henares → Hospital Universitario Infanta Cristina,3,0,3,23.0,0.0,0
 Hospital Universitario del Henares → Hospital Universitario La Paz,3,0,3,14.0,0.0,0
-Hospital Universitario del Sureste → Hospital Universitario Infanta Cristina,3,0,3,25.333333333333332,0.0,0
+Hospital Universitario del Sureste → Hospital Universitario Infanta Cristina,3,0,3,24.666666666666668,0.0,0
 Hospital Universitario del Sureste → Hospital Universitario Puerta de Hierro Majadahonda,3,0,3,29.333333333333332,0.0,0
 Hospital Universitario del Sureste → Hospital Virgen de la Torre,3,0,3,13.0,0.0,0
 Hospital Virgen de la Torre → Hospital Asociado Universitario Guadarrama,3,0,3,39.333333333333336,0.0,0
 Hospital Virgen de la Torre → Hospital Universitario Fundación Alcorcón,3,0,3,20.666666666666668,0.0,0
 Hospital Virgen de la Torre → Hospital Universitario de La Princesa,3,0,3,6.666666666666667,0.0,0
-Hospital Asociado Universitario Guadarrama → Hospital Enfermera Isabel Zendal,2,0,2,36.0,0.0,0
+Hospital Asociado Universitario Guadarrama → Hospital Enfermera Isabel Zendal,2,0,2,35.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital General Universitario Gregorio Marañón,2,0,2,38.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario Dr. Rodríguez Lafora,2,0,2,26.5,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario Fundación Jiménez Díaz,2,0,2,27.0,0.0,0
@@ -318,8 +317,8 @@ Hospital Carlos III → Hospital Universitario de La Princesa,2,0,2,3.0,0.0,0
 Hospital Carlos III → Hospital Universitario de Móstoles,2,0,2,16.5,0.0,0
 Hospital Carlos III → Hospital Universitario del Henares,2,0,2,13.0,0.0,0
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Cantoblanco,2,0,2,9.0,0.0,0
-Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Príncipe de Asturias,2,0,2,24.5,0.0,0
-Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Puerta de Hierro Majadahonda,2,0,2,12.0,0.0,0
+Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Príncipe de Asturias,2,0,2,22.5,0.0,0
+Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Puerta de Hierro Majadahonda,2,0,2,11.0,0.0,0
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario Severo Ochoa,2,0,2,12.5,0.0,0
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario de Torrejón,2,0,2,19.0,0.0,0
 Hospital Central de la Cruz Roja San José y Santa Adela → Hospital Universitario del Henares,2,0,2,10.5,0.0,0
@@ -341,7 +340,7 @@ Hospital Clínico San Carlos → Hospital Universitario Infanta Cristina,2,0,2,2
 Hospital Clínico San Carlos → Hospital Universitario Infanta Elena,2,0,2,24.0,0.0,0
 Hospital Clínico San Carlos → Hospital Universitario Infanta Sofía,2,0,2,15.0,0.0,0
 Hospital Clínico San Carlos → Hospital Universitario José Germain,2,0,2,11.5,0.0,0
-Hospital Clínico San Carlos → Hospital Universitario Ramón y Cajal,2,0,2,7.0,0.0,0
+Hospital Clínico San Carlos → Hospital Universitario Ramón y Cajal,2,0,2,5.0,0.0,0
 Hospital Clínico San Carlos → Hospital Universitario Severo Ochoa,2,0,2,12.5,0.0,0
 Hospital Clínico San Carlos → Hospital Universitario de La Princesa,2,0,2,6.0,0.0,0
 Hospital Clínico San Carlos → Hospital Virgen de la Torre,2,0,2,8.0,0.0,0
@@ -366,7 +365,7 @@ Hospital General Universitario Gregorio Marañón → Hospital Universitario Inf
 Hospital General Universitario Gregorio Marañón → Hospital Universitario José Germain,2,0,2,10.0,0.0,0
 Hospital General Universitario Gregorio Marañón → Hospital Universitario de Getafe,2,0,2,9.5,0.0,0
 Hospital General Universitario Gregorio Marañón → Hospital Universitario de La Princesa,2,0,2,3.0,0.0,0
-Hospital General Universitario Gregorio Marañón → Hospital Universitario de Móstoles,2,0,2,19.0,0.0,0
+Hospital General Universitario Gregorio Marañón → Hospital Universitario de Móstoles,2,0,2,17.0,0.0,0
 Hospital Infantil Universitario Niño Jesús → Hospital General Universitario Gregorio Marañón,2,0,2,4.0,0.0,0
 Hospital Infantil Universitario Niño Jesús → Hospital Universitario José Germain,2,0,2,10.5,0.0,0
 Hospital Infantil Universitario Niño Jesús → Hospital Universitario Puerta de Hierro Majadahonda,2,0,2,15.0,0.0,0
@@ -414,7 +413,7 @@ Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario Infa
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario José Germain,2,0,2,10.0,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario Ramón y Cajal,2,0,2,6.0,0.0,0
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario del Henares,2,0,2,13.0,0.0,0
-Hospital Universitario General de Villalba → Hospital Cantoblanco,2,0,2,25.5,0.0,0
+Hospital Universitario General de Villalba → Hospital Cantoblanco,2,0,2,24.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Central de la Cruz Roja San José y Santa Adela,2,0,2,28.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Universitario Infanta Cristina,2,0,2,40.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Universitario Infanta Elena,2,0,2,43.0,0.0,0
@@ -434,12 +433,13 @@ Hospital Universitario Infanta Cristina → Hospital Universitario de Getafe,2,0
 Hospital Universitario Infanta Cristina → Hospital Universitario de La Princesa,2,0,2,21.5,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario de Torrejón,2,0,2,29.5,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario del Henares,2,0,2,25.5,0.0,0
-Hospital Universitario Infanta Elena → Hospital Cantoblanco,2,0,2,27.5,0.0,0
+Hospital Universitario Infanta Elena → Hospital Asociado Universitario Guadarrama,2,0,2,41.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Cantoblanco,2,0,2,25.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Infantil Universitario Niño Jesús,2,0,2,16.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario Fundación Jiménez Díaz,2,0,2,18.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario General de Villalba,2,0,2,42.5,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario José Germain,2,0,2,14.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario de Getafe,2,0,2,12.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario General de Villalba,2,0,2,38.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario José Germain,2,0,2,11.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario de Getafe,2,0,2,9.5,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario de Móstoles,2,0,2,21.5,0.0,0
 Hospital Universitario Infanta Leonor → Hospital Asociado Universitario Guadarrama,2,0,2,42.0,0.0,0
 Hospital Universitario Infanta Leonor → Hospital Central de la Defensa Gómez Ulla,2,0,2,13.5,0.0,0
@@ -463,8 +463,8 @@ Hospital Universitario Infanta Sofía → Hospital Universitario La Paz,2,0,2,9.
 Hospital Universitario Infanta Sofía → Hospital Universitario Príncipe de Asturias,2,0,2,23.0,0.0,0
 Hospital Universitario Infanta Sofía → Hospital Universitario Ramón y Cajal,2,0,2,7.0,0.0,0
 Hospital Universitario Infanta Sofía → Hospital Universitario Rey Juan Carlos,2,0,2,23.0,0.0,0
-Hospital Universitario José Germain → Hospital Infantil Universitario Niño Jesús,2,0,2,10.5,0.0,0
-Hospital Universitario José Germain → Hospital La Fuenfría,2,0,2,42.0,0.0,0
+Hospital Universitario José Germain → Hospital Infantil Universitario Niño Jesús,2,0,2,11.0,0.0,0
+Hospital Universitario José Germain → Hospital La Fuenfría,2,0,2,41.0,0.0,0
 Hospital Universitario José Germain → Hospital Universitario 12 de Octubre,2,0,2,8.5,0.0,0
 Hospital Universitario José Germain → Hospital Universitario Fundación Alcorcón,2,0,2,4.0,0.0,0
 Hospital Universitario José Germain → Hospital Universitario Fundación Jiménez Díaz,2,0,2,14.0,0.0,0
@@ -502,9 +502,9 @@ Hospital Universitario Ramón y Cajal → Hospital Universitario Infanta Sofía,
 Hospital Universitario Ramón y Cajal → Hospital Universitario Príncipe de Asturias,2,0,2,21.5,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario de La Princesa,2,0,2,4.5,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Virgen de la Torre,2,0,2,10.0,0.0,0
-Hospital Universitario Rey Juan Carlos → Hospital Carlos III,2,0,2,29.0,0.0,0
+Hospital Universitario Rey Juan Carlos → Hospital Carlos III,2,0,2,27.0,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital Infantil Universitario Niño Jesús,2,0,2,15.5,0.0,0
-Hospital Universitario Rey Juan Carlos → Hospital La Fuenfría,2,0,2,40.0,0.0,0
+Hospital Universitario Rey Juan Carlos → Hospital La Fuenfría,2,0,2,44.0,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital Universitario Severo Ochoa,2,0,2,9.5,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital Universitario del Henares,2,0,2,25.5,0.0,0
 Hospital Universitario Santa Cristina → Hospital Clínico San Carlos,2,0,2,5.0,0.0,0
@@ -518,7 +518,7 @@ Hospital Universitario Severo Ochoa → Hospital Universitario Infanta Sofía,2,
 Hospital Universitario Severo Ochoa → Hospital Universitario La Paz,2,0,2,17.0,0.0,0
 Hospital Universitario Severo Ochoa → Hospital Universitario Rey Juan Carlos,2,0,2,10.5,0.0,0
 Hospital Universitario Severo Ochoa → Hospital Universitario de La Princesa,2,0,2,13.0,0.0,0
-Hospital Universitario Severo Ochoa → Hospital Universitario de Torrejón,2,0,2,29.5,0.0,0
+Hospital Universitario Severo Ochoa → Hospital Universitario de Torrejón,2,0,2,28.0,0.0,0
 Hospital Universitario Severo Ochoa → Hospital Universitario del Henares,2,0,2,17.5,0.0,0
 Hospital Universitario de Fuenlabrada → Hospital Asociado Universitario Guadarrama,2,0,2,34.0,0.0,0
 Hospital Universitario de Fuenlabrada → Hospital Central de la Cruz Roja San José y Santa Adela,2,0,2,13.0,0.0,0
@@ -530,7 +530,7 @@ Hospital Universitario de Fuenlabrada → Hospital Universitario Ramón y Cajal,
 Hospital Universitario de Fuenlabrada → Hospital Universitario de Móstoles,2,0,2,4.5,0.0,0
 Hospital Universitario de Getafe → Hospital El Escorial,2,0,2,34.5,0.0,0
 Hospital Universitario de Getafe → Hospital General Universitario Gregorio Marañón,2,0,2,11.5,0.0,0
-Hospital Universitario de Getafe → Hospital Universitario General de Villalba,2,0,2,36.5,0.0,0
+Hospital Universitario de Getafe → Hospital Universitario General de Villalba,2,0,2,33.5,0.0,0
 Hospital Universitario de Getafe → Hospital Universitario Infanta Sofía,2,0,2,25.0,0.0,0
 Hospital Universitario de Getafe → Hospital Universitario Santa Cristina,2,0,2,11.0,0.0,0
 Hospital Universitario de Getafe → Hospital Universitario Severo Ochoa,2,0,2,8.5,0.0,0
@@ -542,8 +542,8 @@ Hospital Universitario de La Princesa → Hospital Universitario Dr. Rodríguez 
 Hospital Universitario de La Princesa → Hospital Universitario La Paz,2,0,2,5.5,0.0,0
 Hospital Universitario de La Princesa → Hospital Universitario del Sureste,2,0,2,22.0,0.0,0
 Hospital Universitario de Móstoles → Hospital Asociado Universitario Guadarrama,2,0,2,49.0,0.0,0
-Hospital Universitario de Móstoles → Hospital Enfermera Isabel Zendal,2,0,2,28.0,0.0,0
-Hospital Universitario de Móstoles → Hospital Infantil Universitario Niño Jesús,2,0,2,22.5,0.0,0
+Hospital Universitario de Móstoles → Hospital Enfermera Isabel Zendal,2,0,2,28.5,0.0,0
+Hospital Universitario de Móstoles → Hospital Infantil Universitario Niño Jesús,2,0,2,20.5,0.0,0
 Hospital Universitario de Móstoles → Hospital La Fuenfría,2,0,2,38.0,0.0,0
 Hospital Universitario de Móstoles → Hospital Universitario de Fuenlabrada,2,0,2,8.5,0.0,0
 Hospital Universitario de Móstoles → Hospital Universitario de Torrejón,2,0,2,32.5,0.0,0
@@ -581,7 +581,7 @@ Hospital Virgen de la Torre → Hospital Universitario Severo Ochoa,2,0,2,14.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Carlos III,1,0,1,31.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Central de la Cruz Roja San José y Santa Adela,1,0,1,27.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Clínico San Carlos,1,0,1,45.0,0.0,0
-Hospital Asociado Universitario Guadarrama → Hospital Infantil Universitario Niño Jesús,1,0,1,39.0,0.0,0
+Hospital Asociado Universitario Guadarrama → Hospital Infantil Universitario Niño Jesús,1,0,1,33.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario Fundación Alcorcón,1,0,1,28.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario Infanta Cristina,1,0,1,38.0,0.0,0
 Hospital Asociado Universitario Guadarrama → Hospital Universitario Infanta Elena,1,0,1,48.0,0.0,0
@@ -635,7 +635,7 @@ Hospital Central de la Defensa Gómez Ulla → Hospital Enfermera Isabel Zendal,
 Hospital Central de la Defensa Gómez Ulla → Hospital General Universitario Gregorio Marañón,1,0,1,10.0,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital La Fuenfría,1,0,1,38.0,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario 12 de Octubre,1,0,1,3.0,0.0,0
-Hospital Central de la Defensa Gómez Ulla → Hospital Universitario Infanta Elena,1,0,1,19.0,0.0,0
+Hospital Central de la Defensa Gómez Ulla → Hospital Universitario Infanta Elena,1,0,1,18.0,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario Infanta Leonor,1,0,1,9.0,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario José Germain,1,0,1,5.0,0.0,0
 Hospital Central de la Defensa Gómez Ulla → Hospital Universitario Rey Juan Carlos,1,0,1,11.0,0.0,0
@@ -748,7 +748,7 @@ Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario Sant
 Hospital Universitario Fundación Jiménez Díaz → Hospital Universitario de Fuenlabrada,1,0,1,18.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Carlos III,1,0,1,26.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Central de la Defensa Gómez Ulla,1,0,1,29.0,0.0,0
-Hospital Universitario General de Villalba → Hospital Clínico San Carlos,1,0,1,30.0,0.0,0
+Hospital Universitario General de Villalba → Hospital Clínico San Carlos,1,0,1,27.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Enfermera Isabel Zendal,1,0,1,31.0,0.0,0
 Hospital Universitario General de Villalba → Hospital General Universitario Gregorio Marañón,1,0,1,47.0,0.0,0
 Hospital Universitario General de Villalba → Hospital La Fuenfría,1,0,1,14.0,0.0,0
@@ -762,7 +762,7 @@ Hospital Universitario General de Villalba → Hospital Universitario Rey Juan C
 Hospital Universitario General de Villalba → Hospital Universitario de Fuenlabrada,1,0,1,40.0,0.0,0
 Hospital Universitario General de Villalba → Hospital Universitario de La Princesa,1,0,1,30.0,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Carlos III,1,0,1,20.0,0.0,0
-Hospital Universitario Infanta Cristina → Hospital Clínico San Carlos,1,0,1,37.0,0.0,0
+Hospital Universitario Infanta Cristina → Hospital Clínico San Carlos,1,0,1,25.0,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario Príncipe de Asturias,1,0,1,33.0,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario Ramón y Cajal,1,0,1,21.0,0.0,0
 Hospital Universitario Infanta Cristina → Hospital Universitario Severo Ochoa,1,0,1,9.0,0.0,0
@@ -772,11 +772,11 @@ Hospital Universitario Infanta Elena → Hospital La Fuenfría,1,0,1,47.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario Dr. Rodríguez Lafora,1,0,1,25.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario Fundación Alcorcón,1,0,1,14.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario Infanta Cristina,1,0,1,6.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario Infanta Sofía,1,0,1,40.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario La Paz,1,0,1,34.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario Príncipe de Asturias,1,0,1,43.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario Ramón y Cajal,1,0,1,26.0,0.0,0
-Hospital Universitario Infanta Elena → Hospital Universitario Santa Cristina,1,0,1,36.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario Infanta Sofía,1,0,1,27.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario La Paz,1,0,1,21.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario Príncipe de Asturias,1,0,1,30.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario Ramón y Cajal,1,0,1,21.0,0.0,0
+Hospital Universitario Infanta Elena → Hospital Universitario Santa Cristina,1,0,1,20.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario de La Princesa,1,0,1,18.0,0.0,0
 Hospital Universitario Infanta Elena → Hospital Universitario del Sureste,1,0,1,18.0,0.0,0
 Hospital Universitario Infanta Leonor → Hospital Enfermera Isabel Zendal,1,0,1,8.0,0.0,0
@@ -836,11 +836,11 @@ Hospital Universitario Príncipe de Asturias → Hospital Universitario Ramón y
 Hospital Universitario Príncipe de Asturias → Hospital Universitario Santa Cristina,1,0,1,19.0,0.0,0
 Hospital Universitario Príncipe de Asturias → Hospital Universitario del Henares,1,0,1,31.0,0.0,0
 Hospital Universitario Príncipe de Asturias → Hospital Universitario del Sureste,1,0,1,17.0,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Carlos III,1,0,1,19.0,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital La Fuenfría,1,0,1,39.0,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Infanta Cristina,1,0,1,26.0,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Carlos III,1,0,1,10.0,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital La Fuenfría,1,0,1,26.0,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Infanta Cristina,1,0,1,18.0,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Infanta Elena,1,0,1,21.0,0.0,0
-Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Infanta Leonor,1,0,1,27.0,0.0,0
+Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Infanta Leonor,1,0,1,18.0,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario Severo Ochoa,1,0,1,13.0,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario de Fuenlabrada,1,0,1,13.0,0.0,0
 Hospital Universitario Puerta de Hierro Majadahonda → Hospital Universitario de Móstoles,1,0,1,10.0,0.0,0
@@ -856,7 +856,7 @@ Hospital Universitario Ramón y Cajal → Hospital Universitario Santa Cristina,
 Hospital Universitario Ramón y Cajal → Hospital Universitario de Fuenlabrada,1,0,1,16.0,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario de Móstoles,1,0,1,18.0,0.0,0
 Hospital Universitario Ramón y Cajal → Hospital Universitario del Sureste,1,0,1,26.0,0.0,0
-Hospital Universitario Rey Juan Carlos → Hospital Central de la Cruz Roja San José y Santa Adela,1,0,1,38.0,0.0,0
+Hospital Universitario Rey Juan Carlos → Hospital Central de la Cruz Roja San José y Santa Adela,1,0,1,32.0,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital El Escorial,1,0,1,30.0,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital Universitario 12 de Octubre,1,0,1,22.0,0.0,0
 Hospital Universitario Rey Juan Carlos → Hospital Universitario Dr. Rodríguez Lafora,1,0,1,19.0,0.0,0
@@ -914,7 +914,7 @@ Hospital Universitario de La Princesa → Hospital Universitario Ramón y Cajal,
 Hospital Universitario de La Princesa → Hospital Universitario de Torrejón,1,0,1,29.0,0.0,0
 Hospital Universitario de La Princesa → Hospital Universitario del Henares,1,0,1,11.0,0.0,0
 Hospital Universitario de La Princesa → Hospital Virgen de la Torre,1,0,1,6.0,0.0,0
-Hospital Universitario de Móstoles → Hospital Cantoblanco,1,0,1,29.0,0.0,0
+Hospital Universitario de Móstoles → Hospital Cantoblanco,1,0,1,25.0,0.0,0
 Hospital Universitario de Móstoles → Hospital Central de la Defensa Gómez Ulla,1,0,1,17.0,0.0,0
 Hospital Universitario de Móstoles → Hospital Universitario Fundación Alcorcón,1,0,1,12.0,0.0,0
 Hospital Universitario de Móstoles → Hospital Universitario Fundación Jiménez Díaz,1,0,1,21.0,0.0,0

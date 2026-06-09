@@ -136,9 +136,9 @@ ESCENARIOS = {
         # Los drones de base se ponen manualmente en drones_por_base_config.
         "drones_por_base": 0,
         "drones_por_base_config": {
-            "BASE NOROESTE": 1,
-            "BASE NORTE CAPITAL": 3,
-            "BASE ESTE CORREDOR": 3,
+            "BASE NOROESTE": 2,
+            "BASE NORTE CAPITAL": 5,
+            "BASE ESTE CORREDOR": 4,
             "BASE SUR FUENLABRADA": 3,
         },
 
@@ -156,27 +156,30 @@ ESCENARIOS = {
         "drones_por_hospital": 0,
         "drones_por_hospital_config": {
             # Norte / norte capital
-            "Hospital Universitario La Paz": 2,
-            "Hospital Universitario Ramón y Cajal": 2,
+            "Hospital Universitario La Paz": 1,
+            "Hospital Universitario Ramón y Cajal": 1,
+            "Hospital Universitario Infanta Sofía": 2,
 
-            # Centro / centro-este
-            "Hospital General Universitario Gregorio Marañón": 2,
+            # Centro
+            "Hospital General Universitario Gregorio Marañón": 1,
 
             # Sur / suroeste
-            "Hospital Universitario 12 de Octubre": 2,
+            "Hospital Universitario 12 de Octubre": 1,
             "Hospital Universitario de Fuenlabrada": 1,
-            "Hospital Universitario Fundación Alcorcón": 1,
+            "Hospital Universitario Infanta Cristina": 1,
+            "Hospital Universitario Infanta Elena": 3,  # antes 2
+            "Hospital Universitario José Germain": 1,
 
-            # Oeste / noroeste
-            "Hospital Universitario Puerta de Hierro Majadahonda": 2,
+            # Oeste / noroeste / sierra
+            "Hospital Universitario Puerta de Hierro Majadahonda": 3,  # antes 2
+            "Hospital Asociado Universitario Guadarrama": 3,           # antes 2
+            "Hospital La Fuenfría": 2,
+            "Hospital El Escorial": 1,
 
             # Este / corredor del Henares
             "Hospital Universitario de Torrejón": 1,
             "Hospital Universitario Príncipe de Asturias": 1,
-
-            # Sierra / hospitales periféricos críticos
-            "Hospital Asociado Universitario Guadarrama": 2,
-            "Hospital La Fuenfría": 2,
+            "Hospital Universitario del Sureste": 1,
         },
 
         "semilla": None,

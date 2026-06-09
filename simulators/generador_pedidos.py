@@ -70,16 +70,6 @@ PRIORIDAD_PRODUCTO = {
     "medicamento_general": 3,
 }
 
-
-# ---------------------------------------------------------------------------
-# ÓRGANOS
-# ---------------------------------------------------------------------------
-# Interpretación:
-# - Los órganos NO son inventario.
-# - Son eventos raros globales de la red.
-# - La tasa_lambda está en eventos/hora para toda la red.
-# ---------------------------------------------------------------------------
-
 CONFIGURACION_ORGANOS = {
     "corazon": {
         "isquemia_min": 240,
@@ -103,12 +93,7 @@ CONFIGURACION_ORGANOS = {
     },
 }
 
-
-# ---------------------------------------------------------------------------
-# FACTORES HORARIOS DEL NHPP
-# ---------------------------------------------------------------------------
-# factor_lambda multiplica la intensidad de consumo según la franja horaria.
-# ---------------------------------------------------------------------------
+# Factores multiplicadores de las tasas lambda para horas pico
 
 FACTORES_HORARIOS = [
     (0,   6,  0.48),
@@ -134,15 +119,7 @@ class GeneradorPedidos:
        - Generan pedidos hospital -> hospital.
     """
 
-    def __init__(
-        self,
-        hospitales,
-        bases,
-        semilla=None,
-        duracion_min=1440,
-        factor_demanda_inventario=1.0,
-        factor_demanda_organos=1.0,
-    ):
+    def __init__(self, hospitales, bases, semilla=None, duracion_min=1440, factor_demanda_inventario=1.0, factor_demanda_organos=1.0):
         self.hospitales = hospitales
         self.bases = bases
 
@@ -529,24 +506,13 @@ class GeneradorPedidos:
             tipo_pedido="organo",
         )
 
-    # -----------------------------------------------------------------------
-    # UTILIDADES
-    # -----------------------------------------------------------------------
-
+    # Utilidades
     def _base_mas_cercana(self, hospital):
-        """
-        Devuelve la base más cercana a un hospital.
-        """
-        return min(
-            self.bases,
-            key=lambda base: self._distancia_haversine_km(hospital, base),
-        )
+        return min(self.bases, key=lambda base: self._distancia_haversine_km(hospital, base))
 
     @staticmethod
     def _distancia_haversine_km(nodo_a, nodo_b):
-        """
-        Distancia geográfica aproximada entre dos nodos.
-        """
+        
         dlat = math.radians(nodo_b.lat - nodo_a.lat)
         dlon = math.radians(nodo_b.lon - nodo_a.lon)
 
@@ -566,9 +532,4 @@ class GeneradorPedidos:
         )
 
     def total_eventos_dia(self) -> int:
-        """
-        Devuelve el número total de eventos pregenerados.
-
-        Ojo: incluye consumos y órganos, no solo pedidos finales.
-        """
         return sum(len(eventos) for eventos in self._agenda.values())

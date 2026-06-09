@@ -1,22 +1,19 @@
 cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_demanda_organos,producto,semilla,simulacion
 7,estres_1_base,Base,completed,1.0,1.0,rinon,68,1
-242,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,68,1
+243,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,68,1
 4,estres_1_base,Base,completed,1.0,1.0,pulmon,68,1
 460,estres_1_base,Base,completed,1.0,1.0,sangre,68,1
 183,estres_1_base,Base,completed,1.0,1.0,plasma,68,1
 224,estres_1_base,Base,completed,1.0,1.0,antibiotico,68,1
-220,estres_1_base,Base,completed,1.0,1.0,analgesico,68,1
-177,estres_1_base,Base,completed,1.0,1.0,medicamento_general,68,1
-976,estres_1_base,Base,completed,1.0,1.0,suero,68,1
-251,estres_1_base,Base,completed,1.0,1.0,material_sanitario,68,1
+222,estres_1_base,Base,completed,1.0,1.0,analgesico,68,1
+179,estres_1_base,Base,completed,1.0,1.0,medicamento_general,68,1
+977,estres_1_base,Base,completed,1.0,1.0,suero,68,1
+253,estres_1_base,Base,completed,1.0,1.0,material_sanitario,68,1
 10,estres_1_base,Base,completed,1.0,1.0,pancreas,68,1
 1,estres_1_base,Base,completed,1.0,1.0,corazon,68,1
-1,estres_1_base,Base,pending,1.0,1.0,farmaco_uci,68,1
-8,estres_1_base,Base,pending,1.0,1.0,suero,68,1
+7,estres_1_base,Base,pending,1.0,1.0,suero,68,1
 1,estres_1_base,Base,pending,1.0,1.0,plasma,68,1
-2,estres_1_base,Base,pending,1.0,1.0,medicamento_general,68,1
-2,estres_1_base,Base,pending,1.0,1.0,analgesico,68,1
-3,estres_1_base,Base,pending,1.0,1.0,material_sanitario,68,1
+1,estres_1_base,Base,pending,1.0,1.0,material_sanitario,68,1
 233,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,69,2
 2,estres_1_base,Base,completed,1.0,1.0,corazon,69,2
 456,estres_1_base,Base,completed,1.0,1.0,sangre,69,2
@@ -24,33 +21,31 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 185,estres_1_base,Base,completed,1.0,1.0,plasma,69,2
 219,estres_1_base,Base,completed,1.0,1.0,analgesico,69,2
 179,estres_1_base,Base,completed,1.0,1.0,medicamento_general,69,2
-995,estres_1_base,Base,completed,1.0,1.0,suero,69,2
+997,estres_1_base,Base,completed,1.0,1.0,suero,69,2
 6,estres_1_base,Base,completed,1.0,1.0,rinon,69,2
 10,estres_1_base,Base,completed,1.0,1.0,pancreas,69,2
 252,estres_1_base,Base,completed,1.0,1.0,material_sanitario,69,2
 1,estres_1_base,Base,completed,1.0,1.0,pulmon,69,2
-5,estres_1_base,Base,pending,1.0,1.0,suero,69,2
+3,estres_1_base,Base,pending,1.0,1.0,suero,69,2
 6,estres_1_base,Base,completed,1.0,1.0,pancreas,70,3
 242,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,70,3
 462,estres_1_base,Base,completed,1.0,1.0,sangre,70,3
 11,estres_1_base,Base,completed,1.0,1.0,rinon,70,3
 190,estres_1_base,Base,completed,1.0,1.0,plasma,70,3
 226,estres_1_base,Base,completed,1.0,1.0,antibiotico,70,3
-218,estres_1_base,Base,completed,1.0,1.0,analgesico,70,3
-177,estres_1_base,Base,completed,1.0,1.0,medicamento_general,70,3
+219,estres_1_base,Base,completed,1.0,1.0,analgesico,70,3
+178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,70,3
 4,estres_1_base,Base,completed,1.0,1.0,pulmon,70,3
 1024,estres_1_base,Base,completed,1.0,1.0,suero,70,3
-261,estres_1_base,Base,completed,1.0,1.0,material_sanitario,70,3
+262,estres_1_base,Base,completed,1.0,1.0,material_sanitario,70,3
 2,estres_1_base,Base,completed,1.0,1.0,corazon,70,3
-1,estres_1_base,Base,pending,1.0,1.0,material_sanitario,70,3
-1,estres_1_base,Base,pending,1.0,1.0,analgesico,70,3
 5,estres_1_base,Base,completed,1.0,1.0,pancreas,71,4
 239,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,71,4
 460,estres_1_base,Base,completed,1.0,1.0,sangre,71,4
 7,estres_1_base,Base,completed,1.0,1.0,pulmon,71,4
 5,estres_1_base,Base,completed,1.0,1.0,rinon,71,4
-178,estres_1_base,Base,completed,1.0,1.0,plasma,71,4
 227,estres_1_base,Base,completed,1.0,1.0,antibiotico,71,4
+178,estres_1_base,Base,completed,1.0,1.0,plasma,71,4
 219,estres_1_base,Base,completed,1.0,1.0,analgesico,71,4
 180,estres_1_base,Base,completed,1.0,1.0,medicamento_general,71,4
 1000,estres_1_base,Base,completed,1.0,1.0,suero,71,4
@@ -59,7 +54,7 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 6,estres_1_base,Base,completed,1.0,1.0,rinon,72,5
 233,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,72,5
 6,estres_1_base,Base,completed,1.0,1.0,pancreas,72,5
-466,estres_1_base,Base,completed,1.0,1.0,sangre,72,5
+468,estres_1_base,Base,completed,1.0,1.0,sangre,72,5
 227,estres_1_base,Base,completed,1.0,1.0,antibiotico,72,5
 178,estres_1_base,Base,completed,1.0,1.0,plasma,72,5
 222,estres_1_base,Base,completed,1.0,1.0,analgesico,72,5
@@ -67,34 +62,34 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 3,estres_1_base,Base,completed,1.0,1.0,pulmon,72,5
 1032,estres_1_base,Base,completed,1.0,1.0,suero,72,5
 264,estres_1_base,Base,completed,1.0,1.0,material_sanitario,72,5
-2,estres_1_base,Base,pending,1.0,1.0,sangre,72,5
 239,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,73,6
-450,estres_1_base,Base,completed,1.0,1.0,sangre,73,6
+452,estres_1_base,Base,completed,1.0,1.0,sangre,73,6
 2,estres_1_base,Base,completed,1.0,1.0,pulmon,73,6
 8,estres_1_base,Base,completed,1.0,1.0,rinon,73,6
 184,estres_1_base,Base,completed,1.0,1.0,plasma,73,6
 220,estres_1_base,Base,completed,1.0,1.0,antibiotico,73,6
 223,estres_1_base,Base,completed,1.0,1.0,analgesico,73,6
-177,estres_1_base,Base,completed,1.0,1.0,medicamento_general,73,6
+178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,73,6
 8,estres_1_base,Base,completed,1.0,1.0,pancreas,73,6
-996,estres_1_base,Base,completed,1.0,1.0,suero,73,6
+999,estres_1_base,Base,completed,1.0,1.0,suero,73,6
 252,estres_1_base,Base,completed,1.0,1.0,material_sanitario,73,6
 1,estres_1_base,Base,completed,1.0,1.0,corazon,73,6
-2,estres_1_base,Base,pending,1.0,1.0,sangre,73,6
-4,estres_1_base,Base,pending,1.0,1.0,suero,73,6
-1,estres_1_base,Base,pending,1.0,1.0,medicamento_general,73,6
+1,estres_1_base,Base,pending,1.0,1.0,suero,73,6
 5,estres_1_base,Base,completed,1.0,1.0,rinon,74,7
 243,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,74,7
 8,estres_1_base,Base,completed,1.0,1.0,pancreas,74,7
 456,estres_1_base,Base,completed,1.0,1.0,sangre,74,7
-184,estres_1_base,Base,completed,1.0,1.0,plasma,74,7
-227,estres_1_base,Base,completed,1.0,1.0,antibiotico,74,7
+182,estres_1_base,Base,completed,1.0,1.0,plasma,74,7
+226,estres_1_base,Base,completed,1.0,1.0,antibiotico,74,7
 220,estres_1_base,Base,completed,1.0,1.0,analgesico,74,7
 179,estres_1_base,Base,completed,1.0,1.0,medicamento_general,74,7
-1016,estres_1_base,Base,completed,1.0,1.0,suero,74,7
+1008,estres_1_base,Base,completed,1.0,1.0,suero,74,7
 252,estres_1_base,Base,completed,1.0,1.0,material_sanitario,74,7
 3,estres_1_base,Base,completed,1.0,1.0,pulmon,74,7
 1,estres_1_base,Base,completed,1.0,1.0,corazon,74,7
+8,estres_1_base,Base,pending,1.0,1.0,suero,74,7
+1,estres_1_base,Base,pending,1.0,1.0,antibiotico,74,7
+2,estres_1_base,Base,pending,1.0,1.0,plasma,74,7
 231,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,75,8
 448,estres_1_base,Base,completed,1.0,1.0,sangre,75,8
 180,estres_1_base,Base,completed,1.0,1.0,plasma,75,8
@@ -102,12 +97,11 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 225,estres_1_base,Base,completed,1.0,1.0,analgesico,75,8
 7,estres_1_base,Base,completed,1.0,1.0,rinon,75,8
 5,estres_1_base,Base,completed,1.0,1.0,pancreas,75,8
-177,estres_1_base,Base,completed,1.0,1.0,medicamento_general,75,8
+178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,75,8
 3,estres_1_base,Base,completed,1.0,1.0,pulmon,75,8
 984,estres_1_base,Base,completed,1.0,1.0,suero,75,8
 258,estres_1_base,Base,completed,1.0,1.0,material_sanitario,75,8
 1,estres_1_base,Base,completed,1.0,1.0,corazon,75,8
-1,estres_1_base,Base,pending,1.0,1.0,medicamento_general,75,8
 11,estres_1_base,Base,completed,1.0,1.0,rinon,76,9
 235,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,76,9
 478,estres_1_base,Base,completed,1.0,1.0,sangre,76,9
@@ -123,7 +117,7 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 13,estres_1_base,Base,completed,1.0,1.0,pancreas,77,10
 2,estres_1_base,Base,completed,1.0,1.0,corazon,77,10
 234,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,77,10
-458,estres_1_base,Base,completed,1.0,1.0,sangre,77,10
+456,estres_1_base,Base,completed,1.0,1.0,sangre,77,10
 224,estres_1_base,Base,completed,1.0,1.0,antibiotico,77,10
 180,estres_1_base,Base,completed,1.0,1.0,plasma,77,10
 221,estres_1_base,Base,completed,1.0,1.0,analgesico,77,10
@@ -132,6 +126,7 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 254,estres_1_base,Base,completed,1.0,1.0,material_sanitario,77,10
 3,estres_1_base,Base,completed,1.0,1.0,rinon,77,10
 1,estres_1_base,Base,completed,1.0,1.0,pulmon,77,10
+2,estres_1_base,Base,pending,1.0,1.0,sangre,77,10
 6,estres_1_base,Base,completed,1.0,1.0,pancreas,78,11
 233,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,78,11
 468,estres_1_base,Base,completed,1.0,1.0,sangre,78,11
@@ -139,44 +134,44 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 2,estres_1_base,Base,completed,1.0,1.0,corazon,78,11
 227,estres_1_base,Base,completed,1.0,1.0,antibiotico,78,11
 223,estres_1_base,Base,completed,1.0,1.0,analgesico,78,11
-181,estres_1_base,Base,completed,1.0,1.0,plasma,78,11
+182,estres_1_base,Base,completed,1.0,1.0,plasma,78,11
 5,estres_1_base,Base,completed,1.0,1.0,rinon,78,11
 177,estres_1_base,Base,completed,1.0,1.0,medicamento_general,78,11
 992,estres_1_base,Base,completed,1.0,1.0,suero,78,11
 260,estres_1_base,Base,completed,1.0,1.0,material_sanitario,78,11
-1,estres_1_base,Base,pending,1.0,1.0,plasma,78,11
 10,estres_1_base,Base,completed,1.0,1.0,rinon,79,12
-464,estres_1_base,Base,completed,1.0,1.0,sangre,79,12
+465,estres_1_base,Base,completed,1.0,1.0,sangre,79,12
 231,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,79,12
 227,estres_1_base,Base,completed,1.0,1.0,antibiotico,79,12
 218,estres_1_base,Base,completed,1.0,1.0,analgesico,79,12
 179,estres_1_base,Base,completed,1.0,1.0,plasma,79,12
-177,estres_1_base,Base,completed,1.0,1.0,medicamento_general,79,12
-1027,estres_1_base,Base,completed,1.0,1.0,suero,79,12
+178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,79,12
+1017,estres_1_base,Base,completed,1.0,1.0,suero,79,12
 252,estres_1_base,Base,completed,1.0,1.0,material_sanitario,79,12
 4,estres_1_base,Base,completed,1.0,1.0,pancreas,79,12
 1,estres_1_base,Base,completed,1.0,1.0,corazon,79,12
 2,estres_1_base,Base,completed,1.0,1.0,pulmon,79,12
-2,estres_1_base,Base,pending,1.0,1.0,sangre,79,12
-5,estres_1_base,Base,pending,1.0,1.0,suero,79,12
+1,estres_1_base,Base,pending,1.0,1.0,sangre,79,12
+15,estres_1_base,Base,pending,1.0,1.0,suero,79,12
 1,estres_1_base,Base,pending,1.0,1.0,antibiotico,79,12
 2,estres_1_base,Base,pending,1.0,1.0,plasma,79,12
-1,estres_1_base,Base,pending,1.0,1.0,medicamento_general,79,12
 6,estres_1_base,Base,pending,1.0,1.0,material_sanitario,79,12
 1,estres_1_base,Base,pending,1.0,1.0,analgesico,79,12
 234,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,80,13
 466,estres_1_base,Base,completed,1.0,1.0,sangre,80,13
 228,estres_1_base,Base,completed,1.0,1.0,antibiotico,80,13
-220,estres_1_base,Base,completed,1.0,1.0,analgesico,80,13
+218,estres_1_base,Base,completed,1.0,1.0,analgesico,80,13
 178,estres_1_base,Base,completed,1.0,1.0,plasma,80,13
-179,estres_1_base,Base,completed,1.0,1.0,medicamento_general,80,13
+178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,80,13
 4,estres_1_base,Base,completed,1.0,1.0,rinon,80,13
 2,estres_1_base,Base,completed,1.0,1.0,pancreas,80,13
-1018,estres_1_base,Base,completed,1.0,1.0,suero,80,13
-254,estres_1_base,Base,completed,1.0,1.0,material_sanitario,80,13
+1021,estres_1_base,Base,completed,1.0,1.0,suero,80,13
+253,estres_1_base,Base,completed,1.0,1.0,material_sanitario,80,13
 1,estres_1_base,Base,completed,1.0,1.0,pulmon,80,13
-6,estres_1_base,Base,pending,1.0,1.0,suero,80,13
-2,estres_1_base,Base,pending,1.0,1.0,material_sanitario,80,13
+3,estres_1_base,Base,pending,1.0,1.0,suero,80,13
+2,estres_1_base,Base,pending,1.0,1.0,analgesico,80,13
+1,estres_1_base,Base,pending,1.0,1.0,medicamento_general,80,13
+3,estres_1_base,Base,pending,1.0,1.0,material_sanitario,80,13
 228,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,81,14
 454,estres_1_base,Base,completed,1.0,1.0,sangre,81,14
 5,estres_1_base,Base,completed,1.0,1.0,rinon,81,14
@@ -215,7 +210,7 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 2,estres_1_base,Base,completed,1.0,1.0,corazon,83,16
 232,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,84,17
 2,estres_1_base,Base,completed,1.0,1.0,corazon,84,17
-446,estres_1_base,Base,completed,1.0,1.0,sangre,84,17
+447,estres_1_base,Base,completed,1.0,1.0,sangre,84,17
 4,estres_1_base,Base,completed,1.0,1.0,pulmon,84,17
 8,estres_1_base,Base,completed,1.0,1.0,rinon,84,17
 5,estres_1_base,Base,completed,1.0,1.0,pancreas,84,17
@@ -223,10 +218,10 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 176,estres_1_base,Base,completed,1.0,1.0,plasma,84,17
 223,estres_1_base,Base,completed,1.0,1.0,analgesico,84,17
 180,estres_1_base,Base,completed,1.0,1.0,medicamento_general,84,17
-1028,estres_1_base,Base,completed,1.0,1.0,suero,84,17
+1030,estres_1_base,Base,completed,1.0,1.0,suero,84,17
 254,estres_1_base,Base,completed,1.0,1.0,material_sanitario,84,17
-2,estres_1_base,Base,pending,1.0,1.0,sangre,84,17
-4,estres_1_base,Base,pending,1.0,1.0,suero,84,17
+1,estres_1_base,Base,pending,1.0,1.0,sangre,84,17
+2,estres_1_base,Base,pending,1.0,1.0,suero,84,17
 8,estres_1_base,Base,completed,1.0,1.0,pancreas,85,18
 227,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,85,18
 462,estres_1_base,Base,completed,1.0,1.0,sangre,85,18
@@ -239,20 +234,17 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 248,estres_1_base,Base,completed,1.0,1.0,material_sanitario,85,18
 3,estres_1_base,Base,completed,1.0,1.0,pulmon,85,18
 233,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,86,19
-432,estres_1_base,Base,completed,1.0,1.0,sangre,86,19
+434,estres_1_base,Base,completed,1.0,1.0,sangre,86,19
 3,estres_1_base,Base,completed,1.0,1.0,pulmon,86,19
 226,estres_1_base,Base,completed,1.0,1.0,antibiotico,86,19
 219,estres_1_base,Base,completed,1.0,1.0,analgesico,86,19
 178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,86,19
 176,estres_1_base,Base,completed,1.0,1.0,plasma,86,19
 6,estres_1_base,Base,completed,1.0,1.0,pancreas,86,19
-984,estres_1_base,Base,completed,1.0,1.0,suero,86,19
-261,estres_1_base,Base,completed,1.0,1.0,material_sanitario,86,19
+992,estres_1_base,Base,completed,1.0,1.0,suero,86,19
+262,estres_1_base,Base,completed,1.0,1.0,material_sanitario,86,19
 7,estres_1_base,Base,completed,1.0,1.0,rinon,86,19
 2,estres_1_base,Base,completed,1.0,1.0,corazon,86,19
-2,estres_1_base,Base,pending,1.0,1.0,sangre,86,19
-8,estres_1_base,Base,pending,1.0,1.0,suero,86,19
-1,estres_1_base,Base,pending,1.0,1.0,material_sanitario,86,19
 4,estres_1_base,Base,completed,1.0,1.0,pulmon,87,20
 224,estres_1_base,Base,completed,1.0,1.0,farmaco_uci,87,20
 7,estres_1_base,Base,completed,1.0,1.0,rinon,87,20
@@ -262,24 +254,23 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 221,estres_1_base,Base,completed,1.0,1.0,antibiotico,87,20
 219,estres_1_base,Base,completed,1.0,1.0,analgesico,87,20
 178,estres_1_base,Base,completed,1.0,1.0,medicamento_general,87,20
-992,estres_1_base,Base,completed,1.0,1.0,suero,87,20
+990,estres_1_base,Base,completed,1.0,1.0,suero,87,20
 260,estres_1_base,Base,completed,1.0,1.0,material_sanitario,87,20
 1,estres_1_base,Base,completed,1.0,1.0,corazon,87,20
+2,estres_1_base,Base,pending,1.0,1.0,suero,87,20
 346,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,68,1
 690,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,68,1
 273,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,68,1
 347,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,68,1
 11,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,68,1
-336,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,68,1
+337,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,68,1
 281,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,68,1
-1577,estres_2_moderado,Moderado,completed,1.5,1.25,suero,68,1
+1584,estres_2_moderado,Moderado,completed,1.5,1.25,suero,68,1
 398,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,68,1
 1,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,68,1
 9,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,68,1
 5,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,68,1
-7,estres_2_moderado,Moderado,pending,1.5,1.25,suero,68,1
-1,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,68,1
-356,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,69,2
+355,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,69,2
 700,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,69,2
 13,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,69,2
 342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,69,2
@@ -288,34 +279,38 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 10,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,69,2
 274,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,69,2
 1560,estres_2_moderado,Moderado,completed,1.5,1.25,suero,69,2
-398,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,69,2
+399,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,69,2
 3,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,69,2
 1,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,69,2
-2,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,69,2
-1,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,69,2
+1,estres_2_moderado,Moderado,pending,1.5,1.25,farmaco_uci,69,2
+2,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,69,2
+1,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,69,2
 2,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,70,3
 355,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,70,3
-692,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,70,3
+690,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,70,3
 350,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,70,3
 343,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,70,3
 288,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,70,3
 3,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,70,3
-279,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,70,3
+278,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,70,3
 1520,estres_2_moderado,Moderado,completed,1.5,1.25,suero,70,3
 416,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,70,3
 4,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,70,3
 5,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,70,3
+2,estres_2_moderado,Moderado,pending,1.5,1.25,sangre,70,3
 359,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,71,4
 692,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,71,4
 280,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,71,4
-349,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,71,4
+348,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,71,4
 6,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,71,4
 348,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,71,4
-277,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,71,4
+276,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,71,4
 1560,estres_2_moderado,Moderado,completed,1.5,1.25,suero,71,4
 5,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,71,4
 416,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,71,4
 3,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,71,4
+1,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,71,4
+1,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,71,4
 362,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,72,5
 3,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,72,5
 696,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,72,5
@@ -330,19 +325,19 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 4,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,73,6
 357,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,73,6
 9,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,73,6
-700,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,73,6
+698,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,73,6
 273,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,73,6
-342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,73,6
+343,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,73,6
 340,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,73,6
 277,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,73,6
-1573,estres_2_moderado,Moderado,completed,1.5,1.25,suero,73,6
-402,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,73,6
+1581,estres_2_moderado,Moderado,completed,1.5,1.25,suero,73,6
+404,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,73,6
 6,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,73,6
-19,estres_2_moderado,Moderado,pending,1.5,1.25,suero,73,6
+2,estres_2_moderado,Moderado,pending,1.5,1.25,sangre,73,6
+11,estres_2_moderado,Moderado,pending,1.5,1.25,suero,73,6
 1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,73,6
-2,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,73,6
-1,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,73,6
-4,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,73,6
+1,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,73,6
+2,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,73,6
 1,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,73,6
 353,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,74,7
 7,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,74,7
@@ -359,31 +354,31 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 12,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,75,8
 361,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,75,8
 722,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,75,8
-343,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,75,8
+342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,75,8
 4,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,75,8
-282,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,75,8
-347,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,75,8
-277,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,75,8
-1568,estres_2_moderado,Moderado,completed,1.5,1.25,suero,75,8
+281,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,75,8
+346,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,75,8
+276,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,75,8
+1565,estres_2_moderado,Moderado,completed,1.5,1.25,suero,75,8
 4,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,75,8
 410,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,75,8
+3,estres_2_moderado,Moderado,pending,1.5,1.25,suero,75,8
+1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,75,8
+1,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,75,8
+1,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,75,8
+1,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,75,8
 349,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,76,9
 708,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,76,9
 14,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,76,9
-349,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,76,9
-342,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,76,9
+351,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,76,9
+343,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,76,9
 278,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,76,9
-273,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,76,9
+277,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,76,9
 1,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,76,9
-1559,estres_2_moderado,Moderado,completed,1.5,1.25,suero,76,9
-416,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,76,9
+1560,estres_2_moderado,Moderado,completed,1.5,1.25,suero,76,9
+420,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,76,9
 7,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,76,9
 3,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,76,9
-1,estres_2_moderado,Moderado,pending,1.5,1.25,suero,76,9
-2,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,76,9
-4,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,76,9
-4,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,76,9
-1,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,76,9
 351,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,77,10
 692,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,77,10
 342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,77,10
@@ -412,34 +407,29 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 712,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,79,12
 349,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,79,12
 12,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,79,12
-289,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,79,12
-337,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,79,12
-278,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,79,12
+290,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,79,12
+339,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,79,12
+279,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,79,12
 9,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,79,12
-1557,estres_2_moderado,Moderado,completed,1.5,1.25,suero,79,12
-400,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,79,12
+1560,estres_2_moderado,Moderado,completed,1.5,1.25,suero,79,12
+404,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,79,12
 4,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,79,12
 1,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,79,12
-3,estres_2_moderado,Moderado,pending,1.5,1.25,suero,79,12
-1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,79,12
-2,estres_2_moderado,Moderado,pending,1.5,1.25,analgesico,79,12
-4,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,79,12
-2,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,79,12
+1,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,79,12
 14,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,80,13
 352,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,80,13
 710,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,80,13
 342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,80,13
 346,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,80,13
-3,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,80,13
 280,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,80,13
+3,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,80,13
 3,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,80,13
 279,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,80,13
-1583,estres_2_moderado,Moderado,completed,1.5,1.25,suero,80,13
+1584,estres_2_moderado,Moderado,completed,1.5,1.25,suero,80,13
 406,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,80,13
 6,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,80,13
 1,estres_2_moderado,Moderado,pending,1.5,1.25,farmaco_uci,80,13
 1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,80,13
-1,estres_2_moderado,Moderado,pending,1.5,1.25,suero,80,13
 2,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,80,13
 352,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,81,14
 696,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,81,14
@@ -459,16 +449,16 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 696,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,82,15
 340,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,82,15
 4,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,82,15
-291,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,82,15
+290,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,82,15
 342,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,82,15
-273,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,82,15
-1562,estres_2_moderado,Moderado,completed,1.5,1.25,suero,82,15
+274,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,82,15
+1561,estres_2_moderado,Moderado,completed,1.5,1.25,suero,82,15
 408,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,82,15
 1,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,82,15
 2,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,82,15
 1,estres_2_moderado,Moderado,pending,1.5,1.25,farmaco_uci,82,15
-6,estres_2_moderado,Moderado,pending,1.5,1.25,suero,82,15
-1,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,82,15
+7,estres_2_moderado,Moderado,pending,1.5,1.25,suero,82,15
+1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,82,15
 6,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,83,16
 351,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,83,16
 706,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,83,16
@@ -484,7 +474,7 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 360,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,84,17
 2,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,84,17
 694,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,84,17
-275,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,84,17
+276,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,84,17
 347,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,84,17
 342,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,84,17
 278,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,84,17
@@ -493,34 +483,34 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 9,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,84,17
 2,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,84,17
 2,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,84,17
-1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,84,17
 10,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,85,18
 354,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,85,18
 674,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,85,18
 280,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,85,18
-342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,85,18
+343,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,85,18
 340,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,85,18
 274,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,85,18
-1568,estres_2_moderado,Moderado,completed,1.5,1.25,suero,85,18
-414,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,85,18
+1565,estres_2_moderado,Moderado,completed,1.5,1.25,suero,85,18
+416,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,85,18
 7,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,85,18
 2,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,85,18
 2,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,85,18
-1,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,85,18
-2,estres_2_moderado,Moderado,pending,1.5,1.25,material_sanitario,85,18
+3,estres_2_moderado,Moderado,pending,1.5,1.25,suero,85,18
 357,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,86,19
 684,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,86,19
-278,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,86,19
-343,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,86,19
+277,estres_2_moderado,Moderado,completed,1.5,1.25,plasma,86,19
+342,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,86,19
 344,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,86,19
 12,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,86,19
 9,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,86,19
-278,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,86,19
-1560,estres_2_moderado,Moderado,completed,1.5,1.25,suero,86,19
+279,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,86,19
+1555,estres_2_moderado,Moderado,completed,1.5,1.25,suero,86,19
 400,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,86,19
 5,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,86,19
 2,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,86,19
-1,estres_2_moderado,Moderado,pending,1.5,1.25,medicamento_general,86,19
+5,estres_2_moderado,Moderado,pending,1.5,1.25,suero,86,19
+1,estres_2_moderado,Moderado,pending,1.5,1.25,antibiotico,86,19
+1,estres_2_moderado,Moderado,pending,1.5,1.25,plasma,86,19
 8,estres_2_moderado,Moderado,completed,1.5,1.25,pancreas,87,20
 356,estres_2_moderado,Moderado,completed,1.5,1.25,farmaco_uci,87,20
 700,estres_2_moderado,Moderado,completed,1.5,1.25,sangre,87,20
@@ -528,41 +518,37 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 346,estres_2_moderado,Moderado,completed,1.5,1.25,antibiotico,87,20
 339,estres_2_moderado,Moderado,completed,1.5,1.25,analgesico,87,20
 276,estres_2_moderado,Moderado,completed,1.5,1.25,medicamento_general,87,20
-1592,estres_2_moderado,Moderado,completed,1.5,1.25,suero,87,20
+1585,estres_2_moderado,Moderado,completed,1.5,1.25,suero,87,20
 402,estres_2_moderado,Moderado,completed,1.5,1.25,material_sanitario,87,20
 7,estres_2_moderado,Moderado,completed,1.5,1.25,rinon,87,20
 4,estres_2_moderado,Moderado,completed,1.5,1.25,pulmon,87,20
 3,estres_2_moderado,Moderado,completed,1.5,1.25,corazon,87,20
+7,estres_2_moderado,Moderado,pending,1.5,1.25,suero,87,20
 8,estres_3_alto,Alto,completed,2.0,1.5,rinon,68,1
 483,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,68,1
 928,estres_3_alto,Alto,completed,2.0,1.5,sangre,68,1
-451,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,68,1
+452,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,68,1
 381,estres_3_alto,Alto,completed,2.0,1.5,plasma,68,1
 458,estres_3_alto,Alto,completed,2.0,1.5,analgesico,68,1
 12,estres_3_alto,Alto,completed,2.0,1.5,pancreas,68,1
-369,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,68,1
+370,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,68,1
 2112,estres_3_alto,Alto,completed,2.0,1.5,suero,68,1
 552,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,68,1
 4,estres_3_alto,Alto,completed,2.0,1.5,pulmon,68,1
-1,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,68,1
-1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,68,1
 10,estres_3_alto,Alto,completed,2.0,1.5,pancreas,69,2
 476,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,69,2
 920,estres_3_alto,Alto,completed,2.0,1.5,sangre,69,2
 372,estres_3_alto,Alto,completed,2.0,1.5,plasma,69,2
 464,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,69,2
-454,estres_3_alto,Alto,completed,2.0,1.5,analgesico,69,2
-372,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,69,2
-2136,estres_3_alto,Alto,completed,2.0,1.5,suero,69,2
+458,estres_3_alto,Alto,completed,2.0,1.5,analgesico,69,2
+374,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,69,2
+2141,estres_3_alto,Alto,completed,2.0,1.5,suero,69,2
 8,estres_3_alto,Alto,completed,2.0,1.5,rinon,69,2
-557,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,69,2
+562,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,69,2
 1,estres_3_alto,Alto,completed,2.0,1.5,pulmon,69,2
-8,estres_3_alto,Alto,pending,2.0,1.5,suero,69,2
-5,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,69,2
-2,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,69,2
-4,estres_3_alto,Alto,pending,2.0,1.5,analgesico,69,2
+3,estres_3_alto,Alto,pending,2.0,1.5,suero,69,2
 481,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,70,3
-948,estres_3_alto,Alto,completed,2.0,1.5,sangre,70,3
+947,estres_3_alto,Alto,completed,2.0,1.5,sangre,70,3
 384,estres_3_alto,Alto,completed,2.0,1.5,plasma,70,3
 466,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,70,3
 2,estres_3_alto,Alto,completed,2.0,1.5,corazon,70,3
@@ -573,6 +559,7 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 552,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,70,3
 11,estres_3_alto,Alto,completed,2.0,1.5,rinon,70,3
 3,estres_3_alto,Alto,completed,2.0,1.5,pulmon,70,3
+1,estres_3_alto,Alto,pending,2.0,1.5,sangre,70,3
 490,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,71,4
 920,estres_3_alto,Alto,completed,2.0,1.5,sangre,71,4
 466,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,71,4
@@ -589,14 +576,16 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 5,estres_3_alto,Alto,completed,2.0,1.5,pulmon,72,5
 960,estres_3_alto,Alto,completed,2.0,1.5,sangre,72,5
 375,estres_3_alto,Alto,completed,2.0,1.5,plasma,72,5
-466,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,72,5
+465,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,72,5
 460,estres_3_alto,Alto,completed,2.0,1.5,analgesico,72,5
 12,estres_3_alto,Alto,completed,2.0,1.5,pancreas,72,5
 370,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,72,5
 15,estres_3_alto,Alto,completed,2.0,1.5,rinon,72,5
-2176,estres_3_alto,Alto,completed,2.0,1.5,suero,72,5
+2174,estres_3_alto,Alto,completed,2.0,1.5,suero,72,5
 556,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,72,5
-461,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,73,6
+1,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,72,5
+2,estres_3_alto,Alto,pending,2.0,1.5,suero,72,5
+460,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,73,6
 928,estres_3_alto,Alto,completed,2.0,1.5,sangre,73,6
 13,estres_3_alto,Alto,completed,2.0,1.5,pancreas,73,6
 388,estres_3_alto,Alto,completed,2.0,1.5,plasma,73,6
@@ -605,78 +594,72 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 4,estres_3_alto,Alto,completed,2.0,1.5,corazon,73,6
 376,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,73,6
 2132,estres_3_alto,Alto,completed,2.0,1.5,suero,73,6
-554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,73,6
 9,estres_3_alto,Alto,completed,2.0,1.5,rinon,73,6
+554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,73,6
 3,estres_3_alto,Alto,completed,2.0,1.5,pulmon,73,6
+1,estres_3_alto,Alto,pending,2.0,1.5,farmaco_uci,73,6
 4,estres_3_alto,Alto,pending,2.0,1.5,suero,73,6
 494,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,74,7
-942,estres_3_alto,Alto,completed,2.0,1.5,sangre,74,7
+940,estres_3_alto,Alto,completed,2.0,1.5,sangre,74,7
 380,estres_3_alto,Alto,completed,2.0,1.5,plasma,74,7
-466,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,74,7
-464,estres_3_alto,Alto,completed,2.0,1.5,analgesico,74,7
-372,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,74,7
+467,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,74,7
+466,estres_3_alto,Alto,completed,2.0,1.5,analgesico,74,7
+374,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,74,7
 10,estres_3_alto,Alto,completed,2.0,1.5,pancreas,74,7
 10,estres_3_alto,Alto,completed,2.0,1.5,rinon,74,7
 2176,estres_3_alto,Alto,completed,2.0,1.5,suero,74,7
-553,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,74,7
+554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,74,7
 3,estres_3_alto,Alto,completed,2.0,1.5,pulmon,74,7
 2,estres_3_alto,Alto,completed,2.0,1.5,corazon,74,7
-1,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,74,7
-1,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,74,7
-2,estres_3_alto,Alto,pending,2.0,1.5,analgesico,74,7
-2,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,74,7
 7,estres_3_alto,Alto,completed,2.0,1.5,pulmon,75,8
 3,estres_3_alto,Alto,completed,2.0,1.5,corazon,75,8
 954,estres_3_alto,Alto,completed,2.0,1.5,sangre,75,8
 476,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,75,8
 14,estres_3_alto,Alto,completed,2.0,1.5,rinon,75,8
 468,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,75,8
-384,estres_3_alto,Alto,completed,2.0,1.5,plasma,75,8
-463,estres_3_alto,Alto,completed,2.0,1.5,analgesico,75,8
+385,estres_3_alto,Alto,completed,2.0,1.5,plasma,75,8
+462,estres_3_alto,Alto,completed,2.0,1.5,analgesico,75,8
 373,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,75,8
 13,estres_3_alto,Alto,completed,2.0,1.5,pancreas,75,8
-2136,estres_3_alto,Alto,completed,2.0,1.5,suero,75,8
+2139,estres_3_alto,Alto,completed,2.0,1.5,suero,75,8
 562,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,75,8
-1,estres_3_alto,Alto,pending,2.0,1.5,plasma,75,8
-8,estres_3_alto,Alto,pending,2.0,1.5,suero,75,8
+5,estres_3_alto,Alto,pending,2.0,1.5,suero,75,8
+1,estres_3_alto,Alto,pending,2.0,1.5,analgesico,75,8
 2,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,75,8
 464,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,76,9
 8,estres_3_alto,Alto,completed,2.0,1.5,pulmon,76,9
 958,estres_3_alto,Alto,completed,2.0,1.5,sangre,76,9
 464,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,76,9
-453,estres_3_alto,Alto,completed,2.0,1.5,analgesico,76,9
-389,estres_3_alto,Alto,completed,2.0,1.5,plasma,76,9
-372,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,76,9
-2159,estres_3_alto,Alto,completed,2.0,1.5,suero,76,9
+454,estres_3_alto,Alto,completed,2.0,1.5,analgesico,76,9
+390,estres_3_alto,Alto,completed,2.0,1.5,plasma,76,9
+371,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,76,9
+2162,estres_3_alto,Alto,completed,2.0,1.5,suero,76,9
+550,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,76,9
 10,estres_3_alto,Alto,completed,2.0,1.5,pancreas,76,9
-548,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,76,9
 9,estres_3_alto,Alto,completed,2.0,1.5,rinon,76,9
 2,estres_3_alto,Alto,completed,2.0,1.5,corazon,76,9
-9,estres_3_alto,Alto,pending,2.0,1.5,suero,76,9
-1,estres_3_alto,Alto,pending,2.0,1.5,plasma,76,9
-4,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,76,9
-1,estres_3_alto,Alto,pending,2.0,1.5,analgesico,76,9
+6,estres_3_alto,Alto,pending,2.0,1.5,suero,76,9
+1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,76,9
+2,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,76,9
 942,estres_3_alto,Alto,completed,2.0,1.5,sangre,77,10
-470,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,77,10
+471,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,77,10
 9,estres_3_alto,Alto,completed,2.0,1.5,pancreas,77,10
 379,estres_3_alto,Alto,completed,2.0,1.5,plasma,77,10
-463,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,77,10
+465,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,77,10
 13,estres_3_alto,Alto,completed,2.0,1.5,rinon,77,10
 461,estres_3_alto,Alto,completed,2.0,1.5,analgesico,77,10
 371,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,77,10
-2088,estres_3_alto,Alto,completed,2.0,1.5,suero,77,10
+2103,estres_3_alto,Alto,completed,2.0,1.5,suero,77,10
 546,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,77,10
 5,estres_3_alto,Alto,completed,2.0,1.5,pulmon,77,10
 3,estres_3_alto,Alto,completed,2.0,1.5,corazon,77,10
-1,estres_3_alto,Alto,pending,2.0,1.5,farmaco_uci,77,10
-16,estres_3_alto,Alto,pending,2.0,1.5,suero,77,10
-2,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,77,10
+1,estres_3_alto,Alto,pending,2.0,1.5,suero,77,10
 1,estres_3_alto,Alto,pending,2.0,1.5,plasma,77,10
 2,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,77,10
 4,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,77,10
 1,estres_3_alto,Alto,pending,2.0,1.5,analgesico,77,10
 3,estres_3_alto,Alto,completed,2.0,1.5,pulmon,78,11
-466,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,78,11
+467,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,78,11
 926,estres_3_alto,Alto,completed,2.0,1.5,sangre,78,11
 7,estres_3_alto,Alto,completed,2.0,1.5,pancreas,78,11
 464,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,78,11
@@ -684,29 +667,28 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 460,estres_3_alto,Alto,completed,2.0,1.5,analgesico,78,11
 362,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,78,11
 2152,estres_3_alto,Alto,completed,2.0,1.5,suero,78,11
-555,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,78,11
+554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,78,11
 9,estres_3_alto,Alto,completed,2.0,1.5,rinon,78,11
-1,estres_3_alto,Alto,pending,2.0,1.5,farmaco_uci,78,11
-1,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,78,11
+2,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,78,11
+1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,78,11
 476,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,79,12
 950,estres_3_alto,Alto,completed,2.0,1.5,sangre,79,12
 464,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,79,12
 383,estres_3_alto,Alto,completed,2.0,1.5,plasma,79,12
-377,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,79,12
 458,estres_3_alto,Alto,completed,2.0,1.5,analgesico,79,12
+377,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,79,12
 7,estres_3_alto,Alto,completed,2.0,1.5,rinon,79,12
 2104,estres_3_alto,Alto,completed,2.0,1.5,suero,79,12
 554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,79,12
 10,estres_3_alto,Alto,completed,2.0,1.5,pancreas,79,12
 4,estres_3_alto,Alto,completed,2.0,1.5,pulmon,79,12
 3,estres_3_alto,Alto,completed,2.0,1.5,corazon,79,12
-1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,79,12
 11,estres_3_alto,Alto,completed,2.0,1.5,pancreas,80,13
 466,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,80,13
 958,estres_3_alto,Alto,completed,2.0,1.5,sangre,80,13
 390,estres_3_alto,Alto,completed,2.0,1.5,plasma,80,13
 467,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,80,13
-465,estres_3_alto,Alto,completed,2.0,1.5,analgesico,80,13
+464,estres_3_alto,Alto,completed,2.0,1.5,analgesico,80,13
 373,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,80,13
 2144,estres_3_alto,Alto,completed,2.0,1.5,suero,80,13
 560,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,80,13
@@ -720,413 +702,383 @@ cantidad,escenario,escenario_etiqueta,estado,factor_demanda_inventario,factor_de
 373,estres_3_alto,Alto,completed,2.0,1.5,plasma,81,14
 457,estres_3_alto,Alto,completed,2.0,1.5,analgesico,81,14
 375,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,81,14
-2184,estres_3_alto,Alto,completed,2.0,1.5,suero,81,14
+2183,estres_3_alto,Alto,completed,2.0,1.5,suero,81,14
 562,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,81,14
 14,estres_3_alto,Alto,completed,2.0,1.5,rinon,81,14
 11,estres_3_alto,Alto,completed,2.0,1.5,pancreas,81,14
 4,estres_3_alto,Alto,completed,2.0,1.5,pulmon,81,14
+1,estres_3_alto,Alto,pending,2.0,1.5,suero,81,14
 10,estres_3_alto,Alto,completed,2.0,1.5,rinon,82,15
 468,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,82,15
-944,estres_3_alto,Alto,completed,2.0,1.5,sangre,82,15
+942,estres_3_alto,Alto,completed,2.0,1.5,sangre,82,15
 463,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,82,15
 460,estres_3_alto,Alto,completed,2.0,1.5,analgesico,82,15
 390,estres_3_alto,Alto,completed,2.0,1.5,plasma,82,15
-374,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,82,15
+373,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,82,15
 12,estres_3_alto,Alto,completed,2.0,1.5,pancreas,82,15
 2152,estres_3_alto,Alto,completed,2.0,1.5,suero,82,15
-554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,82,15
+550,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,82,15
 7,estres_3_alto,Alto,completed,2.0,1.5,pulmon,82,15
 3,estres_3_alto,Alto,completed,2.0,1.5,corazon,82,15
+2,estres_3_alto,Alto,pending,2.0,1.5,sangre,82,15
+1,estres_3_alto,Alto,pending,2.0,1.5,plasma,82,15
+4,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,82,15
+1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,82,15
 2,estres_3_alto,Alto,completed,2.0,1.5,corazon,83,16
 475,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,83,16
 936,estres_3_alto,Alto,completed,2.0,1.5,sangre,83,16
 4,estres_3_alto,Alto,completed,2.0,1.5,pulmon,83,16
-462,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,83,16
+461,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,83,16
 379,estres_3_alto,Alto,completed,2.0,1.5,plasma,83,16
 465,estres_3_alto,Alto,completed,2.0,1.5,analgesico,83,16
 5,estres_3_alto,Alto,completed,2.0,1.5,pancreas,83,16
-2160,estres_3_alto,Alto,completed,2.0,1.5,suero,83,16
 368,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,83,16
+2160,estres_3_alto,Alto,completed,2.0,1.5,suero,83,16
 11,estres_3_alto,Alto,completed,2.0,1.5,rinon,83,16
-556,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,83,16
+554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,83,16
+1,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,83,16
+2,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,83,16
 4,estres_3_alto,Alto,completed,2.0,1.5,corazon,84,17
 10,estres_3_alto,Alto,completed,2.0,1.5,pancreas,84,17
 477,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,84,17
-924,estres_3_alto,Alto,completed,2.0,1.5,sangre,84,17
+922,estres_3_alto,Alto,completed,2.0,1.5,sangre,84,17
 467,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,84,17
 5,estres_3_alto,Alto,completed,2.0,1.5,pulmon,84,17
-453,estres_3_alto,Alto,completed,2.0,1.5,analgesico,84,17
+458,estres_3_alto,Alto,completed,2.0,1.5,analgesico,84,17
+370,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,84,17
 382,estres_3_alto,Alto,completed,2.0,1.5,plasma,84,17
 11,estres_3_alto,Alto,completed,2.0,1.5,rinon,84,17
-366,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,84,17
-2183,estres_3_alto,Alto,completed,2.0,1.5,suero,84,17
-544,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,84,17
-1,estres_3_alto,Alto,pending,2.0,1.5,suero,84,17
+2174,estres_3_alto,Alto,completed,2.0,1.5,suero,84,17
+556,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,84,17
+2,estres_3_alto,Alto,pending,2.0,1.5,sangre,84,17
+10,estres_3_alto,Alto,pending,2.0,1.5,suero,84,17
 2,estres_3_alto,Alto,pending,2.0,1.5,plasma,84,17
-18,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,84,17
-7,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,84,17
-6,estres_3_alto,Alto,pending,2.0,1.5,analgesico,84,17
+1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,84,17
+6,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,84,17
+1,estres_3_alto,Alto,pending,2.0,1.5,analgesico,84,17
 12,estres_3_alto,Alto,completed,2.0,1.5,rinon,85,18
 474,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,85,18
 926,estres_3_alto,Alto,completed,2.0,1.5,sangre,85,18
-470,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,85,18
+467,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,85,18
 383,estres_3_alto,Alto,completed,2.0,1.5,plasma,85,18
 459,estres_3_alto,Alto,completed,2.0,1.5,analgesico,85,18
 369,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,85,18
-555,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,85,18
-2160,estres_3_alto,Alto,completed,2.0,1.5,suero,85,18
+556,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,85,18
+2152,estres_3_alto,Alto,completed,2.0,1.5,suero,85,18
 3,estres_3_alto,Alto,completed,2.0,1.5,pulmon,85,18
 6,estres_3_alto,Alto,completed,2.0,1.5,pancreas,85,18
 4,estres_3_alto,Alto,completed,2.0,1.5,corazon,85,18
+3,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,85,18
+8,estres_3_alto,Alto,pending,2.0,1.5,suero,85,18
 2,estres_3_alto,Alto,pending,2.0,1.5,analgesico,85,18
 1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,85,18
-5,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,85,18
+4,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,85,18
 470,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,86,19
-386,estres_3_alto,Alto,completed,2.0,1.5,plasma,86,19
+388,estres_3_alto,Alto,completed,2.0,1.5,plasma,86,19
 930,estres_3_alto,Alto,completed,2.0,1.5,sangre,86,19
-463,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,86,19
-450,estres_3_alto,Alto,completed,2.0,1.5,analgesico,86,19
-371,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,86,19
+464,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,86,19
+453,estres_3_alto,Alto,completed,2.0,1.5,analgesico,86,19
+373,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,86,19
 2176,estres_3_alto,Alto,completed,2.0,1.5,suero,86,19
-551,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,86,19
+554,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,86,19
 4,estres_3_alto,Alto,completed,2.0,1.5,pulmon,86,19
 8,estres_3_alto,Alto,completed,2.0,1.5,pancreas,86,19
 3,estres_3_alto,Alto,completed,2.0,1.5,corazon,86,19
 3,estres_3_alto,Alto,completed,2.0,1.5,rinon,86,19
-1,estres_3_alto,Alto,pending,2.0,1.5,antibiotico,86,19
-2,estres_3_alto,Alto,pending,2.0,1.5,plasma,86,19
-2,estres_3_alto,Alto,pending,2.0,1.5,analgesico,86,19
-3,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,86,19
-5,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,86,19
+2,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,86,19
+1,estres_3_alto,Alto,pending,2.0,1.5,medicamento_general,86,19
 458,estres_3_alto,Alto,completed,2.0,1.5,farmaco_uci,87,20
 942,estres_3_alto,Alto,completed,2.0,1.5,sangre,87,20
 467,estres_3_alto,Alto,completed,2.0,1.5,antibiotico,87,20
 381,estres_3_alto,Alto,completed,2.0,1.5,plasma,87,20
-460,estres_3_alto,Alto,completed,2.0,1.5,analgesico,87,20
+461,estres_3_alto,Alto,completed,2.0,1.5,analgesico,87,20
 377,estres_3_alto,Alto,completed,2.0,1.5,medicamento_general,87,20
 5,estres_3_alto,Alto,completed,2.0,1.5,corazon,87,20
 2160,estres_3_alto,Alto,completed,2.0,1.5,suero,87,20
-556,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,87,20
+555,estres_3_alto,Alto,completed,2.0,1.5,material_sanitario,87,20
 15,estres_3_alto,Alto,completed,2.0,1.5,pancreas,87,20
 13,estres_3_alto,Alto,completed,2.0,1.5,rinon,87,20
 4,estres_3_alto,Alto,completed,2.0,1.5,pulmon,87,20
+1,estres_3_alto,Alto,pending,2.0,1.5,material_sanitario,87,20
 576,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,68,1
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,68,1
 1180,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,68,1
 581,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,68,1
-561,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,68,1
+571,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,68,1
 488,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,68,1
 18,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,68,1
-464,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,68,1
-686,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,68,1
+471,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,68,1
+708,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,68,1
 2728,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,68,1
 4,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,68,1
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,68,1
-7,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,68,1
-22,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,68,1
-7,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,68,1
 14,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,69,2
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,69,2
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,69,2
 1168,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,69,2
 599,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,69,2
-587,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,69,2
+586,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,69,2
 475,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,69,2
-575,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,69,2
+577,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,69,2
 467,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,69,2
-2706,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,69,2
+2700,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,69,2
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,69,2
-699,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,69,2
-6,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,69,2
+702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,69,2
+12,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,69,2
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,69,2
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,69,2
-5,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,69,2
+2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,69,2
 14,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,70,3
 603,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,70,3
 1186,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,70,3
-591,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,70,3
+593,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,70,3
 486,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,70,3
-566,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,70,3
-462,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,70,3
+580,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,70,3
+472,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,70,3
 7,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,70,3
-2726,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,70,3
-702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,70,3
+2728,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,70,3
+706,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,70,3
 7,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,70,3
 1,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,70,3
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,70,3
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,70,3
-11,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,70,3
-7,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,70,3
-4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,70,3
-591,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,71,4
+8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,70,3
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,70,3
+590,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,71,4
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,71,4
 1176,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,71,4
-577,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,71,4
-477,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,71,4
-568,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,71,4
-459,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,71,4
-2735,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,71,4
+578,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,71,4
+476,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,71,4
+584,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,71,4
+471,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,71,4
+2736,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,71,4
 18,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,71,4
-696,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,71,4
+706,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,71,4
 4,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,71,4
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,71,4
-9,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,71,4
-2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,71,4
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,71,4
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,71,4
-13,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,71,4
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,farmaco_uci,71,4
+8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,71,4
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,71,4
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,71,4
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,71,4
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,71,4
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,72,5
 17,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,72,5
-593,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,72,5
+594,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,72,5
 1184,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,72,5
-584,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,72,5
+585,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,72,5
 486,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,72,5
 8,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,72,5
-577,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,72,5
+581,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,72,5
 472,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,72,5
 2736,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,72,5
 700,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,72,5
 1,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,72,5
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,farmaco_uci,72,5
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,72,5
 583,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,73,6
 16,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,73,6
 1178,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,73,6
 582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,73,6
 473,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,73,6
-568,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,73,6
-460,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,73,6
+580,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,73,6
+468,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,73,6
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,73,6
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,73,6
-2718,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,73,6
-694,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,73,6
+2722,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,73,6
+700,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,73,6
 2,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,73,6
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,73,6
+6,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,73,6
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,73,6
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,73,6
-8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,73,6
-8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,73,6
+2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,73,6
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,73,6
 594,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,74,7
 1188,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,74,7
 15,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,74,7
 585,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,74,7
-566,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,74,7
+582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,74,7
 478,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,74,7
-461,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,74,7
-2745,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,74,7
+474,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,74,7
+2748,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,74,7
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,74,7
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,74,7
-681,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,74,7
+698,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,74,7
 4,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,74,7
-7,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,74,7
-17,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,74,7
-13,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,74,7
-13,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,74,7
+4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,74,7
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,74,7
 601,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,75,8
 22,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,75,8
 1164,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,75,8
-478,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,75,8
+479,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,75,8
 587,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,75,8
-568,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,75,8
-455,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,75,8
+582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,75,8
+462,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,75,8
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,75,8
-2734,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,75,8
+2740,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,75,8
 10,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,75,8
-686,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,75,8
+702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,75,8
 8,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,75,8
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,farmaco_uci,75,8
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,75,8
+4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,75,8
 2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,75,8
-3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,75,8
-20,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,75,8
-9,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,75,8
-14,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,75,8
+2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,75,8
+4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,75,8
+3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,75,8
+2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,75,8
 598,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,76,9
 1182,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,76,9
 477,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,76,9
 580,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,76,9
-567,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,76,9
-459,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,76,9
+577,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,76,9
+468,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,76,9
 16,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,76,9
-2736,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,76,9
-686,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,76,9
+2734,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,76,9
+702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,76,9
 9,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,76,9
 1,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,76,9
 4,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,76,9
-16,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,76,9
-8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,76,9
-8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,76,9
+2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,76,9
 22,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,77,10
 8,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,77,10
 6,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,77,10
 596,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,77,10
 1166,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,77,10
-581,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,77,10
-572,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,77,10
+582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,77,10
+582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,77,10
 481,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,77,10
-465,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,77,10
-2747,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,77,10
-691,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,77,10
+472,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,77,10
+2752,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,77,10
+698,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,77,10
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,77,10
-5,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,77,10
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,77,10
-5,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,77,10
-7,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,77,10
-8,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,77,10
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,77,10
 586,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,78,11
 12,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,78,11
 1178,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,78,11
-579,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,78,11
+581,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,78,11
 485,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,78,11
 2,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,78,11
-574,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,78,11
-466,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,78,11
-2677,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,78,11
+578,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,78,11
+470,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,78,11
+2688,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,78,11
 15,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,78,11
-700,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,78,11
+704,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,78,11
 15,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,78,11
-11,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,78,11
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,78,11
-4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,78,11
-3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,78,11
-3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,78,11
 12,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,79,12
 590,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,79,12
 1186,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,79,12
 587,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,79,12
 481,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,79,12
-576,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,79,12
-470,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,79,12
+578,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,79,12
+478,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,79,12
 2736,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,79,12
 4,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,79,12
 694,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,79,12
 16,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,79,12
 6,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,79,12
-6,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,79,12
-2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,79,12
 600,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,80,13
 1158,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,80,13
 588,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,80,13
 483,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,80,13
-569,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,80,13
-467,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,80,13
+578,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,80,13
+475,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,80,13
 14,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,80,13
 2728,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,80,13
 8,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,80,13
 12,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,80,13
-701,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,80,13
+710,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,80,13
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,80,13
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,80,13
-9,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,80,13
-6,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,80,13
-6,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,80,13
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,80,13
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,81,14
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,81,14
 606,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,81,14
 1186,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,81,14
 478,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,81,14
 577,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,81,14
-565,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,81,14
-460,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,81,14
-2752,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,81,14
+577,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,81,14
+472,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,81,14
+2746,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,81,14
 6,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,81,14
-686,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,81,14
+701,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,81,14
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,81,14
-20,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,81,14
-12,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,81,14
-12,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,81,14
+6,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,81,14
+5,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,81,14
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,81,14
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,82,15
 601,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,82,15
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,82,15
 1172,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,82,15
 583,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,82,15
 481,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,82,15
-574,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,82,15
-466,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,82,15
+587,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,82,15
+473,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,82,15
 2664,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,82,15
-692,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,82,15
+702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,82,15
 12,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,82,15
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,82,15
-5,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,82,15
-10,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,82,15
-7,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,82,15
-600,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,83,16
+601,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,83,16
 1192,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,83,16
 469,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,83,16
-588,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,83,16
-578,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,83,16
-468,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,83,16
+589,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,83,16
+582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,83,16
+470,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,83,16
 2728,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,83,16
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,83,16
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,83,16
 14,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,83,16
-692,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,83,16
+696,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,83,16
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,83,16
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,farmaco_uci,83,16
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,83,16
-2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,83,16
-3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,83,16
-4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,83,16
 584,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,84,17
 12,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,84,17
 1176,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,84,17
 583,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,84,17
 477,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,84,17
-570,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,84,17
+574,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,84,17
 17,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,84,17
-469,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,84,17
-2707,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,84,17
+470,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,84,17
+2711,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,84,17
 6,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,84,17
 706,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,84,17
 7,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,84,17
-5,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,84,17
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,84,17
 2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,84,17
 11,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,85,18
 587,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,85,18
 1184,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,85,18
-468,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,85,18
+467,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,85,18
 582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,85,18
-567,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,85,18
-458,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,85,18
-2745,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,85,18
+578,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,85,18
+470,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,85,18
+2746,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,85,18
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,85,18
-684,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,85,18
+705,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,85,18
 9,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,85,18
 3,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,85,18
-15,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,85,18
+14,estres_4_muy_alto,Muy alto,pending,2.5,2.0,suero,85,18
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,85,18
 1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,plasma,85,18
-22,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,85,18
-13,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,85,18
-9,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,85,18
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,85,18
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,85,18
+1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,85,18
 15,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,86,19
 6,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,86,19
-592,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,86,19
+593,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,86,19
 15,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,86,19
 1146,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,86,19
 590,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,86,19
 480,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,86,19
-580,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,86,19
-466,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,86,19
-699,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,86,19
+586,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,86,19
+471,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,86,19
+702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,86,19
 2688,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,86,19
 5,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,86,19
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,farmaco_uci,86,19
-3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,86,19
-4,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,86,19
-3,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,86,19
 595,estres_4_muy_alto,Muy alto,completed,2.5,2.0,farmaco_uci,87,20
 8,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pulmon,87,20
 1166,estres_4_muy_alto,Muy alto,completed,2.5,2.0,sangre,87,20
-579,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,87,20
-561,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,87,20
+580,estres_4_muy_alto,Muy alto,completed,2.5,2.0,antibiotico,87,20
+582,estres_4_muy_alto,Muy alto,completed,2.5,2.0,analgesico,87,20
 481,estres_4_muy_alto,Muy alto,completed,2.5,2.0,plasma,87,20
 13,estres_4_muy_alto,Muy alto,completed,2.5,2.0,pancreas,87,20
+468,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,87,20
 2,estres_4_muy_alto,Muy alto,completed,2.5,2.0,corazon,87,20
-452,estres_4_muy_alto,Muy alto,completed,2.5,2.0,medicamento_general,87,20
 2776,estres_4_muy_alto,Muy alto,completed,2.5,2.0,suero,87,20
-690,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,87,20
+702,estres_4_muy_alto,Muy alto,completed,2.5,2.0,material_sanitario,87,20
 9,estres_4_muy_alto,Muy alto,completed,2.5,2.0,rinon,87,20
-1,estres_4_muy_alto,Muy alto,pending,2.5,2.0,antibiotico,87,20
-15,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,87,20
-16,estres_4_muy_alto,Muy alto,pending,2.5,2.0,analgesico,87,20
-12,estres_4_muy_alto,Muy alto,pending,2.5,2.0,material_sanitario,87,20
+2,estres_4_muy_alto,Muy alto,pending,2.5,2.0,medicamento_general,87,20
