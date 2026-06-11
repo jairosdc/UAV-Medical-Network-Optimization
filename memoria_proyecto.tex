@@ -1,0 +1,138 @@
+\documentclass[11pt, a4paper]{article} % Se añade el tamaño de fuente (11pt) y del papel (a4paper)
+
+% =========================================================================
+% 1. CONFIGURACIÓN DE PÁGINA Y MÁRGENES
+% =========================================================================
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    top=2.5cm,    % Margen superior
+    bottom=2.5cm, % Margen inferior
+    left=2.5cm,     % Margen izquierdo
+    right=2.5cm,    % Margen derecho
+    % headheight=14pt, % Descomenta si usas encabezados personalizados (fancyhdr)
+    % footskip=35pt    % Descomenta si el número de página queda muy pegado abajo
+}
+
+% =========================================================================
+% 2. IDIOMA, CODIFICACIÓN Y TIPOGRAFÍA
+% =========================================================================
+\usepackage[utf8]{inputenc}   % Codificación de entrada
+\usepackage[T1]{fontenc}      % Codificación de fuente para asegurar guiones y acentos correctos
+\usepackage[spanish, es-tabla]{babel} % Idioma español ('es-tabla' evita que ponga "Cuadro" en vez de "Tabla")
+\usepackage{microtype}        % Mejora sutilmente la justificación del texto y evita "overfull boxes"
+
+% =========================================================================
+% 3. PAQUETES DE SOPORTE ESENCIALES (Ajustables a tu gusto)
+% =========================================================================
+\usepackage{amsmath, amsfonts, amssymb} % Soporte avanzado para matemáticas y símbolos
+\usepackage{graphicx}         % Para la inclusión de imágenes y gráficos
+\usepackage{booktabs}         % Para tablas con acabado profesional y limpio
+\usepackage{enumitem}         % Permite personalizar listas (itemize, enumerate) fácilmente
+\usepackage{xcolor}           % Gestión y definición de colores personalizados
+
+% Configuración del paquete hyperref para enlaces y marcadores en el PDF
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,          % Falso para cajas de color, verdadero para texto coloreado
+    linkcolor=black,          % Color para enlaces internos (secciones, tablas, etc.)
+    citecolor=blue,           % Color para citas bibliográficas
+    urlcolor=blue             % Color para URLs externas
+}
+
+% =========================================================================
+% 4. DATOS DEL DOCUMENTO
+% =========================================================================
+\title{\textbf{Memoria del proyecto}}
+\author{Luis Gonzalez}
+\date{Abril 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+En los sistemas sanitarios de hoy en día existe un problema claro, el transporte de material sanitario y órganos. Este problema se agudiza en situaciones en las que ademas el menor tiempo de entrega posible es crucial. Tradicionalmente, estos sistemas de transporte se han basado en redes terrestres, las cuales pueden verse afectadas por factores como el tráfico, la distancia o las condiciones meteorológicas. Estas limitaciones han impulsado la búsqueda de soluciones innovadoras que permitan mejorar la eficiencia y fiabilidad del sistema logístico sanitario.
+
+\section{Objetivos del proyecto}
+
+\subsection{Objetivo principal}
+El presente proyecto tiene como objetivo el desarrollo de un modelo matemático y de simulación que represente un sistema logístico basado en drones para el transporte de material sanitario entre hospitales y almacenes. Esto a través de un sistema de grafos compuesto de ocho hospitales del municipio de madrid y tres almacenes que representa relación hospital-hospital o hospital-almacen. Para realizar estas relaciones, hemos tenido en cuenta los princpales hospitales públicos del municipio de Madrid. Los almacenes son tres, ubicados en zonas estratégicas de manera q cada hospital este próximo de algún almacen. A través de este enfoque, se pretende evaluar el rendimiento del sistema en diferentes situaciones, dependiendo del número de drones, metereología, demanda dependiendo de la franja horaria, capacidad de adaptación del sistema o la fiabilidad del método. El objetivo es, por tanto, desarrollar un modelo de drones que permita representar de forma realista este sistema, gestionar las prioridades de los envíos mediante colas y evaluar su rendimiento en términos de tiempos de entrega, nivel de servicio o clima.
+
+\subsection{Otros objetivos}
+Adicionalmente, el proyecto persigue una serie de objetivos formativos y metodológicos:
+\begin{itemize}
+    \item Aplicar de forma integrada conocimientos matemáticos y computacionales vistos en clase para la resolución de un problema real.
+    \item Desarrollar habilidades de modelización, análisis y abstracción.
+    \item Adquirir experiencia en la gestión y planificación de un proyecto técnico, sobretodo de cara a llevar las tareas establecidas al día.
+    \item Fomentar el trabajo estructurado y la toma de decisiones basada en datos obtenidos a través del análisis y la investigación.
+\end{itemize}
+
+\section{Descripción del problema}
+El problema abordado en este proyecto consiste en el diseño y análisis de un sistema logístico para el transporte de material sanitario entre distintos hospitales y almacenes, utilizando drones como medio de distribución. En particular, se considera una red compuesta por varios hospitales y almacenes, entre los cuales se deben gestionar envíos de productos con distintos niveles de urgencia, tales como órganos, sangre, fármacos o material sanitario. Además, el sistema debe operar bajo diversas restricciones, como la disponibilidad limitada de drones, la capacidad de carga, la autonomía de batería y la influencia de factores externos como las condiciones meteorológicas. Todo ello condiciona la planificación de las rutas y la asignación de recursos.
+
+\section{Desarrollo del proyecto}
+
+\subsection{Desarrollo de los elementos de la red}
+El punto de partida del proyecto fue la definición de una arquitectura computacional clara antes de escribir una sola línea de código funcional. El equipo acordó representar la red logística como un grafo dirigido completo $G=(V,E)$. Los nodos agrupan los ocho hospitales de referencia en Madrid La Paz, Gregorio Marañón, Hospital San Carlos, 12 de Octubre, Ramón y Cajal, La Princesa, Jiménez Díaz y Cruz Roja- junto con tres bases de almacenamiento, denominadas BASE CENTRO, BASE SUR Y BASE NORTE. Estas bases estan distribuidas geográficamente para maximizar la cobertura de la ciudad, de manera que su localización pueda atender a la mayoría de hospitales posibles, en este caso, tres en dos bases y dos en la restante. En esta fase se establecieron las clases principales (como dron, hospital, pedido) del sistema y las relaciones entre módulos, organizando el proyecto en tres capas diferenciadas: los modelos de datos (models/), los servicios de lógica de negocio (services/) y los controladores de orquestación (controllers/). También se fijó la estructura del repositorio y se crearon los primeros ficheros de configuración.
+
+En los modelos de datos almacenamos las clases creadas, junto con un inventario, el cual se encargaba de establecer diferentes umbrales de consumo de los productos de las base y, hospitales. En los servicios incluimos todo lo relacionado con la carga de los drones, su consumo y asignación de pedidos. Aquí encontramos cierta dificultad para establecer el criterio de carga. El resto no nos generó mucho probelma ya que con los datos del tipo de dron que elegimos (wingcopter 198 R1B-TC), como puede ser la autonomía, consumo, velocidad dependiendo de la carga ya estaba establecido. Para evitar problemas en el consumo, establecimos una función lineal que dependiendo de la distancia del pedido consumiese una batería. Por último, pusimos como límite que el dron volase con menos del veinte por ciento de batería. Una vez llegase a ese punto entraría en modo de carga. Además en esta parte del proyecto incluimos también funciones para optimizar la asignación de pedidos, para ser lo más eficiente posibles y evitar recorrer más distancia de manera innecesaria.
+
+En el apartado de controllers introdujimos un gestor de flota, que agregue drones, procese pedidos e inicialice la flota. Tambiénm en este apartado se controlan temas como la llegada, aterrizajes, despegues... Con la arquitectura definida, el trabajo se centró en traducir el modelo conceptual a estructuras de datos concretas. Se implementó el módulo hospitales almacenes data, que materializa los nodos del grafo mediante objetos Node con coordenadas geográficas reales en Madrid, lo que permitió calcular distancias geodésicas entre hospitales y bases para alimentar el servicio de red (ServicioRed). En paralelo, se formalizó el modelo de demanda basado en un Proceso de Poisson No Homogéneo (NHPP), con una función de tasa de llegada $\lambda(t)$. $\lambda(t)$ definida por tramos horarios para reflejar los picos de actividad hospitalaria a lo largo del día. Este modelo quedó encapsulado en el módulo Generador Pedidos, que permite pregenerar todos los eventos de consumo de una simulación completa antes de iniciar el bucle principal, mejorando significativamente el rendimiento computacional.
+
+\subsection{Sistema de prioridades e inventario}
+Una de las piezas fundamentales del simulador es la gestión del inventario en cada nodo hospitalario. Durante esta fase se diseñó e implementó la clase Inventario, que modela el estado de los recursos médicos disponibles en cada hospital en cada instante de la simulación. El modelo distingue dos tipos de nodo: los hospitales, que actúan como consumidores de recursos y generadores de pedidos, a la vez que también son proveedores de, por ejemplo, órganos. Las bases de almacenamiento, actúan como proveedores centrales. Esta distinción se captura mediante el parámetro almacen central en la inicialización del inventario, lo que permite que la lógica de reposición y consumo se comporte de forma diferente según el tipo de nodo. Los productos se agrupan en tres categorías operativas con comportamientos diferenciados:
+
+\begin{itemize}
+    \item Productos críticos (órganos, sangre, fármacos de UCI): no se modelan como inventario permanente sino como eventos independientes, dado que su aparición es esporádica y su gestión responde a urgencias clínicas impredecibles. Su prioridad en el sistema es máxima y no siguen la política de reposición por umbral.
+    \item Productos urgentes (antibióticos, sueros): mantienen un stock físico en el hospital y se reponen automáticamente cuando el nivel cae por debajo del umbral ss s definido para cada producto.
+    \item Productos rutinarios (analgésicos, material sanitario): siguen la misma lógica de reposición que los urgentes, pero con tiempos de espera tolerables mayores y prioridades de despacho inferiores.
+\end{itemize}
+
+La política de reposición implementada es del tipo (s,Q): cuando el stock físico de un producto desciende por debajo del umbral mínimo s, el sistema genera automáticamente un pedido de cantidad Q unidades desde la base de almacenamiento asignada al hospital. Este pedido entra directamente en la cola de prioridad del simulador, compitiendo con el resto de solicitudes activas según su nivel de urgencia. Un aspecto relevante del diseño es la distinción entre stock físico y stock en camino. En el momento en que se despacha un dron con un pedido de reposición, las unidades correspondientes se descuentan del inventario de origen y se registran como stock en camino en el hospital de destino. Esto evita que el sistema genere pedidos duplicados para un mismo producto mientras la entrega está en tránsito, un problema clásico en sistemas de inventario con tiempos de entrega no nulos.
+
+El consumo interno de los hospitales se modela como un proceso estocástico: el Generador Pedidos pregenera, al inicio de cada simulación, todos los eventos de consumo del horizonte temporal completo siguiendo un Proceso de Poisson, con tasas de consumo diferenciadas por tipo de producto y por tramo horario del día. Este enfoque de pregeneración -en lugar de muestrear el consumo minuto a minuto mejora significativamente el rendimiento computacional, especialmente en las simulaciones largas de tipo Monte Carlo.
+
+\subsubsection{Sistema de prioridades y política de despacho}
+El módulo cola prioridad implementa la clase Gestor Prioridad, que encapsula toda la lógica de ordenación y selección de pedidos pendientes. La decisión de diseño más relevante en esta fase fue definir con precisión el criterio de ordenación total sobre el conjunto de pedidos, garantizando que el sistema sea siempre determinista y no presente ambigüedades en el despacho. La política de prioridad sigue un criterio lexicográfico de cuatro niveles:
+
+\begin{itemize}
+    \item Prioridad clínica (priority): valor numérico entero donde un número menor indica mayor urgencia. Los órganos y productos de UCI ocupan los valores más bajos, mientras que el material rutinario se sitúa en los más altos. Este es el criterio dominante.
+    \item Deadline más próximo (deadline min): en caso de empate en prioridad clínica, se aplica el criterio Earliest Deadline First (EDF). Este nivel es especialmente crítico para los órganos, cuyo tiempo de isquemia el margen temporal hasta que el tejido deja de ser viable para el trasplante convierte el deadline en una restricción dura. Un órgano con menor tiempo restante hasta su límite de isquemia debe despacharse antes que otro de igual prioridad clínica pero con más margen temporal.
+    \item Timestamp de llegada (timestamp min): si dos pedidos comparten prioridad y deadline, se respeta el orden de llegada a la cola, implementando así el criterio FIFO (First In, First Out). Esto garantiza equidad entre pedidos de igual urgencia y evita la inanición indefinida de pedidos que no consigan ser atendidos.
+    \item Identificador de pedido (call id): último nivel de desempate, puramente técnico, que garantiza un orden total estricto y hace el comportamiento del simulador completamente reproducible dado una semilla aleatoria fija.
+\end{itemize}
+
+La implementación concreta usa el método sort() de Python sobre la lista de pedidos pendientes, con una función key que construye una tupla de cuatro elementos (priority, deadline min, timestamp min, call id). Python ordena las tuplas lexicográficamente de forma nativa, lo que hace la implementación compacta y eficiente para los tamaños de cola esperados. El pedido de mayor prioridad el primero tras el ordenamiento- se extrae con pop(0) y se devuelve al bucle principal de la simulación para su asignación a un dron. Esta decisión de usar una lista plana con ordenación en el momento de la consulta, en lugar de una estructura de heap clásica, responde a un compromiso pragmático: dado que los pedidos pueden actualizarse en su prioridad efectiva a medida que su deadline se aproxima, una cola de prioridad estática tipo heap no reflejaría correctamente el orden dinámico. Con la ordenación en cada consulta, el sistema recalcula el orden real en el momento exacto en que se va a despachar un pedido, garantizando que siempre se atiende el más urgente según el estado actual del sistema.
+
+\subsection{Simulación}
+Este es el apartado principal del proyecto, una simulación que modele el transporte de material y órganos, teniendo en cuenta todos estos elementos definidos en los anteriores apartados. Su objetivo es la obtención de métricas estadísticamente robustas sobre el rendimiento de la flota de drones y la capacidad del sistema para satisfacer la demanda hospitalaria. La elección de una simulación de eventos discretos frente a otros enfoques, como la simulación continua o los modelos analíticos cerrados, responde a la naturaleza del problema: los eventos relevantes del sistema llegada de un pedido, despegue de un dron, aterrizaje en un hospital, fin de recarga de batería- son sucesos puntuales en el tiempo que alteran el estado global del sistema de forma instantánea, sin que haya variación continua entre uno y otro. Este paradigma permite modelar con fidelidad las interdependencias entre componentes heterogéneos inventario, flota, meteorología, cola de pedidos sin sacrificar eficiencia computacional.
+
+\subsubsection{Inicialización del sistema}
+Antes de arrancar el bucle principal, el simulador ejecuta una fase de inicialización en la que se construyen y conectan todos los componentes del sistema. En primer lugar se instancia el grafo logístico mediante ServicioRed, que calcula y almacena las distancias geodésicas entre todos los pares de nodos hospitales y bases a partir de sus coordenadas geográficas reales. A continuación se inicializa la flota de drones mediante Gestor Flota Controller, que crea el número de drones configurado por base y los registra en su estado inicial de disponibilidad plena con la batería al cien por cien. Acto seguido se construyen los inventarios de cada nodo: los hospitales se inicializan con un stock predeterminado por categoría de producto, con la posibilidad de forzar el stock a un nivel cercano al umbral de reposición mediante el parámetro stock inicial cerca umbral para acelerar la aparición de pedidos en pruebas de estrés del sistema. Las bases de almacenamiento se inicializan como almacenes centrales con capacidad ilimitada. Finalmente se instancian el Generador Pedidos, que pregenera en memoria la totalidad de los eventos de consumo del horizonte temporal, y el SimuladorClima, que gestionará la evolución estocástica de las condiciones meteorológicas. Esta fase de inicialización imprime por consola un resumen estructurado del estado inicial del sistema, incluyendo la duración de la simulación, el número de drones y hospitales, la semilla aleatoria utilizada, el total de eventos pregenerados y el inventario inicial de cada hospital, lo que permite verificar la configuración antes de lanzar simulaciones largas.
+
+\subsubsection{Funcionamiento de la iteración}
+La simulación itera sobre cada minuto del horizonte temporal ejecutando siempre los mismos pasos en el mismo orden, lo que garantiza la coherencia causal del modelo.
+
+\begin{itemize}
+    \item Actualización meteorológica. El simulador consulta al Simulador Clima el estado activo y obtiene un factor velocidad multiplicativo que se propaga al resto de pasos del bucle. Si la meteorología está desactivada mediante activar metereologia, el factor se fija a 1.0.
+    \item Procesamiento de eventos DES vencidos. El simulador mantiene una cola de eventos futuros implementada como un min-heap de Python (heapq). En cada minuto se extraen y procesan todos los eventos con tiempo de ocurrencia menor o igual al minuto actual: llegada hospital, aterrizaje base y fin recarga. Cada evento procesado puede generar nuevos eventos futuros que se reinsertan en el heap, manteniendo la cadena causal de la simulación. El campo secuencia un contador que se incrementa con cada nuevo evento garantiza un orden total determinista cuando dos eventos coinciden en el mismo minuto, evitando que Python intente comparar objetos no comparables entre sí.
+    \item Consumo de inventario y generación de pedidos. El Generador Pedidos procesa los eventos de consumo pregenerados para el minuto en curso. Cuando el stock físico de un producto cae por debajo del umbral s, se genera automáticamente un DeliveryCall que se encola en el Gestor Prioridad.
+    \item Despacho de pedidos. Con la cola actualizada, el simulador intenta asignar drones disponibles a los pedidos en orden de prioridad. Si la flota está completamente ocupada, los pedidos permanecen en espera hasta el siguiente minuto.
+\end{itemize}
+
+\subsubsection{Gestor de flota}
+El GestorFlotaController es el módulo de mayor complejidad del sistema, y actúa como intermediario entre el bucle principal y los objetos Drone individuales. Al inicializarse, crea el número configurado de drones por base, todos en estado availableçon batería al 100. Cuando llega un nuevo pedido, el controlador evalúa todos los drones disponibles y descarta aquellos cuya batería no sea suficiente para completar la misión con el margen mínimo de seguridad definido en bateria minima vuelo. Entre los viables, selecciona el que minimiza el tiempo estimado de llegada al hospital de destino. Una vez asignado, el dron pasa a estado "mission", se descuenta el consumo estimado del vuelo de ida, y se programa el evento llegada hospital en el heap. El ciclo de vida completo de una misión atraviesa tres eventos. En llegada hospital se registra la entrega y se calcula el ETA de regreso, aplicando el factor climático activo en ese instante que puede diferir del que había al despegue si el clima ha cambiado durante el vuelo. En aterrizaje base se actualiza la batería y se determina si es necesaria una recarga: si la batería está por debajo del 100 y charge to full está activo, el dron entra en estado chargingr se programa fin recarga según la tasa charge rate percent per min. Al procesarse fin recarga, el dron recupera el estado.availableçon batería completa. El controlador acumula a lo largo de la simulación el número de pedidos procesados, asignados, rechazados y completados, y cada dron registra individualmente sus minutos en vuelo, en recarga y en espera, lo que permite detectar al final desequilibrios en la carga de trabajo entre bases.
+
+\subsubsection{Simulador del clima}
+El Simulador Clima modela la incertidumbre meteorológica mediante un conjunto de estados discretos día normal, lluvia moderada, viento fuerte, calor extremo y condiciones adversas combinadas cada uno con un factor velocidad asociado. Cada INTERVALO CAMBIO CLIMA MIN minutos, el simulador muestrea un nuevo estado según una distribución de probabilidad que refleja la frecuencia histórica de cada condición climática en la zona de operación, manteniéndose estable entre transiciones. Esto reduce el coste computacional del paso climático a una simple consulta al estado activo en la gran mayoría de los minutos, reservando el muestreo aleatorio únicamente para los instantes de cambio. El factor velocidad del estado activo se multiplica directamente por la velocidad nominal del dron antes de calcular cualquier ETA, de modo que el clima no es un elemento cosmético del modelo sino un factor que se propaga a través de toda la cadena logística: condiciones adversas ralentizan las entregas, retrasan el regreso de los drones a base y reducen la disponibilidad de la flota, aumentando la longitud de la cola de pedidos pendientes.
+
+\subsubsection{Fases finales del desarrollo: escenarios, refactorización y visualización}
+Durante las últimas semanas del proyecto el equipo concentró sus esfuerzos en tres líneas de trabajo paralelas que llevaron el simulador a su forma definitiva. En primer lugar, se implementaron escenarios diferenciados de demanda y climatología adversa. Hasta ese momento el simulador operaba bajo una única configuración de parámetros; en esta fase se formalizaron distintos perfiles de simulación demanda base, picos de alta demanda y condiciones meteorológicas adversas cada uno con su propia función de tasa y su distribución de estados climáticos asociada. Esto permitió analizar la robustez del sistema ante situaciones de estrés y comparar el comportamiento de la flota bajo distintos contextos operativos, enriqueciendo significativamente el análisis de resultados. En segundo lugar, se acometió una refactorización estructural del simulador. La lógica principal de simulación, que hasta entonces residía íntegramente en main.py, se trasladó a un módulo independiente, dejando el fichero principal como un punto de entrada ligero desde el que configurar y lanzar cualquier combinación de escenarios de forma sencilla. Esta separación de responsabilidades facilitó también la generación de resultados más detallados al término de cada ejecución, incluyendo métricas más finas y la posibilidad de activar o desactivar de forma selectiva la impresión de mensajes por consola y la generación de gráficas, sin necesidad de modificar la lógica del simulador.
+
+Por último, se desarrolló una herramienta de visualización interactiva denominada Flight Radar, que constituye uno de los elementos más representativos del proyecto en términos de comunicación de resultados. Esta interfaz permite al usuario configurar antes de cada ejecución el modo de simulación, la duración en minutos y el número de drones de la flota. Una vez iniciada la simulación, el Flight Radar representa en tiempo real el movimiento de los drones sobre el mapa de la red logística, mostrando los trayectos de ida a los hospitales y los regresos a base, de forma que es posible observar visualmente la dinámica completa del sistema saturación de la flota, colas de pedidos, distribución geográfica de las misiones de una manera intuitiva y fácilmente comunicable.
+
+\subsubsection{Principal dificultad}
+Uno de los problemas más recurrentes durante el desarrollo fue la falta de consistencia en el nombrado de variables entre módulos, consecuencia natural del trabajo en equipo sobre una base de código en crecimiento rápido. Para resolverlo, el equipo dedicó un esfuerzo considerable a centralizar y unificar los nombres de todas las variables compartidas entre módulos, poniendo especial cuidado en que aquellas que eran referenciadas desde distintos puntos del sistema recibieran nombres claros, coherentes y autoexplicativos. Esta tarea, aunque no estaba prevista en la planificación inicial, resultó imprescindible para garantizar la correctitud del simulador y la fiabilidad de los resultados obtenidos.
+
+\end{document}
