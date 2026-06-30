@@ -1,0 +1,1069 @@
+"""
+simulacion.py
+=============
+
+Motor de simulación de eventos discretos (DES) y configuraciones de escenarios.
+
+Uso principal:
+    from simulacion import run_simulation, ESCENARIOS
+
+    config = ESCENARIOS["personalizado"].copy()
+    resultado = run_simulation(config)
+
+────────────────────────────────────────────────────────────
+ESCENARIOS disponibles
+────────────────────────────────────────────────────────────
+  "normal"                 Demanda normal, clima normal, flota estándar
+  "alta_demanda"           Mayor demanda, clima normal
+  "lluvia_alta_demanda"    Alta demanda + clima lluvioso
+  "baja_demanda_clima_adverso"  Baja demanda + clima adverso + menos drones
+  "estres_extremo"         Máxima demanda + clima adverso + flota mínima
+  "personalizado"          Distribución manual de drones por base y hospital
+
+────────────────────────────────────────────────────────────
+RESULTADO de run_simulation
+────────────────────────────────────────────────────────────
+  resultado["pedidos_generados"]   : pedidos totales en la simulación
+  resultado["pedidos_completados"] : pedidos entregados
+  resultado["tasa_servicio"]       : fracción completados / generados
+  resultado["tasa_exito_organos"]  : órganos a tiempo / órganos totales
+  resultado["total_drones"]        : número de drones en la flota
+  resultado["conteo_clima"]        : minutos por estado climático
+  ... (y muchas métricas más)
+"""
+
+import heapq
+
+from config import HOSPITALS, BASES
+from modelos import Inventario, GestorPrioridad
+from red import ServicioRed
+from telemetria import TelemetriaLogger
+from flota import GestorFlotaController
+from generador import GeneradorPedidos
+from clima import SimuladorClima
+
+
+# ===========================================================================
+# ESCENARIOS PREDEFINIDOS
+# ===========================================================================
+
+ESCENARIOS = {
+    "normal": {
+        "minutos_simulacion": 10080,
+        "drones_por_base": 2,
+        "drones_por_hospital": 1,
+        "semilla": 42,
+
+        "factor_demanda_inventario": 1.0,
+        "factor_demanda_organos": 1.0,
+        "escenario_clima": "normal",
+
+        "activar_meteorologia": True,
+        "intervalo_cambio_clima_min": 300,
+        "stock_inicial_cerca_umbral": False,
+
+        "generar_graficas": True,
+        "verbose": True,
+
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_clima": False,
+    },
+
+    "alta_demanda": {
+        "minutos_simulacion": 10080,
+        "drones_por_base": 2,
+        "drones_por_hospital": 1,
+        "semilla": 42,
+
+        "factor_demanda_inventario": 1.8,
+        "factor_demanda_organos": 1.5,
+        "escenario_clima": "normal",
+
+        "activar_meteorologia": True,
+        "intervalo_cambio_clima_min": 300,
+        "stock_inicial_cerca_umbral": False,
+
+        "generar_graficas": True,
+        "verbose": True,
+
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_clima": False,
+    },
+
+    "lluvia_alta_demanda": {
+        "minutos_simulacion": 10080,
+        "drones_por_base": 2,
+        "drones_por_hospital": 1,
+        "semilla": 42,
+
+        "factor_demanda_inventario": 1.8,
+        "factor_demanda_organos": 1.5,
+        "escenario_clima": "lluvioso",
+
+        "activar_meteorologia": True,
+        "intervalo_cambio_clima_min": 300,
+        "stock_inicial_cerca_umbral": False,
+
+        "generar_graficas": True,
+        "verbose": True,
+
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_clima": False,
+    },
+
+    "baja_demanda_clima_adverso": {
+        "minutos_simulacion": 10080,
+        "drones_por_base": 1,
+        "drones_por_hospital": 1,
+        "semilla": 42,
+
+        "factor_demanda_inventario": 0.7,
+        "factor_demanda_organos": 1.0,
+        "escenario_clima": "adverso",
+
+        "activar_meteorologia": True,
+        "intervalo_cambio_clima_min": 300,
+        "stock_inicial_cerca_umbral": False,
+
+        "generar_graficas": True,
+        "verbose": True,
+
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_clima": False,
+    },
+
+    "estres_extremo": {
+        "minutos_simulacion": 10080,
+        "drones_por_base": 1,
+        "drones_por_hospital": 1,
+        "semilla": 42,
+
+        "factor_demanda_inventario": 2.5,
+        "factor_demanda_organos": 2.0,
+        "escenario_clima": "adverso",
+
+        "activar_meteorologia": True,
+        "intervalo_cambio_clima_min": 300,
+        "stock_inicial_cerca_umbral": False,
+
+        "generar_graficas": True,
+        "verbose": True,
+
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": False,
+        "imprimir_eventos_clima": False,
+    },
+
+    "personalizado": {
+        "minutos_simulacion": 20160,
+
+        # Por defecto, ninguna base recibe drones.
+        # Los drones de base se ponen manualmente en drones_por_base_config.
+        "drones_por_base": 0,
+        "drones_por_base_config": {
+            "BASE NOROESTE": 2,
+            "BASE NORTE CAPITAL": 5,
+            "BASE ESTE CORREDOR": 4,
+            "BASE SUR FUENLABRADA": 3,
+        },
+
+        # Los drones hospitalarios se asignan manualmente por hospital.
+        # Cada hospital no listado recibe drones_por_hospital (= 0 aquí).
+        "drones_por_hospital": 0,
+        "drones_por_hospital_config": {
+            # Norte / norte capital
+            "Hospital Universitario La Paz": 1,
+            "Hospital Universitario Ramón y Cajal": 1,
+            "Hospital Universitario Infanta Sofía": 2,
+
+            # Centro
+            "Hospital General Universitario Gregorio Marañón": 1,
+
+            # Sur / suroeste
+            "Hospital Universitario 12 de Octubre": 1,
+            "Hospital Universitario de Fuenlabrada": 1,
+            "Hospital Universitario Infanta Cristina": 1,
+            "Hospital Universitario Infanta Elena": 3,
+            "Hospital Universitario José Germain": 1,
+
+            # Oeste / noroeste / sierra
+            "Hospital Universitario Puerta de Hierro Majadahonda": 3,
+            "Hospital Asociado Universitario Guadarrama": 3,
+            "Hospital La Fuenfría": 2,
+            "Hospital El Escorial": 1,
+
+            # Este / corredor del Henares
+            "Hospital Universitario de Torrejón": 1,
+            "Hospital Universitario Príncipe de Asturias": 1,
+            "Hospital Universitario del Sureste": 1,
+        },
+
+        "semilla": None,
+
+        "factor_demanda_inventario": 1.5,
+        "factor_demanda_organos": 1.2,
+        "escenario_clima": "normal",
+
+        "activar_meteorologia": True,
+        "intervalo_cambio_clima_min": 300,
+        "stock_inicial_cerca_umbral": False,
+
+        "generar_graficas": True,
+        "verbose": True,
+
+        "imprimir_eventos_drones": False,
+        "imprimir_eventos_hospital": True,
+        "imprimir_eventos_clima": False,
+    },
+}
+
+
+# ===========================================================================
+# FUNCIONES AUXILIARES DEL MOTOR
+# ===========================================================================
+
+def es_pedido_inventario(pedido):
+    return getattr(pedido, "tipo_pedido", "inventario") == "inventario"
+
+
+def es_pedido_organo(pedido):
+    return getattr(pedido, "tipo_pedido", "inventario") == "organo"
+
+
+def _contar_por_producto(lista_pedidos):
+    """Cuenta cuántos pedidos hay de cada producto en una lista."""
+    conteo = {}
+    for pedido in lista_pedidos:
+        producto = getattr(pedido, "producto", None) or "desconocido"
+        conteo[producto] = conteo.get(producto, 0) + 1
+    return conteo
+
+
+def calcular_percentil(valores, percentil):
+    """Calcula un percentil sin depender de numpy."""
+    if not valores:
+        return None
+
+    valores_ordenados = sorted(valores)
+    k = (len(valores_ordenados) - 1) * percentil / 100
+    f = int(k)
+    c = min(f + 1, len(valores_ordenados) - 1)
+
+    if f == c:
+        return valores_ordenados[f]
+
+    return (
+        valores_ordenados[f] * (c - k)
+        + valores_ordenados[c] * (k - f)
+    )
+
+
+def descripcion_pedido(pedido):
+    if es_pedido_organo(pedido):
+        return (
+            f"ORGANO {pedido.producto.upper()} "
+            f"{pedido.origin_hospital} -> {pedido.destination_hospital}"
+        )
+
+    return (
+        f"{pedido.producto} x{pedido.unidades} "
+        f"{pedido.origin_hospital} -> {pedido.destination_hospital}"
+    )
+
+
+# ===========================================================================
+# MOTOR DE SIMULACIÓN PRINCIPAL
+# ===========================================================================
+
+def run_simulation(config=None):
+    """
+    Ejecuta una simulación completa del sistema.
+
+    Parámetro:
+        config: diccionario con parámetros de simulación.
+
+    Devuelve:
+        resultado: diccionario con métricas básicas.
+    """
+
+    if config is None:
+        config = {}
+
+    # -----------------------------------------------------------------------
+    # CONFIGURACIÓN
+    # -----------------------------------------------------------------------
+
+    MINUTOS_SIMULACION = config.get("minutos_simulacion", 1440)
+
+    DRONES_POR_BASE = config.get("drones_por_base", 2)
+    DRONES_POR_HOSPITAL = config.get("drones_por_hospital", 1)
+
+    DRONES_POR_BASE_CONFIG = config.get("drones_por_base_config", {})
+    DRONES_POR_HOSPITAL_CONFIG = config.get("drones_por_hospital_config", {})
+
+    SEMILLA_ALEATORIA = config.get("semilla", None)
+
+    FACTOR_DEMANDA_INVENTARIO = config.get("factor_demanda_inventario", 1.0)
+    FACTOR_DEMANDA_ORGANOS = config.get("factor_demanda_organos", 1.0)
+    ESCENARIO_CLIMA = config.get("escenario_clima", "normal")
+
+    ACTIVAR_METEOROLOGIA = config.get("activar_meteorologia", True)
+    INTERVALO_CAMBIO_CLIMA_MIN = config.get("intervalo_cambio_clima_min", 300)
+
+    STOCK_INICIAL_CERCA_UMBRAL = config.get("stock_inicial_cerca_umbral", True)
+
+    GENERAR_GRAFICAS = config.get("generar_graficas", False)
+    VERBOSE = config.get("verbose", True)
+
+    IMPRIMIR_EVENTOS_DRONES = config.get("imprimir_eventos_drones", False)
+    IMPRIMIR_EVENTOS_HOSPITAL = config.get("imprimir_eventos_hospital", False)
+    IMPRIMIR_EVENTOS_CLIMA = config.get("imprimir_eventos_clima", False)
+
+    # -----------------------------------------------------------------------
+    # FASE 1: INICIALIZACIÓN
+    # -----------------------------------------------------------------------
+
+    red = ServicioRed()
+
+    gestor_flota = GestorFlotaController(red)
+    gestor_flota.inicializar_flota(
+        drones_por_base=DRONES_POR_BASE,
+        drones_por_hospital=DRONES_POR_HOSPITAL,
+        drones_por_base_config=DRONES_POR_BASE_CONFIG,
+        drones_por_hospital_config=DRONES_POR_HOSPITAL_CONFIG,
+    )
+
+    inventarios = {}
+    lista_hospitales = []
+
+    for nombre, nodo in HOSPITALS.items():
+        inventario_hospital = Inventario(es_almacen_central=False)
+
+        if STOCK_INICIAL_CERCA_UMBRAL:
+            for _, producto in inventario_hospital.productos.items():
+                producto.stock_fisico = int(producto.umbral_s * 1.2) + 1
+
+        inventarios[nombre] = inventario_hospital
+        lista_hospitales.append(nodo)
+
+    lista_bases = []
+
+    for nombre, nodo in BASES.items():
+        inventarios[nombre] = Inventario(es_almacen_central=True)
+        lista_bases.append(nodo)
+
+    generador = GeneradorPedidos(
+        lista_hospitales,
+        lista_bases,
+        semilla=SEMILLA_ALEATORIA,
+        duracion_min=MINUTOS_SIMULACION,
+        factor_demanda_inventario=FACTOR_DEMANDA_INVENTARIO,
+        factor_demanda_organos=FACTOR_DEMANDA_ORGANOS,
+    )
+
+    cola_pedidos = GestorPrioridad()
+
+    clima_sim = SimuladorClima(
+        intervalo_cambio_min=INTERVALO_CAMBIO_CLIMA_MIN,
+        semilla=SEMILLA_ALEATORIA,
+        escenario_clima=ESCENARIO_CLIMA,
+    )
+
+    conteo_clima = {}
+    estado_clima_anterior = None
+
+    cola_eventos_des = []
+    secuencia_evento = 0
+
+    historial_longitud_cola = []
+
+    telemetria = TelemetriaLogger()
+
+    # -----------------------------------------------------------------------
+    # REPORTE INICIAL
+    # -----------------------------------------------------------------------
+
+    if VERBOSE:
+        print("=" * 60)
+        print("  SIMULADOR DE RED DE DRONES HOSPITALARIOS")
+        print("=" * 60)
+
+        dias = MINUTOS_SIMULACION / 1440
+
+        print(f"  Duracion:          {MINUTOS_SIMULACION} min  ({dias:.1f} dias)")
+        print(f"  Hospitales:        {len(HOSPITALS)}")
+        print(f"  Bases:             {len(BASES)}")
+
+        print(f"  Demanda inventario: x{FACTOR_DEMANDA_INVENTARIO}")
+        print(f"  Demanda organos:    x{FACTOR_DEMANDA_ORGANOS}")
+        print(f"  Escenario clima:    {ESCENARIO_CLIMA}")
+
+        semilla_str = (
+            str(SEMILLA_ALEATORIA)
+            if SEMILLA_ALEATORIA is not None
+            else "aleatorio (None)"
+        )
+
+        print(f"  Semilla:           {semilla_str}")
+
+        print(
+            f"  Eventos pregenerados: {generador.total_eventos_dia()}  "
+            f"(~{generador.total_eventos_dia() / max(dias, 1):.0f}/dia)"
+        )
+
+        clima_str = (
+            f"Simulado (cambio cada {clima_sim.intervalo_cambio_min} min)"
+            if ACTIVAR_METEOROLOGIA
+            else "Desactivado"
+        )
+
+        print(f"  Clima:             {clima_str}")
+        print("-" * 60)
+
+    # -----------------------------------------------------------------------
+    # FASE 2: BUCLE PRINCIPAL
+    # -----------------------------------------------------------------------
+
+    for minuto in range(MINUTOS_SIMULACION):
+
+        # -------------------------------------------------------------------
+        # PASO CLIMA
+        # -------------------------------------------------------------------
+
+        if ACTIVAR_METEOROLOGIA:
+            estado_clima = clima_sim.actualizar(minuto)
+            factor_vel = estado_clima.factor_velocidad
+
+            conteo_clima[estado_clima.nombre] = (
+                conteo_clima.get(estado_clima.nombre, 0) + 1
+            )
+
+            if IMPRIMIR_EVENTOS_CLIMA and estado_clima is not estado_clima_anterior:
+                print(
+                    f"  [t={minuto:05d}] CLIMA       {estado_clima.descripcion}  "
+                    f"(velocidad x{factor_vel:.2f})"
+                )
+
+            estado_clima_anterior = estado_clima
+
+        else:
+            factor_vel = 1.0
+
+        # -------------------------------------------------------------------
+        # PASO A: procesar eventos DES vencidos
+        # -------------------------------------------------------------------
+
+        while cola_eventos_des and cola_eventos_des[0][0] <= minuto:
+            evento = heapq.heappop(cola_eventos_des)
+
+            if len(evento) == 4:
+                _, _, tipo_evento, id_dron = evento
+                decision = None
+            else:
+                _, _, tipo_evento, id_dron, decision = evento
+
+            if tipo_evento == "llegada_hospital":
+                siguiente_evento, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
+                    id_dron,
+                    minuto,
+                    decision,
+                )
+
+                if (
+                    pedido_ok is not None
+                    and es_pedido_inventario(pedido_ok)
+                    and pedido_ok.producto
+                ):
+                    inventarios[pedido_ok.destination_hospital].recibir_dron(
+                        pedido_ok.producto,
+                        pedido_ok.unidades,
+                    )
+
+                # Si el gestor devuelve una tupla, es una recarga hospitalaria.
+                if isinstance(siguiente_evento, tuple):
+                    tipo_siguiente_evento, tiempo_siguiente_evento = siguiente_evento
+
+                    secuencia_evento += 1
+                    heapq.heappush(
+                        cola_eventos_des,
+                        (
+                            tiempo_siguiente_evento,
+                            secuencia_evento,
+                            tipo_siguiente_evento,
+                            id_dron,
+                            None,
+                        ),
+                    )
+
+                    if IMPRIMIR_EVENTOS_DRONES:
+                        dron_recarga = gestor_flota.drones[id_dron]
+                        print(
+                            f"  [t={minuto:05d}] RECARGA HOSP {id_dron} "
+                            f"en {dron_recarga.current_node} "
+                            f"bat={dron_recarga.battery_percent:.1f}% "
+                            f"-> ETA={tiempo_siguiente_evento:.0f}"
+                        )
+
+                # Si devuelve un número, es la vuelta a base de inventario.
+                elif siguiente_evento is not None:
+                    eta_base = siguiente_evento
+
+                    secuencia_evento += 1
+                    heapq.heappush(
+                        cola_eventos_des,
+                        (
+                            eta_base,
+                            secuencia_evento,
+                            "aterrizaje_base",
+                            id_dron,
+                            None,
+                        ),
+                    )
+
+                    # Telemetría: vuelo de VUELTA a base
+                    dron_vuelta = gestor_flota.drones[id_dron]
+                    telemetria.registrar_vuelo(
+                        dron_id=id_dron,
+                        origen=pedido_ok.destination_hospital if pedido_ok else dron_vuelta.current_node,
+                        destino=dron_vuelta.base_name,
+                        t_salida=minuto,
+                        t_llegada=eta_base,
+                        tipo_mision="vuelta_base",
+                        bateria=dron_vuelta.battery_percent,
+                    )
+
+                if IMPRIMIR_EVENTOS_DRONES and pedido_ok is not None:
+                    if es_pedido_organo(pedido_ok):
+                        print(
+                            f"  [t={minuto:05d}] ENTREGA ORG {id_dron} "
+                            f"| {pedido_ok.producto.upper()} "
+                            f"{pedido_ok.origin_hospital} -> {pedido_ok.destination_hospital} "
+                            f"| dron queda en destino"
+                        )
+                    else:
+                        print(
+                            f"  [t={minuto:05d}] DESCARGA    {id_dron} "
+                            f"en {pedido_ok.destination_hospital} "
+                            f"| {pedido_ok.producto} x{pedido_ok.unidades} "
+                            f"-> regreso ETA={siguiente_evento:.0f}"
+                        )
+
+            elif tipo_evento == "aterrizaje_base":
+                bat_antes = gestor_flota.drones[id_dron].battery_percent
+
+                tiempo_fin_recarga = gestor_flota.procesar_evento_aterrizaje_base(
+                    id_dron,
+                    minuto,
+                )
+
+                if tiempo_fin_recarga is not None:
+                    secuencia_evento += 1
+                    heapq.heappush(
+                        cola_eventos_des,
+                        (
+                            tiempo_fin_recarga,
+                            secuencia_evento,
+                            "fin_recarga",
+                            id_dron,
+                            None,
+                        ),
+                    )
+
+                    if IMPRIMIR_EVENTOS_DRONES:
+                        print(
+                            f"  [t={minuto:05d}] ATERRIZAJE  {id_dron} "
+                            f"en base bat={bat_antes:.1f}% "
+                            f"-> RECARGA ETA={tiempo_fin_recarga:.0f}"
+                        )
+
+                else:
+                    if IMPRIMIR_EVENTOS_DRONES:
+                        print(
+                            f"  [t={minuto:05d}] ATERRIZAJE  {id_dron} "
+                            f"en base bat={bat_antes:.1f}% -> DISPONIBLE"
+                        )
+
+            elif tipo_evento == "fin_recarga":
+                gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+                if IMPRIMIR_EVENTOS_DRONES:
+                    print(
+                        f"  [t={minuto:05d}] FIN RECARGA {id_dron} "
+                        f"bat=100.0% -> DISPONIBLE"
+                    )
+
+        # -------------------------------------------------------------------
+        # PASO B: generar pedidos del minuto
+        # -------------------------------------------------------------------
+
+        generador.procesar_minuto(
+            minuto,
+            inventarios,
+            cola_pedidos,
+            verbose=IMPRIMIR_EVENTOS_HOSPITAL,
+        )
+
+        # -------------------------------------------------------------------
+        # PASO C: despachar cola por rondas
+        # -------------------------------------------------------------------
+        # Se intenta asignar cada pedido como máximo una vez por minuto.
+        # Si no se puede asignar, vuelve a la cola.
+
+        pedidos_ronda = cola_pedidos.extraer_ronda_ordenada()
+
+        for pedido in pedidos_ronda:
+
+            resumen = gestor_flota.obtener_resumen_estado()
+
+            if es_pedido_organo(pedido) and resumen.get("hospital_available", 0) == 0:
+                cola_pedidos.añadir_pedido(pedido)
+                continue
+
+            if es_pedido_inventario(pedido) and resumen.get("base_available", 0) == 0:
+                cola_pedidos.añadir_pedido(pedido)
+                continue
+
+            resultado = gestor_flota.procesar_nuevo_pedido(
+                pedido,
+                minuto,
+                factor_vel,
+            )
+
+            if resultado is None:
+                cola_pedidos.añadir_pedido(pedido)
+
+                if IMPRIMIR_EVENTOS_DRONES:
+                    if es_pedido_organo(pedido):
+                        print(
+                            f"  [t={minuto:05d}] ESPERA ORG pedido #{pedido.call_id} "
+                            f"({pedido.producto.upper()} "
+                            f"{pedido.origin_hospital} -> {pedido.destination_hospital})"
+                        )
+                    else:
+                        print(
+                            f"  [t={minuto:05d}] ESPERA INV pedido #{pedido.call_id} "
+                            f"({pedido.producto} x{pedido.unidades} "
+                            f"{pedido.origin_hospital} -> {pedido.destination_hospital})"
+                        )
+
+                continue
+
+            eta_ida, decision = resultado
+            id_dron_asignado = pedido.assigned_drone_id
+            bat_post = gestor_flota.drones[id_dron_asignado].battery_percent
+
+            if es_pedido_inventario(pedido) and pedido.producto:
+                inventarios[pedido.origin_hospital].enviar_dron(
+                    pedido.producto,
+                    pedido.unidades,
+                )
+
+            secuencia_evento += 1
+            heapq.heappush(
+                cola_eventos_des,
+                (
+                    eta_ida,
+                    secuencia_evento,
+                    "llegada_hospital",
+                    id_dron_asignado,
+                    decision,
+                ),
+            )
+
+            # Telemetría: vuelo de IDA
+            tipo_tel = "organo" if es_pedido_organo(pedido) else "inventario"
+            telemetria.registrar_vuelo(
+                dron_id=id_dron_asignado,
+                origen=pedido.origin_hospital,
+                destino=pedido.destination_hospital,
+                t_salida=minuto,
+                t_llegada=eta_ida,
+                tipo_mision=tipo_tel,
+                bateria=bat_post,
+            )
+
+            if IMPRIMIR_EVENTOS_DRONES:
+                if es_pedido_organo(pedido):
+                    print(
+                        f"  [t={minuto:05d}] DESPACHO ORG {id_dron_asignado} "
+                        f"bat->{bat_post:.1f}% "
+                        f"| {pedido.producto.upper()} "
+                        f"{pedido.origin_hospital} -> {pedido.destination_hospital} "
+                        f"| deadline={pedido.deadline_min:.0f} "
+                        f"| ETA={eta_ida:.0f}"
+                    )
+                else:
+                    print(
+                        f"  [t={minuto:05d}] DESPACHO    {id_dron_asignado} "
+                        f"bat->{bat_post:.1f}% "
+                        f"| {pedido.producto} x{pedido.unidades} "
+                        f"{pedido.origin_hospital} -> {pedido.destination_hospital} "
+                        f"| ETA={eta_ida:.0f}"
+                    )
+
+        historial_longitud_cola.append(cola_pedidos.size())
+
+    # -----------------------------------------------------------------------
+    # FASE 3: PROCESAR EVENTOS DES RESTANTES POST-SIMULACION
+    # -----------------------------------------------------------------------
+    # Se completan misiones ya asignadas, pero no se despachan pedidos nuevos.
+
+    while cola_eventos_des:
+        evento = heapq.heappop(cola_eventos_des)
+
+        if len(evento) == 4:
+            tiempo_evento, _, tipo_evento, id_dron = evento
+            decision = None
+        else:
+            tiempo_evento, _, tipo_evento, id_dron, decision = evento
+
+        if tipo_evento == "llegada_hospital":
+            siguiente_evento, pedido_ok = gestor_flota.procesar_evento_llegada_hospital(
+                id_dron,
+                tiempo_evento,
+                decision,
+            )
+
+            if (
+                pedido_ok is not None
+                and es_pedido_inventario(pedido_ok)
+                and pedido_ok.producto
+            ):
+                inventarios[pedido_ok.destination_hospital].recibir_dron(
+                    pedido_ok.producto,
+                    pedido_ok.unidades,
+                )
+
+            if isinstance(siguiente_evento, tuple):
+                tipo_siguiente_evento, _ = siguiente_evento
+
+                if tipo_siguiente_evento == "fin_recarga":
+                    gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+            elif siguiente_evento is not None:
+                eta_base = siguiente_evento
+
+                tiempo_fin_recarga = gestor_flota.procesar_evento_aterrizaje_base(
+                    id_dron,
+                    eta_base,
+                )
+
+                if tiempo_fin_recarga is not None:
+                    gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+        elif tipo_evento == "aterrizaje_base":
+            tiempo_fin_recarga = gestor_flota.procesar_evento_aterrizaje_base(
+                id_dron,
+                tiempo_evento,
+            )
+
+            if tiempo_fin_recarga is not None:
+                gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+        elif tipo_evento == "fin_recarga":
+            gestor_flota.procesar_evento_fin_recarga(id_dron)
+
+    # -----------------------------------------------------------------------
+    # FASE 4: MÉTRICAS  +  EXPORTAR TELEMETRÍA
+    # -----------------------------------------------------------------------
+
+    telemetria.exportar_json()
+
+    estadisticas = gestor_flota.estadisticas
+    resumen_flota = gestor_flota.obtener_resumen_estado()
+
+    total_gen = generador._contador_pedidos
+
+    pedidos_completados = getattr(gestor_flota, "pedidos_completados", [])
+    pedidos_rechazados = getattr(gestor_flota, "pedidos_rechazados", [])
+    pedidos_pendientes = getattr(cola_pedidos, "pedidos_pendientes", [])
+
+    organos_completados = [
+        pedido for pedido in pedidos_completados
+        if es_pedido_organo(pedido)
+    ]
+
+    organos_rechazados = [
+        pedido for pedido in pedidos_rechazados
+        if es_pedido_organo(pedido)
+    ]
+
+    organos_pendientes = [
+        pedido for pedido in pedidos_pendientes
+        if es_pedido_organo(pedido)
+    ]
+
+    inventario_completado = [
+        pedido for pedido in pedidos_completados
+        if es_pedido_inventario(pedido)
+    ]
+
+    inventario_pendiente = [
+        pedido for pedido in pedidos_pendientes
+        if es_pedido_inventario(pedido)
+    ]
+
+    tiempos_inventario = [
+        pedido.completed_time_min - pedido.timestamp_min
+        for pedido in inventario_completado
+        if pedido.completed_time_min is not None
+    ]
+
+    tiempos_organos = [
+        pedido.completed_time_min - pedido.timestamp_min
+        for pedido in organos_completados
+        if pedido.completed_time_min is not None
+    ]
+
+    p95_inventario = calcular_percentil(tiempos_inventario, 95)
+    p95_organos = calcular_percentil(tiempos_organos, 95)
+
+    detalle_organos_pendientes = []
+
+    for pedido in organos_pendientes:
+        timestamp = getattr(pedido, "timestamp_min", None)
+        tiempo_restante = (
+            MINUTOS_SIMULACION - timestamp
+            if timestamp is not None
+            else None
+        )
+
+        detalle_organos_pendientes.append(
+            {
+                "call_id": getattr(pedido, "call_id", None),
+                "producto": getattr(pedido, "producto", None),
+                "origen": getattr(pedido, "origin_hospital", None),
+                "destino": getattr(pedido, "destination_hospital", None),
+                "timestamp_min": timestamp,
+                "tiempo_restante_simulacion_min": tiempo_restante,
+                "deadline_min": getattr(pedido, "deadline_min", None),
+            }
+        )
+
+    organos_totales = estadisticas.organ_calls
+
+    total_vuelo = sum(dron.flight_minutes for dron in gestor_flota.drones.values())
+    total_recarga = sum(dron.charging_minutes for dron in gestor_flota.drones.values())
+    total_tiempo_flota = len(gestor_flota.drones) * MINUTOS_SIMULACION
+
+    utilizacion_vuelo = (
+        total_vuelo / total_tiempo_flota
+        if total_tiempo_flota > 0
+        else 0
+    )
+
+    utilizacion_operativa = (
+        (total_vuelo + total_recarga) / total_tiempo_flota
+        if total_tiempo_flota > 0
+        else 0
+    )
+
+    longitud_media_cola = (
+        sum(historial_longitud_cola) / len(historial_longitud_cola)
+        if historial_longitud_cola
+        else 0
+    )
+
+    longitud_maxima_cola = (
+        max(historial_longitud_cola)
+        if historial_longitud_cola
+        else 0
+    )
+
+    tasa_servicio = (
+        estadisticas.completed_calls / estadisticas.total_calls
+        if estadisticas.total_calls > 0
+        else 0
+    )
+
+    tasa_exito_organos = (
+        estadisticas.organ_on_time / organos_totales
+        if organos_totales > 0
+        else 0
+    )
+
+    resultado = {
+        "minutos_simulacion": MINUTOS_SIMULACION,
+        "drones_por_base": DRONES_POR_BASE,
+        "drones_por_hospital": DRONES_POR_HOSPITAL,
+        "total_drones": len(gestor_flota.drones),
+        "numero_hospitales": len(HOSPITALS),
+        "numero_bases": len(BASES),
+
+        "factor_demanda_inventario": FACTOR_DEMANDA_INVENTARIO,
+        "factor_demanda_organos": FACTOR_DEMANDA_ORGANOS,
+        "escenario_clima": ESCENARIO_CLIMA,
+
+        "pedidos_generados": total_gen,
+        "pedidos_procesados": estadisticas.total_calls,
+        "pedidos_asignados": estadisticas.assigned_calls,
+        "pedidos_completados": estadisticas.completed_calls,
+        "pedidos_rechazados": estadisticas.rejected_calls,
+        "pedidos_en_cola": cola_pedidos.size(),
+        "tasa_servicio": tasa_servicio,
+
+        "inventario_completado": len(inventario_completado),
+        "inventario_pendiente": len(inventario_pendiente),
+        "p95_inventario_min": p95_inventario,
+
+        "organos_totales": organos_totales,
+        "organos_completados": len(organos_completados),
+        "organos_rechazados": len(organos_rechazados),
+        "organos_pendientes": len(organos_pendientes),
+        "organos_on_time": estadisticas.organ_on_time,
+        "organos_late": estadisticas.organ_late,
+        "tasa_exito_organos": tasa_exito_organos,
+        "p95_organos_min": p95_organos,
+        "detalle_organos_pendientes": detalle_organos_pendientes,
+
+        "utilizacion_vuelo_pct": utilizacion_vuelo * 100,
+        "utilizacion_operativa_pct": utilizacion_operativa * 100,
+        "tiempo_total_vuelo": total_vuelo,
+        "tiempo_total_recarga": total_recarga,
+
+        "longitud_media_cola": longitud_media_cola,
+        "longitud_maxima_cola": longitud_maxima_cola,
+
+        "resumen_flota": resumen_flota,
+        "conteo_clima": conteo_clima,
+
+        "conteo_producto_completados": _contar_por_producto(pedidos_completados),
+        "conteo_producto_pendientes": _contar_por_producto(pedidos_pendientes),
+        "conteo_producto_rechazados": _contar_por_producto(pedidos_rechazados),
+
+        # Objetos internos para gráficas
+        "_gestor_flota": gestor_flota,
+        "_historial_longitud_cola": historial_longitud_cola,
+        "_cola_pedidos": cola_pedidos,
+    }
+
+    # -----------------------------------------------------------------------
+    # REPORTE FINAL
+    # -----------------------------------------------------------------------
+
+    if VERBOSE:
+        print("\n" + "=" * 60)
+        print("  RESULTADOS DE LA SIMULACION")
+        print("=" * 60)
+
+        print("\n--- PEDIDOS ---")
+        print(f"  Pedidos generados:           {total_gen}")
+        print(f"  Pedidos procesados:          {estadisticas.total_calls}")
+        print(f"  Pedidos asignados:           {estadisticas.assigned_calls}")
+        print(f"  Pedidos rechazados:          {estadisticas.rejected_calls}")
+        print(f"  Pedidos completados:         {estadisticas.completed_calls}")
+        print(f"  Pedidos aun en cola:         {cola_pedidos.size()}")
+        print(f"  Tasa de servicio:            {tasa_servicio * 100:.1f}%")
+
+        print("\n--- INVENTARIO ---")
+        print(f"  Inventario completado:       {len(inventario_completado)}")
+        print(f"  Inventario pendiente:        {len(inventario_pendiente)}")
+
+        if p95_inventario is not None:
+            print(f"  P95 inventario:              {p95_inventario:.2f} min")
+        else:
+            print("  P95 inventario:              sin datos")
+
+        print("\n--- ORGANOS ---")
+        print(f"  Organos totales:             {organos_totales}")
+        print(f"  Organos completados:         {len(organos_completados)}")
+        print(f"  Organos rechazados:          {len(organos_rechazados)}")
+        print(f"  Organos pendientes:          {len(organos_pendientes)}")
+        print(f"  Organos a tiempo:            {estadisticas.organ_on_time}")
+        print(f"  Organos tarde:               {estadisticas.organ_late}")
+        print(f"  Tasa exito organos:          {tasa_exito_organos * 100:.1f}%")
+
+        if p95_organos is not None:
+            print(f"  P95 organos:                 {p95_organos:.2f} min")
+        else:
+            print("  P95 organos:                 sin datos")
+
+        if detalle_organos_pendientes:
+            print("\n  --- DETALLE ORGANOS PENDIENTES ---")
+
+            for detalle in detalle_organos_pendientes:
+                tiempo_restante = detalle["tiempo_restante_simulacion_min"]
+                tiempo_restante_txt = (
+                    f"{tiempo_restante:.0f}"
+                    if tiempo_restante is not None
+                    else "desconocido"
+                )
+
+                deadline = detalle["deadline_min"]
+                deadline_txt = (
+                    f"{deadline:.0f}"
+                    if deadline is not None
+                    else "sin deadline"
+                )
+
+                print(
+                    f"  Pedido #{detalle['call_id']} | "
+                    f"{str(detalle['producto']).upper()} | "
+                    f"{detalle['origen']} -> {detalle['destino']} | "
+                    f"aparecio t={detalle['timestamp_min']} | "
+                    f"faltaban {tiempo_restante_txt} min para acabar | "
+                    f"deadline={deadline_txt}"
+                )
+
+        print("\n--- COLA ---")
+        print(f"  Longitud media de cola:      {longitud_media_cola:.2f}")
+        print(f"  Longitud maxima de cola:     {longitud_maxima_cola}")
+
+        print("\n--- FLOTA DE DRONES ---")
+        print(f"  Total drones:                {len(gestor_flota.drones)}")
+        print(f"  Drones base total:           {resumen_flota.get('base_total', 0)}")
+        print(f"  Drones hospital total:       {resumen_flota.get('hospital_total', 0)}")
+        print(f"  Disponibles total:           {resumen_flota.get('available', 0)}")
+        print(f"  Disponibles base:            {resumen_flota.get('base_available', 0)}")
+        print(f"  Disponibles hospital:        {resumen_flota.get('hospital_available', 0)}")
+        print(f"  En mision:                   {resumen_flota.get('mission', 0)}")
+        print(f"  Volviendo a base:            {resumen_flota.get('returning', 0)}")
+        print(f"  Recargando:                  {resumen_flota.get('charging', 0)}")
+        print(f"  Utilizacion vuelo:           {utilizacion_vuelo * 100:.2f}%")
+        print(f"  Utilizacion operativa:       {utilizacion_operativa * 100:.2f}%")
+
+        if ACTIVAR_METEOROLOGIA:
+            print("\n--- METEOROLOGIA ---")
+            for nombre_estado, minutos_estado in conteo_clima.items():
+                porcentaje = (
+                    minutos_estado / MINUTOS_SIMULACION
+                ) * 100 if MINUTOS_SIMULACION else 0
+
+                print(
+                    f"  {nombre_estado:20s} "
+                    f"{minutos_estado:5d} min "
+                    f"({porcentaje:5.1f}%)"
+                )
+
+        print("\n" + "=" * 60)
+        print("  FIN DE LA SIMULACION")
+        print("=" * 60)
+
+    # -----------------------------------------------------------------------
+    # GRÁFICAS OPCIONALES
+    # -----------------------------------------------------------------------
+
+    if GENERAR_GRAFICAS:
+        try:
+            from graficas import mostrar_graficas_resultados
+
+            mostrar_graficas_resultados(
+                gestor_flota,
+                total_gen,
+                MINUTOS_SIMULACION,
+                historial_longitud_cola=historial_longitud_cola,
+                cola_pedidos=cola_pedidos,
+            )
+
+        except ImportError as error:
+            if VERBOSE:
+                print(
+                    "\n  [Aviso] No se pudieron generar las graficas. "
+                    f"¿Está instalado matplotlib? Error: {error}"
+                )
+
+    return resultado

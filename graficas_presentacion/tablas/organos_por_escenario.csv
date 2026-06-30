@@ -1,5 +1,5 @@
 ﻿escenario,organos_totales,organos_a_tiempo,organos_fuera_isquemia,organos_pendientes,exito_clinico_pct
-Base,359.0,359.0,0.0,0.0,100.0
-Moderado,425.0,425.0,0.0,0.0,100.0
-Alto,549.0,549.0,0.0,0.0,100.0
-Muy alto,737.0,737.0,0.0,0.0,100.0
+Base,359.0,357.0,2.0,1.0,99.44289693593315
+Moderado,425.0,421.0,4.0,2.0,99.05882352941177
+Alto,549.0,543.0,5.0,4.0,98.90710382513662
+Muy alto,737.0,729.0,8.0,6.0,98.9145183175034

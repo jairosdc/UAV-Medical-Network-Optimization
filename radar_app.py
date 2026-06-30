@@ -26,10 +26,9 @@ import numpy as np
 # Importaciones del proyecto
 # ---------------------------------------------------------------------------
 
-from hospitales_almacenes_data import HOSPITALS, BASES
-from services.grafo_distancias_service import ServicioRed
-from simulators.experimentacion import run_simulation
-from simulators.escenarios import ESCENARIOS
+from config import HOSPITALS, BASES
+from red import ServicioRed
+from simulacion import run_simulation, ESCENARIOS
 
 # ---------------------------------------------------------------------------
 # CONSTANTES

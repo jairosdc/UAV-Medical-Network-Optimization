@@ -1,5 +1,4 @@
-from simulators.experimentacion import run_simulation
-from simulators.escenarios import ESCENARIOS
+from simulacion import run_simulation, ESCENARIOS
 
 
 def main():
