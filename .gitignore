@@ -1,3 +1,7 @@
+# ============================================
+# UAV Medical Network Optimization — .gitignore
+# ============================================
+
 # Python
 __pycache__/
 *.pyc
@@ -8,20 +12,17 @@ __pycache__/
 dist/
 build/
 
-# macOS
-.DS_Store
-
 # Entornos virtuales
 .venv/
 venv/
 env/
 
 # IDEs
-.vscode/settings.json
+.vscode/
 .idea/
+
+# macOS
+.DS_Store
 
 # Outputs generados por la simulación
 telemetria_vuelos.json
-datasets_montecarlo_dimensionamiento_1semana/
-graficas_presentacion/
-Grafo/grafo.html
