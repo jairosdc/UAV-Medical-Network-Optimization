@@ -14,3 +14,6 @@ branca>=0.6.0
 # Simulación visual e interactiva (FlyRadar)
 streamlit>=1.22.0
 pydeck>=0.8.0
+
+# Testing y desarrollo
+pytest>=8.0.0

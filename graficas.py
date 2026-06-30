@@ -1,4 +1,4 @@
-# generar_graficas_presentacion.py
+# graficas.py
 # ============================================================
 # Gráficas finales limpias para presentación
 # Red sanitaria de drones
@@ -729,11 +729,12 @@ def grafica_tiempos_organos(df_rutas: pd.DataFrame, out: Path):
 
     bp = ax.boxplot(
         datos,
-        labels=escenarios,
         patch_artist=True,
         showfliers=False,
         widths=0.55,
     )
+    ax.set_xticks(range(1, len(escenarios) + 1))
+    ax.set_xticklabels(escenarios)
 
     for patch, esc in zip(bp["boxes"], escenarios):
         patch.set_facecolor(color_escenario(esc))

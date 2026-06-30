@@ -782,7 +782,7 @@ with st.sidebar:
         60,
     )
 
-    opciones_clima = ["normal", "severo", "despejado"]
+    opciones_clima = ["normal", "lluvioso", "adverso"]
     clima_default = CONFIG_ESCENARIO_RADAR.get("escenario_clima", "normal")
     indice_clima = opciones_clima.index(clima_default) if clima_default in opciones_clima else 0
 

@@ -1,0 +1,9 @@
+[project]
+name = "uav-medical-network-optimization"
+version = "0.1.0"
+description = "Discrete-event simulation for a medical drone logistics network."
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

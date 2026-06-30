@@ -1,15 +1,15 @@
 """
-montecarlo_escenarios_sencillo.py
-=================================
+montecarlo.py
+=============
 
-Ejecuta simulaciones Monte Carlo y guarda un unico CSV.
-Ese CSV es la tabla que despues lee el script de graficas.
+Ejecuta simulaciones Monte Carlo y guarda un único CSV.
+Ese CSV es la tabla que después lee el script de gráficas.
 
-Uso desde la raiz del proyecto:
-    python -m simulators.montecarlo_escenarios_sencillo
+Uso desde la raíz del proyecto:
+    python montecarlo.py
 
-Tambien puedes cambiar parametros:
-    python -m simulators.montecarlo_escenarios_sencillo --simulaciones 20 --salida resultados/tabla_montecarlo.csv
+También puedes cambiar parámetros:
+    python montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
 """
 
 from __future__ import annotations
@@ -55,31 +55,31 @@ DRONES_BASE_CONFIG = {
 
 DRONES_HOSPITALARIOS_CONFIG = {
     "Hospital Universitario La Paz": 1,
-    "Hospital Universitario RamÃ³n y Cajal": 1,
-    "Hospital Universitario Infanta SofÃ­a": 2,
-    "Hospital General Universitario Gregorio MaraÃ±Ã³n": 1,
+    "Hospital Universitario Ramón y Cajal": 1,
+    "Hospital Universitario Infanta Sofía": 2,
+    "Hospital General Universitario Gregorio Marañón": 1,
     "Hospital Universitario 12 de Octubre": 1,
     "Hospital Universitario de Fuenlabrada": 1,
     "Hospital Universitario Infanta Cristina": 1,
     "Hospital Universitario Infanta Elena": 3,
-    "Hospital Universitario JosÃ© Germain": 1,
+    "Hospital Universitario José Germain": 1,
     "Hospital Universitario Puerta de Hierro Majadahonda": 3,
     "Hospital Asociado Universitario Guadarrama": 3,
-    "Hospital La FuenfrÃ­a": 2,
+    "Hospital La Fuenfría": 2,
     "Hospital El Escorial": 1,
-    "Hospital Universitario de TorrejÃ³n": 1,
-    "Hospital Universitario PrÃ­ncipe de Asturias": 1,
+    "Hospital Universitario de Torrejón": 1,
+    "Hospital Universitario Príncipe de Asturias": 1,
     "Hospital Universitario del Sureste": 1,
 }
 
 ORGANOS = {
-    "corazon", "corazÃ³n", "pulmon", "pulmÃ³n", "rinon", "riÃ±on", "riÃ±Ã³n",
-    "pancreas", "pÃ¡ncreas", "higado", "hÃ­gado",
+    "corazon", "corazón", "pulmon", "pulmón", "rinon", "riñón",
+    "pancreas", "páncreas", "higado", "hígado",
 }
 
 
 # ---------------------------------------------------------------------------
-# Utilidades pequeÃ±as
+# Utilidades pequeñas
 # ---------------------------------------------------------------------------
 
 def valor(diccionario, clave, defecto=0):
@@ -310,7 +310,7 @@ def fila_simulacion(resultado, nivel, simulacion, config, tiempo_s, pedidos, dro
         "inventario_tiempo_medio_min": media(tiempos_inv),
         "inventario_tiempo_p95_min": percentil(tiempos_inv, 95),
         "inventario_tiempo_p99_min": percentil(tiempos_inv, 99),
-        "p95_inventario_cumple_720_min": int((percentil(tiempos_inv, 95) or 10**9) <= UMBRAL_P95_INVENTARIO_MIN),
+        "p95_inventario_cumple_300_min": int((percentil(tiempos_inv, 95) or 10**9) <= UMBRAL_P95_INVENTARIO_MIN),
 
         "organos_totales": organos_total,
         "organos_a_tiempo": organos_a_tiempo,
@@ -388,7 +388,7 @@ def filas_rutas(nivel, simulacion, config, pedidos):
 
             origen = attr(pedido, "origin_hospital", "Origen desconocido")
             destino = attr(pedido, "destination_hospital", "Destino desconocido")
-            ruta = f"{origen} â†’ {destino}"
+            ruta = f"{origen} → {destino}"
 
             r = rutas[ruta]
             r["organos_totales"] += 1

@@ -12,7 +12,7 @@ Calcula:
 
 Ejecutar desde la raíz del proyecto:
 
-    python -m simulators.diagnostico_cobertura
+    python diagnostico.py
 """
 
 from config import HOSPITALS, BASES, CARGA_MAXIMA_KG, BATERIA_MINIMA_VUELO
