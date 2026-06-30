@@ -1,5 +1,27 @@
-# Excluir caché de Python
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# macOS
+.DS_Store
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/settings.json
+.idea/
+
+# Outputs generados por la simulación
+telemetria_vuelos.json
+datasets_montecarlo_dimensionamiento_1semana/
+graficas_presentacion/
+Grafo/grafo.html
