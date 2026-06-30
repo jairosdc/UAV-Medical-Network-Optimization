@@ -1,4 +1,10 @@
-from simulacion import run_simulation, ESCENARIOS
+import sys
+from pathlib import Path
+
+# Añadir carpeta 'src' al path para poder ejecutar el script directamente
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+
+from uav_medical_network.simulacion import run_simulation, ESCENARIOS
 
 
 def main():

@@ -8,7 +8,7 @@ geográficos de la red (hospitales y bases de Madrid).
 Importa Node desde modelos.py para construir los diccionarios HOSPITALS y BASES.
 """
 
-from modelos import Node
+from uav_medical_network.modelos import Node
 
 # ---------------------------------------------------------------------------
 # Parámetros físicos del dron

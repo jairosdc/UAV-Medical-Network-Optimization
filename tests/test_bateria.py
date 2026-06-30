@@ -1,4 +1,4 @@
-from red import (
+from uav_medical_network.red import (
     calcular_autonomia_km,
     calcular_bateria_restante,
     tiene_bateria_suficiente,

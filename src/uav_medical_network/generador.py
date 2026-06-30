@@ -21,9 +21,9 @@ import random
 import math
 import numpy as np
 
-from config import CARGA_MAXIMA_KG
-from modelos import DeliveryCall
-from red import ServicioRed
+from uav_medical_network.config import CARGA_MAXIMA_KG
+from uav_medical_network.modelos import DeliveryCall
+from uav_medical_network.red import ServicioRed
 
 
 # ---------------------------------------------------------------------------

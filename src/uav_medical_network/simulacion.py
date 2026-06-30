@@ -34,13 +34,13 @@ RESULTADO de run_simulation
 
 import heapq
 
-from config import HOSPITALS, BASES
-from modelos import Inventario, GestorPrioridad
-from red import ServicioRed
-from telemetria import TelemetriaLogger
-from flota import GestorFlotaController
-from generador import GeneradorPedidos
-from clima import SimuladorClima
+from uav_medical_network.config import HOSPITALS, BASES
+from uav_medical_network.modelos import Inventario, GestorPrioridad
+from uav_medical_network.red import ServicioRed
+from uav_medical_network.telemetria import TelemetriaLogger
+from uav_medical_network.flota import GestorFlotaController
+from uav_medical_network.generador import GeneradorPedidos
+from uav_medical_network.clima import SimuladorClima
 
 
 # ===========================================================================
@@ -1049,7 +1049,7 @@ def run_simulation(config=None):
 
     if GENERAR_GRAFICAS:
         try:
-            from graficas import mostrar_graficas_resultados
+            from uav_medical_network.graficas import mostrar_graficas_resultados
 
             mostrar_graficas_resultados(
                 gestor_flota,

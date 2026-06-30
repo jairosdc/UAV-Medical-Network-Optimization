@@ -1,6 +1,6 @@
 """
-diagnostico_cobertura.py
-========================
+diagnostico.py
+==============
 
 Analiza si las bases actuales cubren bien los hospitales.
 
@@ -12,11 +12,15 @@ Calcula:
 
 Ejecutar desde la raíz del proyecto:
 
-    python diagnostico.py
+    python scripts/diagnostico.py
 """
 
-from config import HOSPITALS, BASES, CARGA_MAXIMA_KG, BATERIA_MINIMA_VUELO
-from red import ServicioRed, calcular_bateria_restante
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+
+from uav_medical_network.config import HOSPITALS, BASES, CARGA_MAXIMA_KG, BATERIA_MINIMA_VUELO
+from uav_medical_network.red import ServicioRed, calcular_bateria_restante
 
 
 def _base_mas_cercana(hospital):

@@ -18,9 +18,9 @@ Reglas de negocio:
   - Los pedidos nunca se rechazan automáticamente por falta de dron; esperan en cola.
 """
 
-from modelos import Drone, DeliveryCall, SimulationStats
-from red import ServicioDespacho, calcular_tiempo_recarga_completa
-from config import BATERIA_MINIMA_VUELO
+from uav_medical_network.modelos import Drone, DeliveryCall, SimulationStats
+from uav_medical_network.red import ServicioDespacho, calcular_tiempo_recarga_completa
+from uav_medical_network.config import BATERIA_MINIMA_VUELO
 
 
 class GestorFlotaController:

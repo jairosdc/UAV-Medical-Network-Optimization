@@ -1,12 +1,14 @@
-# CÓDIGO PARA PODER GENERAR EL MAPA CADA VEZ QUE SE HAGAN CAMBIOS EN EL ARCHIVO config.py
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 import os
 import folium
 from folium import plugins
 from branca.element import Element
 
-from config import HOSPITALS, BASES
-from red import ServicioRed
+from uav_medical_network.config import HOSPITALS, BASES
+from uav_medical_network.red import ServicioRed
 
 def generar_mapa():
     # 1. Crear el mapa base

@@ -47,13 +47,13 @@ Los resultados definitivos del análisis de dimensionamiento se obtienen mediant
 ### Paso 1: Ejecutar la Simulación Monte Carlo
 Lanza el experimento estadístico que simula 2 semanas operativas bajo cuatro niveles de estrés de demanda. El resultado se guardará en un archivo CSV consolidado.
 ```bash
-python montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
+python scripts/run_montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
 ```
 
 ### Paso 2: Generar las Gráficas y Tablas Comparativas
 Una vez generado el CSV, el script de graficado procesará el fichero para renderizar las figuras PNG de presentación y extraer tablas formateadas con los promedios estadísticos por escenario.
 ```bash
-python graficas.py --input datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv --output graficas_presentacion
+python scripts/generar_graficas.py --input datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv --output graficas_presentacion
 ```
 
 Los outputs generados por estos scripts se almacenan en:

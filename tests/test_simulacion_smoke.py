@@ -1,4 +1,4 @@
-from simulacion import run_simulation
+from uav_medical_network.simulacion import run_simulation
 
 def test_simulacion_smoke_corta():
     config = {

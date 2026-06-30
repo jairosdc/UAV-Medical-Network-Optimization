@@ -11,7 +11,7 @@ compatible con radar_app.py al finalizar la simulación.
 import json
 import os
 
-from config import HOSPITALS, BASES
+from uav_medical_network.config import HOSPITALS, BASES
 
 
 def _coords(nombre_nodo):

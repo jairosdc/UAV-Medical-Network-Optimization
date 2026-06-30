@@ -12,6 +12,12 @@ Solo:
 - pinta el mapa.
 """
 
+import sys
+from pathlib import Path
+
+# Añadir carpeta 'src' al path para poder ejecutar la app directamente
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+
 import json
 import os
 import math
@@ -26,16 +32,16 @@ import numpy as np
 # Importaciones del proyecto
 # ---------------------------------------------------------------------------
 
-from config import HOSPITALS, BASES
-from red import ServicioRed
-from simulacion import run_simulation, ESCENARIOS
+from uav_medical_network.config import HOSPITALS, BASES
+from uav_medical_network.red import ServicioRed
+from uav_medical_network.simulacion import run_simulation, ESCENARIOS
 
 # ---------------------------------------------------------------------------
 # CONSTANTES
 # ---------------------------------------------------------------------------
 
 RUTA_TELEMETRIA = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "telemetria_vuelos.json",
 )
 

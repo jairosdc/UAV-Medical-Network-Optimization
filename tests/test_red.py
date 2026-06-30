@@ -1,5 +1,5 @@
-from red import ServicioRed
-from config import HOSPITALS, BASES
+from uav_medical_network.red import ServicioRed
+from uav_medical_network.config import HOSPITALS, BASES
 
 def test_distancia_entre_hospitales_positiva():
     red_serv = ServicioRed()

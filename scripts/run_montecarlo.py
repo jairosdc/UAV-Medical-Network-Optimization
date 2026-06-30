@@ -1,19 +1,20 @@
 """
-montecarlo.py
-=============
+run_montecarlo.py
+=================
 
 Ejecuta simulaciones Monte Carlo y guarda un único CSV.
 Ese CSV es la tabla que después lee el script de gráficas.
 
 Uso desde la raíz del proyecto:
-    python montecarlo.py
+    python scripts/run_montecarlo.py
 
 También puedes cambiar parámetros:
-    python montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
+    python scripts/run_montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
 """
 
 from __future__ import annotations
 
+import sys
 import argparse
 import json
 import time
@@ -21,10 +22,12 @@ from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
 
+# Añadir carpeta 'src' al path para poder ejecutar el script directamente
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+
 import pandas as pd
 
-from simulacion import run_simulation
-from simulacion import ESCENARIOS
+from uav_medical_network.simulacion import run_simulation, ESCENARIOS
 
 
 # ---------------------------------------------------------------------------

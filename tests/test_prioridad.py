@@ -1,5 +1,5 @@
 import math
-from modelos import GestorPrioridad, DeliveryCall
+from uav_medical_network.modelos import GestorPrioridad, DeliveryCall
 
 def test_orden_de_prioridad_clinica():
     gestor = GestorPrioridad()

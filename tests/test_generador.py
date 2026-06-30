@@ -1,7 +1,7 @@
 import math
-from generador import GeneradorPedidos
-from config import HOSPITALS, BASES, CARGA_MAXIMA_KG
-from modelos import Inventario, GestorPrioridad
+from uav_medical_network.generador import GeneradorPedidos
+from uav_medical_network.config import HOSPITALS, BASES, CARGA_MAXIMA_KG
+from uav_medical_network.modelos import Inventario, GestorPrioridad
 
 def test_generador_crea_organos_correctamente():
     hosp_list = list(HOSPITALS.values())

@@ -28,7 +28,7 @@ Todo lo relacionado con la física del dron en la red geográfica:
 
 import math
 
-from config import (
+from uav_medical_network.config import (
     CARGA_MAXIMA_KG,
     AUTONOMIA_MAX_EN_VACIO,
     BATERIA_MINIMA_VUELO,
@@ -37,7 +37,7 @@ from config import (
     HOSPITALS,
     BASES,
 )
-from modelos import RoutePlan, DispatchDecision
+from uav_medical_network.modelos import RoutePlan, DispatchDecision
 
 
 # ===========================================================================

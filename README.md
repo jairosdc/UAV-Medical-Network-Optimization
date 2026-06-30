@@ -74,39 +74,39 @@ El objetivo principal de esta plataforma es analizar cuantitativamente si una fl
 El proyecto consta de varios puntos de entrada según la tarea a realizar:
 
 ### 1. Ejecutar una simulación individual estándar
-Ejecuta la configuración del escenario predeterminado en `main.py` y muestra un resumen estadístico detallado por consola.
+Ejecuta la configuración del escenario predeterminado en `scripts/run_simulation.py` y muestra un resumen estadístico detallado por consola.
 ```bash
-python main.py
+python scripts/run_simulation.py
 ```
 
 ### 2. Ejecutar simulación estadística Monte Carlo
 Lanza múltiples ejecuciones estocásticas paralelas para realizar un análisis de estrés en el dimensionamiento de la flota.
 ```bash
-python montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
+python scripts/run_montecarlo.py --simulaciones 20 --salida datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv
 ```
 
 ### 3. Generar gráficas de presentación
 Lee los resultados del archivo CSV acumulativo de Monte Carlo y genera las gráficas de rendimiento y nivel de servicio de la red.
 ```bash
-python graficas.py --input datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv --output graficas_presentacion
+python scripts/generar_graficas.py --input datasets_montecarlo_dimensionamiento_1semana/tabla_montecarlo.csv --output graficas_presentacion
 ```
 
 ### 4. Lanzar la aplicación interactiva de visualización (Radar)
 Lanza el panel visual interactivo para visualizar los vuelos de drones en tiempo real sobre el mapa de Madrid.
 ```bash
-streamlit run radar_app.py
+streamlit run apps/radar_app.py
 ```
 
 ### 5. Diagnóstico de cobertura base-hospital
 Analiza la viabilidad geométrica de las rutas base-hospital-base basándose únicamente en la capacidad energética del dron con carga máxima.
 ```bash
-python diagnostico.py
+python scripts/diagnostico.py
 ```
 
 ### 6. Generar mapa estático interactivo del grafo de la red
 Crea un archivo HTML interactivo con las ubicaciones de todos los hospitales, bases y las distancias del grafo.
 ```bash
-python generar_mapa.py
+python scripts/generar_mapa.py
 ```
 
 ### 7. Ejecutar tests unitarios
@@ -119,25 +119,30 @@ python -m pytest
 
 ## 📁 Estructura del Proyecto
 
-El repositorio está estructurado de manera simple y plana en la raíz para facilitar la lectura del código a desarrolladores noveles:
+El repositorio está organizado de forma profesional para separar el núcleo lógico de los puntos de entrada ejecutables y las aplicaciones:
 
-*   `main.py`: Punto de entrada de simulación individual.
-*   `config.py`: Parámetros físicos del dron, límites meteorológicos, y coordenadas de hospitales y bases.
-*   `modelos.py`: Definiciones de datos (`Node`, `Drone`, `DeliveryCall`, `Producto`, `Inventario` y `GestorPrioridad`).
-*   `red.py`: Lógica geográfica, cálculo de distancias Haversine, perfiles de batería y algoritmo de despacho óptimo.
-*   `flota.py`: Controlador principal de asignación de misiones y actualización de estados del dron.
-*   `generador.py`: Generador estocástico de consumos hospitalarios y apariciones espontáneas de órganos.
-*   `clima.py`: Simulador estocástico de perfiles climáticos (normal, lluvioso, adverso) con afectación de velocidad.
-*   `simulacion.py`: Bucle DES central del motor que consume la cola de eventos y controla los escenarios.
-*   `telemetria.py`: Registro temporal de vuelos para su posterior renderizado en la app de visualización.
-*   `graficas.py`: Generador de visualizaciones y tablas a partir de los datasets de salida.
-*   `montecarlo.py`: Orquestador de simulaciones Monte Carlo para análisis estadísticos multivariable.
-*   `diagnostico.py`: Script independiente para verificar la cobertura física de las bases sobre los hospitales.
-*   `generar_mapa.py`: Script para exportar la red de Madrid a un mapa HTML interactivo mediante Folium.
-*   `radar_app.py`: Panel Streamlit que contiene el visor interactivo 2D/3D (FlyRadar) para reproducir trayectorias.
-*   `docs/`: Documentación detallada del proyecto (Arquitectura, Modelo Matemático y Resultados).
-*   `data/sample/`: Ejemplos reducidos de datos de simulación para pruebas rápidas.
-*   `graficas_presentacion/`: Carpeta donde se exportan los resultados gráficos del script de visualización.
+*   **`src/uav_medical_network/`**: Paquete Python que contiene el motor del simulador.
+    *   `config.py`: Parámetros físicos del dron, límites meteorológicos, y coordenadas de hospitales y bases.
+    *   `modelos.py`: Definiciones de datos (`Node`, `Drone`, `DeliveryCall`, `Producto`, `Inventario` y `GestorPrioridad`).
+    *   `red.py`: Lógica geográfica, cálculo de distancias Haversine, perfiles de batería y algoritmo de despacho óptimo.
+    *   `flota.py`: Controlador principal de asignación de misiones y actualización de estados del dron.
+    *   `generador.py`: Generador estocástico de consumos hospitalarios y apariciones espontáneas de órganos.
+    *   `clima.py`: Simulador estocástico de perfiles climáticos (normal, lluvioso, adverso) con afectación de velocidad.
+    *   `simulacion.py`: Bucle DES central del motor que consume la cola de eventos y controla los escenarios.
+    *   `telemetria.py`: Registro temporal de vuelos para su posterior renderizado en la app de visualización.
+    *   `graficas.py`: Generador integrado de visualizaciones individuales rápidas.
+*   **`apps/`**: Aplicaciones interactivas de frontend.
+    *   `radar_app.py`: Panel Streamlit que contiene el visor interactivo 2D/3D (FlyRadar) para reproducir trayectorias.
+*   **`scripts/`**: Puntos de entrada ejecutables desde terminal.
+    *   `run_simulation.py`: Script para lanzar una simulación individual de prueba.
+    *   `run_montecarlo.py`: Orquestador de simulaciones Monte Carlo para análisis estadísticos multivariable.
+    *   `generar_graficas.py`: Procesa los CSV de Monte Carlo y genera las gráficas finales.
+    *   `diagnostico.py`: Verifica la cobertura física estática de las bases de drones.
+    *   `generar_mapa.py`: Exporta la red de Madrid a un mapa HTML interactivo offline en `Grafo/`.
+*   **`docs/`**: Documentación detallada del proyecto (Arquitectura, Modelo Matemático y Resultados).
+*   **`data/sample/`**: Ejemplos reducidos de datos de simulación para pruebas rápidas.
+*   **`tests/`**: Suite de pruebas unitarias con pytest.
+*   **`graficas_presentacion/`**: Carpeta donde se exportan los resultados gráficos del script de visualización.
 
 ---
 
@@ -171,7 +176,7 @@ El sistema registra múltiples indicadores clave de rendimiento (KPIs):
 
 La aplicación web integrada permite una reproducción visual interactiva de los vuelos:
 ```bash
-streamlit run radar_app.py
+streamlit run apps/radar_app.py
 ```
 *   **Monitorización:** Visualiza hospitales, bases aéreas y las trayectorias dinámicas de los drones.
 *   **Filtros de Misión:** Permite ver la naturaleza del vuelo (Misión de Órgano, Misión de Inventario, Regreso a Base).
